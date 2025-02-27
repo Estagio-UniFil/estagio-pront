@@ -1,10 +1,77 @@
+# 📌 Menu do Projeto
+
+## 🗺 Diagramas
+
+- [🔹 Diagrama de Caso de Uso](docs/diagramas/Diagrama%20de%20Caso%20de%20Uso.md)
+- [🔹 Diagrama de Classe](docs/diagramas/Diagrama%20de%20Classe.md)
+- [🔹 Diagrama de Entidade-Relacionamento](docs/diagramas/Diagrama%20de%20Entidade-Relacionamento.md)
+- [🔹 Diagrama de Estado](docs/diagramas/Diagrama%20de%20Estado.md)
+- [🔹 Diagrama de Implantação](docs/diagramas/Diagrama%20de%20implantacao.md)
+- [🔹 Workflow AS-IS e TO-BE](docs/diagramas/Workflow%20AS-IS%20e%20TO-BE.md)
+
+## 📄 Artefatos
+
+- [📄 Especificação Complementar](docs/artefatos/Especificacao%20Complementar.md)
+- [📄 Pedido do Investidor](docs/artefatos/Pedido%20do%20investidor.md)
+- [📄 Visão do Projeto](docs/artefatos/Visao%20do%20Projeto.md)
+- [📄 Glossário](docs/artefatos/glossario.md)
+- [📄 Plano de Estágio](docs/artefatos/Plano%20de%20estagio.md)
+
+
+## 📚 Artefatos de Casos de Uso
+
+### Caso de Uso A
+
+- [🔹 Diagrama de Sequência](docs/casos_de_uso/Caso-de-uso-A/Diagrama%20de%20Sequencia-a.md)
+- [📄 Especificação Caso de Uso](docs/casos_de_uso/Caso-de-uso-A/Especificacao%20Caso%20de%20Uso-a.md)
+
+### Caso de Uso Y
+
+- [🔹 Diagrama de Sequência](docs/casos_de_uso/Caso-de-uso-Y/Diagrama%20de%20Sequencia-b.md)
+- [📄 Especificação Caso de Uso](docs/casos_de_uso/Caso-de-uso-Y/Especificacao%20Caso%20de%20Uso-b.md)
+
+
+# Atualização Importante a partir de 27/02/2025: Migração de Documentos e Novo Workflow
+
+## Documentos Migrados da Wiki para o Repositório Principal
+
+Todos os documentos que anteriormente estavam na Wiki foram migrados para o repositório principal, dentro da pasta `/docs` e o menu enconta-se no README. Essa mudança foi necessária porque a Wiki agora não é mantida automaticamente ao gerar uma TAG, o que pode causar inconsistências nas versões dos documentos.
+
+## Novo Workflow de Conversão para PDF
+
+Implementamos um workflow do GitHub Actions que converte automaticamente os arquivos Markdown em PDF com alta qualidade. 
+
+Você pode encontrar o arquivo de workflow em `.github/workflows/convert-md-to-pdf.yml`.
+
+## Instruções para Entrega das Atividades
+
+Para as atividades de documentação no Google Classroom, siga estas orientações:
+
+- **Entrega em PDF:** Faça o upload do arquivo PDF gerado com a documentação.  
+- **Não envie links do Google Classroom:** A entrega deve ser exclusivamente o arquivo PDF.
+- **Sem necessidade de TAGs:** Não é preciso criar TAGs para as entregas; basta entregar o documento diretamente.
+- **Referência ao Repositório:** Sempre anexe também o link do repositório GitHub para facilitar a verificação e acompanhamento.
+
+## Migração da Versão Antiga para a Nova
+
+Para migrar da versão antiga para a nova estrutura, siga os passos abaixo:
+
+1. **Clone o Diretório `/docs`:** Faça o clone da pasta `/docs` do repositório principal para garantir que você tenha todos os documentos atualizados. Além disso, copie o MENU deste README.
+2. **Atualize ou Remova a Wiki:** Se preferir, remova a Wiki antiga. Caso decida mantê-la, lembre-se que ela precisará ser atualizada manualmente sempre que houver alterações.
+3. **Adicione o Workflow:** Certifique-se de que o workflow de conversão para PDF (localizado em `.github/workflows/convert-md-to-pdf.yml`) está presente no repositório.
+4. **Entrega no Classroom:** Para cada atividade, gere o PDF com os documentos atualizados, faça o upload no Google Classroom e anexe o link do GitHub para referência.
+
+Agradecemos a colaboração de todos durante essa transição para garantir que os documentos estejam sempre atualizados e que o processo de entrega seja o mais eficiente possível.
+
+
+
 # 🚀 Estágio Supervisionado UniFil - Guia Ágil para Alunos
 Este repositório é um template no GitHub para que você possa criar seu próprio repositório de estágio supervisionado a partir dele. Para usá-lo:
 
 - Clique no botão "Use this template" para gerar uma cópia personalizada.
 - Renomeie e ajuste a estrutura conforme as necessidades do seu projeto.
-- Atualize os documentos e a Wiki de acordo com as entregas do seu estágio.
-- Utilize as TAGs para marcar cada entrega e compartilhe os links conforme as instruções.
+- Atualize os documentos de acordo com as entregas do seu estágio.
+
 
 As regras aqui são apenas diretrizes e não substituem as orientações do seu orientador e coordenador de estágio.
 
@@ -16,8 +83,7 @@ Aqui, você desenvolverá um projeto real usando metodologias ágeis, dividido e
 ## ⚠️ Regras Cruciais (Não Pule Essa Parte!)
 1. **Unidades 1 e 3**: Avaliadas **diretamente pelo orientador** (nota final).  
 2. **Unidades 2 e 4**: Avaliadas por **banca examinadora**. Para apresentar, você precisará de um **atestado de aptidão do orientador**.  
-3. **TAGs são obrigatórias**: Cada entrega deve ter uma TAG no GitHub com link postado no Google Classroom.  
-4. **Documentação progressiva**: Até a Unidade 2, você deve ter **toda a documentação básica pronta**, exceto diagramas de novos casos de uso desenvolvidos posteriormente.  
+3. **Documentação progressiva**: Até a Unidade 2, você deve ter **toda a documentação básica pronta**, exceto diagramas de novos casos de uso desenvolvidos posteriormente.  
 
 ---
 
@@ -29,31 +95,6 @@ Aqui, você desenvolverá um projeto real usando metodologias ágeis, dividido e
 | 3️⃣ **Implementação I** | Nota do Orientador | - | 50-80% dos Casos de Uso |
 | 4️⃣ **Implementação II** | Banca Final | Atestado do Orientador + Sistema 100% Funcional | Relatório Final, todos os artefatos e todos os diagramas  |
 
----
-
-## 🛠️ Configuração do Repositório
-No Google Classroom de Estágio, terá entregas programadas e para cada uma delas você deve entregar o link de uma TAG.
-
-### Como Funcionam as TAGs no Git?
-As **TAGs** são "pontos de entrega" congelados no seu repositório. Servem para:  
-- Registrar versões estáveis do projeto.  
-- Facilitar a avaliação (seu orientador/banca verá exatamente o que você entregou).  
-
-**Passo a Passo para Criar uma TAG**:  
-1. Finalize uma entrega (ex: CRUD da Unidade 1).  
-2. Execute no terminal:  
-   ```bash
-   git tag -a "Entrega Diagrama X" -m "CRUD de usuários implementado"
-   git push origin --tags
-   ```  
-3. **Nomeie as TAGs claramente**:  
-   - As TAGS deverão ter o mesmo nome EXATO da atividade postada no Classroom.
-4. **Vincule ao Google Classroom**:  
-   - Link da TAG: `https://github.com/Estagio-UniFil/[REPO]/tree/[NOME_DA_TAG]`.  
-
-❗ **Importante**:  
-- TAGs incompletas ou sem link no Classroom = **entrega não validada**.
-- Ajustas posteriores á geração da TAG entregue não serão avaliadas.
 
 ---
 
@@ -128,7 +169,7 @@ O estágio é dividido em **4 unidades**, cada uma com objetivos e entregas espe
 
 
 
-## 📄 Documentação Progressiva (Atualize a Wiki!)
+## 📄 Documentação Progressiva (Atualize os docs!)
 
 | Documento/Artefato               | Descrição |
 |----------------------------------|-----------|
@@ -144,9 +185,9 @@ O estágio é dividido em **4 unidades**, cada uma com objetivos e entregas espe
 | **Workflow As-Is e To-Be**       | Descreve o processo atual (As-Is) e o processo desejado (To-Be). |
 | **Diagrama de Implantação**      | Mostra a infraestrutura necessária para o deploy do sistema. |
 
-### ❗ Importante: A Wiki é a Fonte Oficial
-- **Toda documentação deve ser mantida na Wiki do GitHub**. Outras fontes (Google Drive, documentos locais, etc.) **não serão consideradas**.  
-- **Atualize a Wiki continuamente**: Sempre que um documento ou artefato for criado ou modificado, ele deve ser imediatamente atualizado na Wiki.  
+### ❗ Importante: A pasta de documentação é a Fonte Oficial
+- **Toda documentação deve ser mantida na pasta Docs do GitHub**. Outras fontes (Google Drive, documentos locais, etc.) **não serão consideradas**.  
+- **Atualize os Docs continuamente**: Sempre que um documento ou artefato for criado ou modificado, ele deve ser imediatamente atualizado na pasta Docs.  
 - **Organize o *Sidebar***: Use o arquivo `_sidebar.md` para criar um menu de navegação claro. Exemplo:  
   ```markdown
   - [Documento de Visão](/Visao)
@@ -154,35 +195,32 @@ O estágio é dividido em **4 unidades**, cada uma com objetivos e entregas espe
   - [Diagramas](/Diagramas)
   ```  
 
-🌟 **Dica**: A Wiki é seu diário de bordo. Mantenha-a organizada e atualizada para garantir que todas as entregas sejam validadas corretamente! 🚀  
+🌟 **Dica**: A Docs é seu diário de bordo. Mantenha-a organizada e atualizada para garantir que todas as entregas sejam validadas corretamente! 🚀  
 
 
 
 
 ## ⚠️ Avisos Importantes
 
-1. **Wiki é a Única Fonte Válida**:  
-   - Toda documentação **deve estar na Wiki do GitHub**. Links externos, arquivos locais ou outras plataformas *não serão aceitos*.  
+1. **Docs é a Única Fonte Válida**:  
+   - Toda documentação **deve estar na Docs do GitHub**. Links externos, arquivos locais ou outras plataformas *não serão aceitos*.  
    - Mantenha o *sidebar* organizado e atualizado. Se não estiver visível, seu trabalho pode ser considerado incompleto.  
+  
 
-2. **TAGs são Obrigatórias**:  
-   - Cada entrega exige uma **TAG no GitHub** com link postado no Google Classroom.  
-   - Sem a TAG, a entrega *não existe oficialmente*.  
-
-3. **Papel do Orientador**:  
+2. **Papel do Orientador**:  
    - Ele é seu **Agile Master** (PO + Scrum Master).  
    - Você *não pode* apresentar nas bancas (Unidades 2 e 4) sem um **atestado de aptidão** assinado por ele.
    - Faltar a orientações (25%) gera reprovação.
 
-4. **Comunicação é Chave**:  
+3. **Comunicação é Chave**:  
    - Mudanças no cronograma? Bloqueios técnicos? **Avise seu orientador imediatamente**.  
    - Falta de comunicação recorrente = **reprovação**.  
 
-5. **Documentação Progressiva**:  
+4. **Documentação Progressiva**:  
    - Até a Unidade 2, todos os documentos básicos (Visão, Workflow, Glossário) *devem estar completos*.  
    - Diagramas de novos casos de uso são adicionados apenas nas unidades em que forem desenvolvidos.  
 
-6. **Repositório Privado**:  
+5. **Repositório Privado**:  
    - Se não adicionar seu orientador como *maintainer*, seu projeto *não será avaliado*.  
 
 ---
@@ -193,24 +231,18 @@ O estágio é dividido em **4 unidades**, cada uma com objetivos e entregas espe
 ### Q1: E se eu precisar alterar o escopo do projeto?  
 **R**: Não há problemas, desde que comunique seu orientador e cumpra as entregas.   
 
-### Q2: O que acontece se eu esquecer de criar uma TAG?  
-**R**: A entrega será considerada **incompleta**. Entregas tardias poderá acarretar em perdas pontos.  
-
-### Q3: O que acontece se eu atualizar a Wiki fora do prazo?  
-**R**: Atualizações tardias serão **desconsideradas**. A Wiki é avaliada *no momento da TAG*.  
-
-### Q4: Como sei se estou apto para a banca (Unidades 2 e 4)?  
+### Q2: Como sei se estou apto para a banca (Unidades 2 e 4)?  
 **R**: Seu orientador emitirá um **atestado de aptidão** após validar:  
 - Unidade 2: Pelo menos 1 caso de uso funcional + diagramas e artefatos.  
 - Unidade 4: Sistema 100% funcional + relatório final + diagramas e artefatos completos.
 
-### Q5: E se eu tiver algum problema ou dúvidas?  
+### Q3: E se eu tiver algum problema ou dúvidas?  
 **R**: Converse com seu orientador, pois ele é aquele que te avaliará durante todo o processo e poderá te orientar.
 
-### Q6: E se eu trocar de projeto ao avançar uma unidade curricular?  
+### Q4: E se eu trocar de projeto ao avançar uma unidade curricular?  
 **R**: Se você mudar de projeto entre uma unidade e outra, será necessário refazer todas as entregas das unidades anteriores, pois cada unidade é sequencial e depende do trabalho desenvolvido nas etapas prévias. Isso inclui documentação, diagramas e qualquer outro artefato já entregue. 
 
-### Q7: Como fazer estágio no NPI? 
+### Q5: Como fazer estágio no NPI? 
 **R**: Marque uma reunião com o Coordenador do NPI no e-mail joao.andrade@unifil.br
 
 
