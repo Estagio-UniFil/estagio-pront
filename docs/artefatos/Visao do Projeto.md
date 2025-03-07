@@ -1,9 +1,11 @@
 # Prontuário Digital
 
-## Vision
+## **Versão 1.0**
+### Histórico de Revisão
 
-**Data:** 06/03/2025
-
+| Data       | Versão | Descrição                    | Autor             |
+| ---------- | ------ | ---------------------------- | ----------------- |
+| 06/03/2025 | 1.0    | Primeira versão do documento | Luis Afonso Mineo |
 # Visão
 
 ## Introdução
@@ -44,15 +46,15 @@
 - **Nosso produto**
   Oferece automação de processos demorados e ineficientes.
 
-## Descrições do Envolvido
+## Descrições dos Envolvidos
 
-### Resumo do Envolvido
+### Resumo dos Envolvidos
 
 | Nome                        | Descrição                                                        | Responsabilidades                                                  |
 | --------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------ |
 | Ivone Maria da Silva Mineo  | Diretora da Escola                                               | Gerenciar a equipe pedagógica e de saúde                           |
 | Rosilene Aparecida da Silva | Gestora de entregas                                              | Analisa os relatórios gerados e lança procedimentos no sistema SUS |
-| Profissionais de Saúde       | Fisioterapeutas, Fonoaudiólogos, Psicólogos, Assistentes Sociais | Registrar atendimentos, acompanhar evolução dos alunos             |
+| Profissionais de Saúde      | Fisioterapeutas, Fonoaudiólogos, Psicólogos, Assistentes Sociais | Registrar atendimentos, acompanhar evolução dos alunos             |
 
 ## Ambiente do Usuário
 
@@ -79,12 +81,12 @@ O sistema de prontuário digital será uma solução web, permitindo o registro 
 
 ## Necessidades e Recursos
 
-| Necessidade                  | Prioridade | Recursos                          | Liberação Planejada |
-| ---------------------------- | ---------- | --------------------------------- | ------------------- |
-| Cadastro de alunos           | Alta       | Banco de dados estruturado        | Q2 2025             |
-| Prontuário digital           | Alta       | Interface web responsiva          | Q2 2025             |
-| Geração de relatórios        | Alta       | Biblioteca de exportação de dados | Q3 2025             |
-| Controle de acesso           | Alta       | Sistema de autenticação           | Q3 2025             |
+| Necessidade           | Prioridade | Recursos                          | Liberação Planejada |
+| --------------------- | ---------- | --------------------------------- | ------------------- |
+| Cadastro de alunos    | Alta       | Banco de dados estruturado        | Imediato            |
+| Prontuário digital    | Alta       | Interface web responsiva          | Intermediário       |
+| Geração de relatórios | Alta       | Biblioteca de exportação de dados | Intermediário       |
+| Controle de acesso    | Alta       | Sistema de autenticação           | Tardio              |
 
 ## Alternativas e Competição
 
