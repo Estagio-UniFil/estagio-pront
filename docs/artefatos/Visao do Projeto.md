@@ -50,9 +50,9 @@
 
 | Nome                        | Descrição                                                        | Responsabilidades                                                  |
 | --------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------ |
-| Ivone Maria da Silva Mineo  | Diretora da Escola de Educação Especial                          | Gerenciar a equipe pedagógica e de saúde                           |
+| Ivone Maria da Silva Mineo  | Diretora da Escola                                               | Gerenciar a equipe pedagógica e de saúde                           |
 | Rosilene Aparecida da Silva | Gestora de entregas                                              | Analisa os relatórios gerados e lança procedimentos no sistema SUS |
-| Profissionais de Saúde      | Fisioterapeutas, Fonoaudiólogos, Psicólogos, Assistentes Sociais | Registrar atendimentos, acompanhar evolução dos alunos             |
+| Profissionais de Saúde       | Fisioterapeutas, Fonoaudiólogos, Psicólogos, Assistentes Sociais | Registrar atendimentos, acompanhar evolução dos alunos             |
 
 ## Ambiente do Usuário
 
