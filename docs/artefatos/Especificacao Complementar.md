@@ -1,6 +1,6 @@
 ## Especificação Complementar
 
-### **Versão 1.0**
+### **Versão 1.1**
 
 ### Histórico de Revisão
 
