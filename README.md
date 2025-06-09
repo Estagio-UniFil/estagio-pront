@@ -86,7 +86,7 @@ Todos os diagramas estão disponíveis em **[docs/diagramas/](docs/diagramas/0-d
 
 ---
 
-**Orientando:** Luis Afonso Mineo
-**Orientador:** Ricardo Petri Silva
-**Curso:** Bacharelado em Ciência da Computação  
+**Orientando:** Luis Afonso Mineo <br>
+**Orientador:** Ricardo Petri Silva <br>
+**Curso:** Bacharelado em Ciência da Computação <br>
 **Ano:** 2025
