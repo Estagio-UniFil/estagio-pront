@@ -1,28 +1,32 @@
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from .models import Student
 from .serializers import StudentSerializer
+from authentication.permissions import IsAdminUser, AdminWriteHealthProfRead
 
 # Create your views here.
 
 
 @api_view(["GET", "POST"])
+@permission_classes([AdminWriteHealthProfRead])
 def student_list(request, format=None):
     if request.method == "GET":
-        students = Student.objects.filter(active=True)
+        students = Student.objects.filter(active=True).order_by("name")
         serializer = StudentSerializer(students, many=True)
         return Response(serializer.data)
 
     if request.method == "POST":
         serializer = StudentSerializer(data=request.data)
         if serializer.is_valid():
+            serializer.save(created_by=request.user, updated_by=request.user)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["GET", "PUT", "DELETE"])
+@permission_classes([IsAdminUser])
 def student_detail(request, pk, format=None):
     try:
         student = Student.objects.get(pk=pk)
@@ -36,12 +40,13 @@ def student_detail(request, pk, format=None):
     elif request.method == "PUT":
         serializer = StudentSerializer(student, data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(updated_by=request.user)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == "DELETE":
         if student.active:
+            student.updated_by = request.user
             student.soft_delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
@@ -52,14 +57,16 @@ def student_detail(request, pk, format=None):
 
 
 @api_view(["GET"])
+@permission_classes([IsAdminUser])
 def inactive_student_list(request, format=None):
     if request.method == "GET":
-        students = Student.objects.filter(active=False)
+        students = Student.objects.filter(active=False).order_by("name")
         serializer = StudentSerializer(students, many=True)
         return Response(serializer.data)
 
 
 @api_view(["PUT"])
+@permission_classes([IsAdminUser])
 def restore_inactive_student(request, pk, format=None):
     try:
         student = Student.objects.get(pk=pk)

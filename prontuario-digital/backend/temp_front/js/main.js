@@ -6,16 +6,31 @@ let confirmCallback = null;
 
 // Inicializar quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. VERIFICA SE ESTÁ LOGADO
+    if (!localStorage.getItem('authToken')) {
+        // Se não houver token, redireciona para a tela de login
+        window.location.href = 'login.html';
+        return; // Para a execução para não carregar o resto
+    }
+
+    // 2. SE ESTIVER LOGADO, INICIALIZA A PÁGINA
+    initializeMainPage();
+});
+
+function initializeMainPage() {
     // Inicializar modais do Bootstrap
     studentModal = new bootstrap.Modal(document.getElementById('student-modal'));
     confirmModal = new bootstrap.Modal(document.getElementById('confirm-modal'));
-    
+
     // Configurar event listeners
     setupEventListeners();
-    
+
     // Carregar alunos ativos inicialmente
     loadActiveStudents();
-});
+
+    // const userEmail = localStorage.getItem('userEmail');
+    // console.log(`Usuário logado: ${userEmail}`);
+}
 
 // Configurar todos os event listeners
 function setupEventListeners() {
@@ -45,6 +60,8 @@ function setupEventListeners() {
             confirmModal.hide();
         }
     });
+
+    document.getElementById('logout-btn').addEventListener('click', handleLogout);
     
     // Validação em tempo real
     const formInputs = document.querySelectorAll('#student-form input, #student-form select');
@@ -68,6 +85,15 @@ function setupEventListeners() {
     document.getElementById('cep').addEventListener('input', function() {
         this.value = formatCEP(this.value);
     });
+}
+
+function handleLogout() {
+    // Remove os dados do localStorage
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('userEmail');
+    // Redireciona para a tela de login
+    window.location.href = 'login.html';
 }
 
 // Validar um input específico
@@ -107,6 +133,9 @@ async function loadActiveStudents() {
         hideLoader();
         showAlert(error.message, 'danger');
         console.error('Erro ao carregar alunos ativos:', error);
+        if (error.message.includes('401') || error.message.includes('403') || error.message.includes('Authentication credentials were not provided')) {
+            handleLogout();
+        }
     }
 }
 
@@ -250,6 +279,8 @@ async function viewStudent(id) {
         const student = currentStudents.find(s => s.id === id) || await api.getStudent(id);
         
         openStudentModal(student);
+        const modalTitle = document.getElementById('modal-title');
+        modalTitle.textContent = 'Visualizar aluno';
         
         // Desabilitar todos os campos para visualização
         document.querySelectorAll('#student-form input, #student-form select').forEach(el => {
@@ -320,6 +351,7 @@ async function saveStudent() {
         studentModal.hide();
         loadActiveStudents();
     } catch (error) {
+        studentModal.hide();
         showAlert(error.message, 'danger');
         console.error('Erro ao salvar aluno:', error);
     }
@@ -330,9 +362,9 @@ function confirmDeleteStudent(id) {
     const student = currentStudents.find(s => s.id === id);
     if (!student) return;
     
-    document.getElementById('confirm-modal-title').textContent = 'Confirmar Exclusão';
+    document.getElementById('confirm-modal-title').textContent = 'Confirmar Desativação';
     document.getElementById('confirm-modal-body').textContent = 
-    `Tem certeza que deseja excluir o aluno "${student.name}"?`;
+    `Tem certeza que deseja desativar o aluno "${student.name}"?`;
     document.getElementById('confirm-action-btn').className = 'btn btn-danger';
     document.getElementById('confirm-action-btn').textContent = 'Excluir';
     
@@ -344,11 +376,11 @@ function confirmDeleteStudent(id) {
 async function deleteStudent(id) {
     try {
         await api.deleteStudent(id);
-        showAlert('Aluno excluído com sucesso!', 'success');
+        showAlert('Aluno desativado com sucesso!', 'success');
         loadActiveStudents();
     } catch (error) {
         showAlert(error.message, 'danger');
-        console.error('Erro ao excluir aluno:', error);
+        console.error('Erro ao desativar aluno:', error);
     }
 }
 
