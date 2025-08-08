@@ -81,12 +81,10 @@ Todos os diagramas estão disponíveis em **[docs/diagramas/](docs/diagramas/0-d
 
 - **Repositório de Documentação:** [luismineo.github.io/proamp-docs](https://luismineo.github.io/proamp-docs/)
 - **Glossário Interativo:** [luismineo.github.io/proamp-docs](https://luismineo.github.io/proamp-docs/pages/glossario.html)
-- **Protótipo Interativo (Setor Clínico):** [Figma - Setor Clínico](https://www.figma.com/proto/JCUS8XLqdO7fcQJ2ipN1jk/Pront?node-id=703-136&t=dnsxIicB9jKkZYlt-1)
-- **Protótipo Interativo (Admin):** [Figma - Administrador](https://www.figma.com/proto/JCUS8XLqdO7fcQJ2ipN1jk/Pront?node-id=719-643&starting-point-node-id=719%3A643&t=yBhgSeZlpx8Bpbyg-1)
 
 ---
 
-**Orientando:** Luis Afonso Mineo
-**Orientador:** Ricardo Petri Silva
-**Curso:** Bacharelado em Ciência da Computação  
+**Orientando:** Luis Afonso Mineo <br>
+**Orientador:** Ricardo Petri Silva <br>
+**Curso:** Bacharelado em Ciência da Computação <br>
 **Ano:** 2025
