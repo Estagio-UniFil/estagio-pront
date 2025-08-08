@@ -36,10 +36,8 @@ class API {
         const response = await fetch(`${this.baseUrl}/api/login/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }, // Login não envia token
-            // IMPORTANTE: Envie o email como 'username' se estiver usando o ObtainAuthToken padrão
             body: JSON.stringify({ username: email, password: password })
         });
-        // O handleResponse tratará erros ou retornará os dados (token, user_id, etc.)
         return this.handleResponse(response);
     }
 

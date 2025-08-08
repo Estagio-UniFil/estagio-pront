@@ -300,6 +300,7 @@ async function editStudent(id) {
     try {
         const student = currentStudents.find(s => s.id === id) || await api.getStudent(id);
         
+        const user = await api.get
         openStudentModal(student);
         
         // Habilitar todos os campos para edição
@@ -366,7 +367,7 @@ function confirmDeleteStudent(id) {
     document.getElementById('confirm-modal-body').textContent = 
     `Tem certeza que deseja desativar o aluno "${student.name}"?`;
     document.getElementById('confirm-action-btn').className = 'btn btn-danger';
-    document.getElementById('confirm-action-btn').textContent = 'Excluir';
+    document.getElementById('confirm-action-btn').textContent = 'Desativar';
     
     confirmCallback = () => deleteStudent(id);
     confirmModal.show();

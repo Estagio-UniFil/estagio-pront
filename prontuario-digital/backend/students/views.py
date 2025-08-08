@@ -14,7 +14,7 @@ def student_list(request, format=None):
     if request.method == "GET":
         students = Student.objects.filter(active=True).order_by("name")
         serializer = StudentSerializer(students, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     if request.method == "POST":
         serializer = StudentSerializer(data=request.data)

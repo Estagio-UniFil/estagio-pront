@@ -1,6 +1,14 @@
 from rest_framework import permissions
 
 
+class IsAuthenticated(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if not (request.user and request.user.is_authenticated):
+            return False
+
+        return super().has_permission(request, view)
+
+
 class IsAdminUser(permissions.BasePermission):
     """
     Permite acesso apenas para usuários com role 'admin'
@@ -53,6 +61,41 @@ class AdminWriteHealthProfRead(permissions.BasePermission):
 
         # Métodos de escrita: apenas admin
         return request.user.role == "admin"
+
+
+class HealthProfWriteAdminRead(permissions.BasePermission):
+    """
+    Health Professionals: podem fazer tudo (GET, POST, PUT, DELETE)
+    Admins: apenas leitura (GET)
+    """
+
+    def has_permission(self, request, view):
+        if not (request.user and request.user.is_authenticated):
+            return False
+
+        # Métodos de leitura: ambos podem acessar
+        if request.method in permissions.SAFE_METHODS:  # GET, HEAD, OPTIONS
+            return request.user.role in ["admin", "health_prof"]
+
+        return request.user.role == "health_prof"
+
+
+class HealthProfWriteAllRead(permissions.BasePermission):
+    """
+    Todos: podem ler (GET)
+    Health Professionals: unico que pode escrever (POST)
+    """
+
+    def has_permission(self, request, view):
+        if not (request.user and request.user.is_authenticated):
+            return False
+
+        # Métodos de leitura: ambos podem acessar
+        if request.method in permissions.SAFE_METHODS:  # GET, HEAD, OPTIONS
+            return request.user.role in ["admin", "health_prof", "manager"]
+
+        # Métodos de escrita: apenas admin
+        return request.user.role == "health_prof"
 
 
 class IsManagerUser(permissions.BasePermission):
