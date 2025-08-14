@@ -1,0 +1,505 @@
+@import 'tailwindcss';
+
+@layer base {
+  body {
+    font-family:
+      'Lato',
+      system-ui,
+      -apple-system,
+      sans-serif;
+    background-color: theme('colors.gray.50');
+    color: theme('colors.gray.900');
+    font-weight: 400; /* Lato Regular */
+    line-height: 1.6;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  /* Headings com Lato */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700; /* Lato Bold */
+    line-height: 1.2;
+  }
+
+  h1 {
+    font-size: theme('fontSize.3xl');
+    font-weight: 900; /* Lato Black */
+  }
+
+  h2 {
+    font-size: theme('fontSize.2xl');
+    font-weight: 700; /* Lato Bold */
+  }
+
+  h3 {
+    font-size: theme('fontSize.xl');
+    font-weight: 700; /* Lato Bold */
+  }
+}
+
+@layer components {
+  /* Botões do sistema com Lato */
+  .btn-primary {
+    background-color: theme('colors.blue.600');
+    color: theme('colors.white');
+    font-family: 'Lato', sans-serif;
+    font-weight: 700; /* Lato Bold */
+    font-size: theme('fontSize.sm');
+    padding: theme('spacing.3') theme('spacing.6');
+    border-radius: theme('borderRadius.lg');
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-primary:hover {
+    background-color: theme('colors.blue.700');
+    transform: translateY(-1px);
+    box-shadow: theme('boxShadow.md');
+  }
+
+  .btn-secondary {
+    background-color: theme('colors.gray.200');
+    color: theme('colors.gray.800');
+    font-family: 'Lato', sans-serif;
+    font-weight: 600; /* Lato Semi-Bold */
+    font-size: theme('fontSize.sm');
+    padding: theme('spacing.3') theme('spacing.6');
+    border-radius: theme('borderRadius.lg');
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-secondary:hover {
+    background-color: theme('colors.gray.300');
+    transform: translateY(-1px);
+  }
+
+  .btn-danger {
+    background-color: theme('colors.red.600');
+    color: theme('colors.white');
+    font-family: 'Lato', sans-serif;
+    font-weight: 700; /* Lato Bold */
+    font-size: theme('fontSize.sm');
+    padding: theme('spacing.3') theme('spacing.6');
+    border-radius: theme('borderRadius.lg');
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-danger:hover {
+    background-color: theme('colors.red.700');
+    transform: translateY(-1px);
+    box-shadow: theme('boxShadow.md');
+  }
+
+  .btn-outline {
+    background-color: transparent;
+    color: theme('colors.blue.600');
+    font-family: 'Lato', sans-serif;
+    font-weight: 600; /* Lato Semi-Bold */
+    font-size: theme('fontSize.sm');
+    padding: theme('spacing.3') theme('spacing.6');
+    border: 2px solid theme('colors.blue.600');
+    border-radius: theme('borderRadius.lg');
+    transition: all 0.2s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-outline:hover {
+    background-color: theme('colors.blue.600');
+    color: theme('colors.white');
+  }
+
+  /* Cards com tipografia Lato */
+  .card {
+    background-color: theme('colors.white');
+    border-radius: theme('borderRadius.xl');
+    box-shadow: theme('boxShadow.lg');
+    padding: theme('spacing.8');
+    border: 1px solid theme('colors.gray.100');
+  }
+
+  .card-header {
+    border-bottom: 2px solid theme('colors.gray.100');
+    padding-bottom: theme('spacing.4');
+    margin-bottom: theme('spacing.6');
+  }
+
+  .card-title {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700; /* Lato Bold */
+    font-size: theme('fontSize.xl');
+    color: theme('colors.gray.900');
+    margin: 0;
+  }
+
+  .card-subtitle {
+    font-family: 'Lato', sans-serif;
+    font-weight: 400; /* Lato Regular */
+    font-size: theme('fontSize.sm');
+    color: theme('colors.gray.600');
+    margin-top: theme('spacing.1');
+  }
+
+  /* Inputs com Lato */
+  .input-field {
+    width: 100%;
+    padding: theme('spacing.4');
+    border: 2px solid theme('colors.gray.200');
+    border-radius: theme('borderRadius.lg');
+    font-family: 'Lato', sans-serif;
+    font-weight: 400; /* Lato Regular */
+    font-size: theme('fontSize.base');
+    transition: all 0.2s ease;
+    background-color: theme('colors.white');
+  }
+
+  .input-field:focus {
+    outline: none;
+    border-color: theme('colors.blue.500');
+    box-shadow: 0 0 0 4px theme('colors.blue.100');
+    background-color: theme('colors.blue.50');
+  }
+
+  .input-field:invalid {
+    border-color: theme('colors.red.500');
+    background-color: theme('colors.red.50');
+  }
+
+  .input-label {
+    display: block;
+    font-family: 'Lato', sans-serif;
+    font-size: theme('fontSize.sm');
+    font-weight: 700; /* Lato Bold */
+    color: theme('colors.gray.800');
+    margin-bottom: theme('spacing.2');
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .input-error {
+    font-family: 'Lato', sans-serif;
+    font-size: theme('fontSize.xs');
+    font-weight: 400; /* Lato Regular */
+    color: theme('colors.red.600');
+    margin-top: theme('spacing.1');
+  }
+
+  /* Layout do dashboard */
+  .dashboard-container {
+    min-height: 100vh;
+    background-color: theme('colors.gray.50');
+    font-family: 'Lato', sans-serif;
+  }
+
+  .sidebar {
+    width: theme('spacing.72');
+    background-color: theme('colors.white');
+    box-shadow: theme('boxShadow.xl');
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    overflow-y: auto;
+    border-right: 1px solid theme('colors.gray.200');
+  }
+
+  .sidebar-header {
+    padding: theme('spacing.6');
+    border-bottom: 2px solid theme('colors.gray.100');
+  }
+
+  .sidebar-title {
+    font-family: 'Lato', sans-serif;
+    font-weight: 900; /* Lato Black */
+    font-size: theme('fontSize.xl');
+    color: theme('colors.gray.900');
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .main-content {
+    margin-left: theme('spacing.72');
+    padding: theme('spacing.8');
+  }
+
+  /* Tabelas com Lato */
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: theme('colors.white');
+    border-radius: theme('borderRadius.xl');
+    overflow: hidden;
+    box-shadow: theme('boxShadow.lg');
+    border: 1px solid theme('colors.gray.200');
+  }
+
+  .table th {
+    background-color: theme('colors.gray.100');
+    padding: theme('spacing.4') theme('spacing.6');
+    text-align: left;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700; /* Lato Bold */
+    font-size: theme('fontSize.sm');
+    color: theme('colors.gray.800');
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid theme('colors.gray.200');
+  }
+
+  .table td {
+    padding: theme('spacing.4') theme('spacing.6');
+    font-family: 'Lato', sans-serif;
+    font-weight: 400; /* Lato Regular */
+    font-size: theme('fontSize.sm');
+    color: theme('colors.gray.700');
+    border-bottom: 1px solid theme('colors.gray.100');
+  }
+
+  .table tbody tr:hover {
+    background-color: theme('colors.blue.50');
+  }
+
+  /* Modais com Lato */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-content {
+    background-color: theme('colors.white');
+    border-radius: theme('borderRadius.xl');
+    box-shadow: theme('boxShadow.2xl');
+    max-width: theme('maxWidth.lg');
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    border: 1px solid theme('colors.gray.200');
+  }
+
+  .modal-header {
+    padding: theme('spacing.8') theme('spacing.8') theme('spacing.4');
+    border-bottom: 2px solid theme('colors.gray.100');
+  }
+
+  .modal-title {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700; /* Lato Bold */
+    font-size: theme('fontSize.xl');
+    color: theme('colors.gray.900');
+    margin: 0;
+  }
+
+  .modal-body {
+    padding: theme('spacing.8');
+  }
+
+  .modal-footer {
+    padding: theme('spacing.4') theme('spacing.8') theme('spacing.8');
+    border-top: 2px solid theme('colors.gray.100');
+    display: flex;
+    justify-content: flex-end;
+    gap: theme('spacing.4');
+  }
+
+  /* Navegação com Lato */
+  .nav-link {
+    display: flex;
+    align-items: center;
+    padding: theme('spacing.4') theme('spacing.6');
+    color: theme('colors.gray.700');
+    text-decoration: none;
+    border-radius: theme('borderRadius.lg');
+    margin: theme('spacing.1') theme('spacing.4');
+    transition: all 0.2s ease;
+    font-family: 'Lato', sans-serif;
+    font-weight: 600; /* Lato Semi-Bold */
+    font-size: theme('fontSize.sm');
+  }
+
+  .nav-link:hover {
+    background-color: theme('colors.blue.100');
+    color: theme('colors.blue.800');
+    transform: translateX(4px);
+  }
+
+  .nav-link.active {
+    background-color: theme('colors.blue.600');
+    color: theme('colors.white');
+    font-weight: 700; /* Lato Bold */
+  }
+
+  /* Utilitários com Lato */
+  .loading-spinner {
+    width: theme('spacing.8');
+    height: theme('spacing.8');
+    border: 3px solid theme('colors.gray.200');
+    border-top: 3px solid theme('colors.blue.600');
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .alert {
+    padding: theme('spacing.4') theme('spacing.6');
+    border-radius: theme('borderRadius.lg');
+    margin-bottom: theme('spacing.4');
+    font-family: 'Lato', sans-serif;
+    font-weight: 400; /* Lato Regular */
+    font-size: theme('fontSize.sm');
+  }
+
+  .alert-success {
+    background-color: theme('colors.green.100');
+    color: theme('colors.green.800');
+    border: 2px solid theme('colors.green.200');
+  }
+
+  .alert-error {
+    background-color: theme('colors.red.100');
+    color: theme('colors.red.800');
+    border: 2px solid theme('colors.red.200');
+  }
+
+  .alert-warning {
+    background-color: theme('colors.yellow.100');
+    color: theme('colors.yellow.800');
+    border: 2px solid theme('colors.yellow.200');
+  }
+
+  .alert-info {
+    background-color: theme('colors.blue.100');
+    color: theme('colors.blue.800');
+    border: 2px solid theme('colors.blue.200');
+  }
+
+  /* Badges e Tags */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: theme('spacing.1') theme('spacing.3');
+    border-radius: theme('borderRadius.full');
+    font-family: 'Lato', sans-serif;
+    font-weight: 700; /* Lato Bold */
+    font-size: theme('fontSize.xs');
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .badge-primary {
+    background-color: theme('colors.blue.100');
+    color: theme('colors.blue.800');
+  }
+
+  .badge-success {
+    background-color: theme('colors.green.100');
+    color: theme('colors.green.800');
+  }
+
+  .badge-danger {
+    background-color: theme('colors.red.100');
+    color: theme('colors.red.800');
+  }
+
+  .badge-warning {
+    background-color: theme('colors.yellow.100');
+    color: theme('colors.yellow.800');
+  }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    margin-left: 0;
+    padding: theme('spacing.4');
+  }
+
+  .modal-content {
+    width: 95%;
+    margin: theme('spacing.4');
+  }
+
+  .card {
+    padding: theme('spacing.6');
+  }
+
+  .table th,
+  .table td {
+    padding: theme('spacing.3') theme('spacing.4');
+    font-size: theme('fontSize.xs');
+  }
+}
+
+/* Classes utilitárias para pesos da fonte Lato */
+.font-lato-thin {
+  font-weight: 100;
+}
+.font-lato-light {
+  font-weight: 300;
+}
+.font-lato-regular {
+  font-weight: 400;
+}
+.font-lato-bold {
+  font-weight: 700;
+}
+.font-lato-black {
+  font-weight: 900;
+}

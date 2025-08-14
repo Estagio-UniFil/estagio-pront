@@ -1,7 +1,8 @@
-from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 from rest_framework import viewsets
+
 from .models import User
 from .serializers import UserSerializer
 from .permissions import IsAdminUser
@@ -26,6 +27,8 @@ class CustomAuthToken(ObtainAuthToken):
                 "token": token.key,
                 "user_id": user.pk,
                 "email": user.email,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
                 "role": user.role,
             }
         )
@@ -35,4 +38,4 @@ class UserViewSet(viewsets.ModelViewSet):
     # Endpoint para admins gerenciarem users
     queryset = User.objects.all().order_by("first_name")
     serializer_class = UserSerializer
-    permission_classes = [IsAdminUser] 
+    permission_classes = [IsAdminUser]

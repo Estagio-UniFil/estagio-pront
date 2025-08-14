@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from django.core.validators import RegexValidator
 from authentication.models import User
+from utils.validators import validate_cpf
 
 # Create your models here.
 
@@ -40,9 +41,10 @@ class Student(models.Model):
     guardian_cpf = models.CharField(
         max_length=11,
         validators=[
+            validate_cpf,
             RegexValidator(
                 r"^\d{11}$", message=("Invalid CPF. Must contain exactly 11 digits.")
-            )
+            ),
         ],
     )
 

@@ -33,6 +33,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("students.urls")),
     path("", include("medicalentry.urls")),
+    path("", include("reports.urls")),
     path("api/auth/", include(router.urls)),
     path("api/login/", CustomAuthToken.as_view(), name="api_login"),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),

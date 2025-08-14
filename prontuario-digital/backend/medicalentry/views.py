@@ -49,6 +49,7 @@ def medical_entry_list(request):
                     {"detail": "You don't have permission"},
                     status=status.HTTP_403_FORBIDDEN,
                 )
+
         if request.user.role == "health_prof":
             if hasattr(request.user, "health_profile"):
                 user_specialty = request.user.health_profile.specialty
@@ -71,17 +72,20 @@ def medical_entry_list(request):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        serializer = MedicalEntrySerializer(data=request.data)
-        if serializer.is_valid():
-            if student_id:
-                serializer.save(student=student_obj, healthpro=request.user)
-                return Response(
-                    serializer.data,
-                    status=status.HTTP_201_CREATED,
-                )
+        if not student_id:
             return Response(
                 {"detail": "No informed student"},
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer = MedicalEntrySerializer(
+            data=request.data, context={"request": request}
+        )
+        if serializer.is_valid():
+            serializer.save(student=student_obj, healthpro=request.user)
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED,
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -97,7 +101,13 @@ def medical_entry_detail(request, pk):
             status=status.HTTP_404_NOT_FOUND,
         )
 
-    if request.method == "GET" and not entry.deleted:
+    if request.method == "GET":
+        if entry.deleted:
+            return Response(
+                {"detail": "Medical entry not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         if request.user.role == "health_prof":
             if hasattr(request.user, "health_profile"):
                 user_specialty = request.user.health_profile.specialty
@@ -127,5 +137,5 @@ def medical_entry_detail(request, pk):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        entry.soft_delete()
+        entry.soft_delete(user=request.user, reason=delete_reason)
         return Response(status=status.HTTP_204_NO_CONTENT)

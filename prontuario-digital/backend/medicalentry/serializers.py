@@ -5,9 +5,22 @@ from .models import MedicalEntry
 class MedicalEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = MedicalEntry
-        fields = "__all__"
+        fields = [
+            "id",
+            "student",
+            "healthpro",
+            "entry_date",
+            "description",
+            "notes",
+            "deleted",
+            "deleted_by",
+            "delete_date",
+            "delete_reason",
+        ]
         read_only_fields = [
             "id",
+            "student",
+            "healthpro",
             "entry_date",
             "deleted",
             "deleted_by",
