@@ -69,6 +69,11 @@
                             {{ formatDate(getValue(item, column.key)) }}
                         </span>
 
+                        <!-- Datetime Column -->
+                        <span v-else-if="column.type === 'datetime'">
+                            {{ formatDateTime(getValue(item, column.key)) }}
+                        </span>
+
                         <!-- Currency Column -->
                         <span v-else-if="column.type === 'currency'">
                             {{ formatCurrency(getValue(item, column.key)) }}
@@ -108,6 +113,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue';
+import { format, parseISO } from 'date-fns';
 
 // Props
 const props = defineProps({
@@ -275,6 +281,11 @@ const getRoleLabel = (role) => {
 const formatDate = (date) => {
     if (!date) return '-';
     return new Date(date).toLocaleDateString('pt-BR');
+};
+
+const formatDateTime = (dateString) => {
+    if (!dateString) return '-';
+    return format(parseISO(dateString), 'dd/MM/yyyy HH:mm');
 };
 
 const formatCurrency = (value) => {

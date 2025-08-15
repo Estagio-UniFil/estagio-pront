@@ -53,7 +53,7 @@ const router = createRouter({
         {
             path: '/admin/reports',
             name: 'admin-reports',
-            component: () => import('@/views/common/ReportsView.vue'),
+            component: () => import('@/views/common/MedEntriesView.vue'),
             beforeEnter: requireAdmin,
         },
         {

@@ -1,9 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 import uuid
-from rest_framework.authtoken.models import Token as DRFToken
-from datetime import timedelta
-from django.utils import timezone
 
 
 # Create your models here.
@@ -45,10 +42,3 @@ class HealthProfile(models.Model):
 
     def __str__(self):
         return f"{self.user.get_full_name()} ({self.specialty})"
-
-
-class Token(DRFToken):
-    def is_expired(self):
-        # Tempo de vida do token
-        token_lifetime = timedelta(seconds=10)
-        return timezone.now() > self.created + token_lifetime

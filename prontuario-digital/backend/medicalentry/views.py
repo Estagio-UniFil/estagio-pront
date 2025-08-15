@@ -50,14 +50,18 @@ def medical_entry_list(request):
                     status=status.HTTP_403_FORBIDDEN,
                 )
 
-        if request.user.role == "health_prof":
-            if hasattr(request.user, "health_profile"):
-                user_specialty = request.user.health_profile.specialty
-                entries = MedicalEntry.objects.filter(
-                    deleted=False, healthpro__health_profile__specialty=user_specialty
-                ).order_by("entry_date")
         else:
-            entries = MedicalEntry.objects.filter(deleted=False).order_by("entry_date")
+            if request.user.role == "health_prof":
+                if hasattr(request.user, "health_profile"):
+                    user_specialty = request.user.health_profile.specialty
+                    entries = MedicalEntry.objects.filter(
+                        deleted=False,
+                        healthpro__health_profile__specialty=user_specialty,
+                    ).order_by("entry_date")
+            else:
+                entries = MedicalEntry.objects.filter(deleted=False).order_by(
+                    "entry_date"
+                )
         serializer = MedicalEntrySerializer(entries, many=True)
 
         return Response(

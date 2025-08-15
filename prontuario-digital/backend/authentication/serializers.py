@@ -82,10 +82,16 @@ class UserSerializer(serializers.ModelSerializer):
             instance.save()
 
         # Atualiza ou cria o perfil profissional, se for o caso
-        if instance.role == "health_profile":
+        if instance.role == "health_prof":
             if profile_data:
                 profile, created = HealthProfile.objects.update_or_create(
                     user=instance, defaults=profile_data
                 )
 
         return instance
+
+
+class UserNestedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "first_name", "last_name"]

@@ -37,3 +37,9 @@ class StudentSerializer(serializers.ModelSerializer):
         if value and not cpf_validator.validate_cpf(value):
             raise serializers.ValidationError("CPF inválido")
         return value
+
+
+class StudentNestedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = ["id", "name", "cgm", "dob"]

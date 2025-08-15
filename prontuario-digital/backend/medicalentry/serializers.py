@@ -1,8 +1,13 @@
 from rest_framework import serializers
 from .models import MedicalEntry
+from authentication.serializers import UserNestedSerializer
+from students.serializers import StudentNestedSerializer
 
 
 class MedicalEntrySerializer(serializers.ModelSerializer):
+    student = StudentNestedSerializer(read_only=True)
+    healthpro = UserNestedSerializer(read_only=True)
+
     class Meta:
         model = MedicalEntry
         fields = [
