@@ -1,6 +1,16 @@
 @import 'tailwindcss';
 
 @layer base {
+    html,
+    body {
+        scrollbar-width: none; /* Para Firefox */
+        -ms-overflow-style: none; /* Para Internet Explorer e Edge */
+    }
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+        display: none; /* Para Chrome, Safari, e Opera */
+    }
+
     body {
         font-family:
             'Lato',
@@ -42,6 +52,16 @@
     h3 {
         font-size: theme('fontSize.xl');
         font-weight: 700; /* Lato Bold */
+    }
+}
+
+@layer utilities {
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
     }
 }
 
@@ -173,13 +193,25 @@
     }
 
     /* Inputs com Lato */
+    .input-field:not(:focus):not(:placeholder-shown):invalid {
+        border-color: theme('colors.red.500');
+        background-color: theme('colors.red.50');
+    }
+
+    /* Ou usar uma abordagem baseada em classes de estado */
+    /* .form-submitted .input-field:invalid {
+        border-color: theme('colors.red.500');
+        background-color: theme('colors.red.50');
+    } */
+
+    /* Estados específicos para melhor controle */
     .input-field {
         width: 100%;
-        padding: theme('spacing.4');
+        padding: theme('spacing.2');
         border: 2px solid theme('colors.gray.200');
         border-radius: theme('borderRadius.lg');
         font-family: 'Lato', sans-serif;
-        font-weight: 400; /* Lato Regular */
+        font-weight: 400;
         font-size: theme('fontSize.base');
         transition: all 0.2s ease;
         background-color: theme('colors.white');
@@ -192,18 +224,42 @@
         background-color: theme('colors.blue.50');
     }
 
-    .input-field:invalid {
+    /* Estado de sucesso */
+    .input-field.success {
+        border-color: theme('colors.green.500');
+        background-color: theme('colors.green.50');
+    }
+
+    .input-field.success:focus {
+        border-color: theme('colors.green.500');
+        box-shadow: 0 0 0 4px theme('colors.green.100');
+    }
+
+    /* Estado de erro controlado por classe */
+    .input-field.error {
         border-color: theme('colors.red.500');
         background-color: theme('colors.red.50');
+    }
+
+    .input-field.error:focus {
+        border-color: theme('colors.red.500');
+        box-shadow: 0 0 0 4px theme('colors.red.100');
+    }
+
+    .input-field:disabled {
+        background-color: theme('colors.gray.100');
+        color: theme('colors.gray.500');
+        cursor: not-allowed;
+        border-color: theme('colors.gray.200');
     }
 
     .input-label {
         display: block;
         font-family: 'Lato', sans-serif;
         font-size: theme('fontSize.sm');
-        font-weight: 700; /* Lato Bold */
+        font-weight: 600;
         color: theme('colors.gray.800');
-        margin-bottom: theme('spacing.2');
+        margin-bottom: theme('spacing.1');
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
@@ -211,7 +267,7 @@
     .input-error {
         font-family: 'Lato', sans-serif;
         font-size: theme('fontSize.xs');
-        font-weight: 400; /* Lato Regular */
+        font-weight: 400;
         color: theme('colors.red.600');
         margin-top: theme('spacing.1');
     }

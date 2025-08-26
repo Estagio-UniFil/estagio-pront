@@ -17,7 +17,7 @@ export const userService = {
     },
 
     async updateUser(id, userData) {
-        const response = await api.put(`api/auth/users/${id}/`, userData);
+        const response = await api.patch(`api/auth/users/${id}/`, userData);
         return response.data;
     },
 
@@ -26,3 +26,5 @@ export const userService = {
         return response.data;
     },
 };
+
+export default userService;

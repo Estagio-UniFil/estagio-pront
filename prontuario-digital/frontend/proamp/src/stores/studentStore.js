@@ -38,7 +38,7 @@ export const useStudentStore = defineStore('student', {
                     response = await studentService.getInactiveStudents();
                 }
 
-                // Se a resposta for um array simples (sem paginação)
+                // No pagination
                 if (Array.isArray(response)) {
                     this.students = response;
                     this.pagination = {
@@ -49,7 +49,7 @@ export const useStudentStore = defineStore('student', {
                         to: response.length,
                     };
                 } else {
-                    // Se tiver paginação do DRF
+                    // DRF paginations
                     this.students = response.results || response;
                     this.pagination = {
                         currentPage: 1,
@@ -74,7 +74,7 @@ export const useStudentStore = defineStore('student', {
             try {
                 const newStudent = await studentService.createStudent(userData);
                 this.students.unshift(newStudent);
-                return newUser;
+                return newStudent;
             } catch (error) {
                 this.error = error.response?.data?.message || 'Erro ao criar estudante';
                 throw error;
@@ -112,6 +112,19 @@ export const useStudentStore = defineStore('student', {
             } catch (error) {
                 this.error = error.response?.data?.message || 'Erro ao desativar estudante';
                 throw error;
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        async restoreStudent(id) {
+            this.loading = true;
+            this.error = null;
+
+            try {
+                await studentService.restoreStudent(id);
+            } catch (error) {
+                this.error = error.response?.data?.message || 'Erro ao restaurar estudante';
             } finally {
                 this.loading = false;
             }

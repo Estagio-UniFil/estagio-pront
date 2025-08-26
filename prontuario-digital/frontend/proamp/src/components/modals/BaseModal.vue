@@ -11,7 +11,7 @@
                     </button>
                 </div>
 
-                <div class="modal-body">
+                <div class="modal-body pt-4 pb-4">
                     <slot></slot>
                 </div>
 
@@ -33,7 +33,7 @@ const props = defineProps({
     },
     title: {
         type: String,
-        default: 'Título do Modal',
+        default: 'Modal title',
     },
     maxWidth: {
         type: String,

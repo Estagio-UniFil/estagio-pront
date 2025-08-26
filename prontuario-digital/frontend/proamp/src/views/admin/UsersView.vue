@@ -3,18 +3,14 @@
         <!-- Page Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
             <div>
-                <h1 class="text-2xl font-lato-bold text-gray-900">Funcionários</h1>
-                <p class="text-gray-600 font-lato-regular mt-1">Gerencie funcionários e profissionais de saúde</p>
+                <h1 class="text-2xl font-lato-bold text-gray-900">Painel de usuários</h1>
+                <p class="text-gray-600 font-lato-regular mt-1">Gerencie os usuários</p>
             </div>
 
             <div class="mt-4 sm:mt-0 flex space-x-3">
-                <button class="btn-outline">
-                    <i class="fas fa-download mr-2"></i>
-                    Exportar
-                </button>
                 <button class="btn-primary" @click="openCreateModal">
                     <i class="fas fa-plus mr-2"></i>
-                    Novo Funcionário
+                    Novo Usuário
                 </button>
             </div>
         </div>
@@ -49,8 +45,8 @@
             <!-- Table Header with Stats -->
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
                 <div>
-                    <h3 class="card-title">Lista de Funcionários</h3>
-                    <p class="card-subtitle">{{ filteredUsers.length }} de {{ userStore.users.length }} funcionários</p>
+                    <h3 class="card-title">Lista de Usuários</h3>
+                    <p class="card-subtitle">{{ filteredUsers.length }} de {{ userStore.users.length }} usuários</p>
                 </div>
 
                 <!-- View Toggle -->
@@ -69,7 +65,7 @@
             <!-- Loading State -->
             <div v-if="userStore.loading" class="flex justify-center items-center h-64">
                 <div class="loading-spinner w-8 h-8"></div>
-                <span class="ml-3 text-gray-600 font-lato-regular">Carregando funcionários...</span>
+                <span class="ml-3 text-gray-600 font-lato-regular">Carregando usuários...</span>
             </div>
 
             <!-- Error State -->
@@ -122,21 +118,21 @@
             <div v-if="!userStore.loading && filteredUsers.length === 0" class="text-center py-12">
                 <i class="fas fa-users text-4xl text-gray-400 mb-4"></i>
                 <h3 class="text-lg font-lato-bold text-gray-900 mb-2">
-                    {{ hasActiveFilters ? 'Nenhum funcionário encontrado' : 'Nenhum funcionário cadastrado' }}
+                    {{ hasActiveFilters ? 'Nenhum usuário encontrado' : 'Nenhum usuário cadastrado' }}
                 </h3>
                 <p class="text-gray-600 font-lato-regular mb-4">
-                    {{ hasActiveFilters ? 'Tente ajustar os filtros de busca' : 'Comece adicionando o primeiro funcionário' }}
+                    {{ hasActiveFilters ? 'Tente ajustar os filtros de busca' : 'Comece adicionando o primeiro usuário' }}
                 </p>
                 <button v-if="!hasActiveFilters" @click="openCreateModal" class="btn-primary">
                     <i class="fas fa-plus mr-2"></i>
-                    Adicionar Funcionário
+                    Adicionar Usuário
                 </button>
             </div>
         </div>
 
         <!-- Pagination -->
-        <div v-if="filteredUsers.length > 0" class="mt-6 flex justify-between items-center">
-            <p class="text-sm text-gray-600 font-lato-regular">Mostrando {{ (currentPage - 1) * itemsPerPage + 1 }} até {{ Math.min(currentPage * itemsPerPage, filteredUsers.length) }} de {{ filteredUsers.length }} funcionários</p>
+        <!-- <div v-if="filteredUsers.length > 0" class="mt-6 flex justify-between items-center">
+            <p class="text-sm text-gray-600 font-lato-regular">Mostrando {{ (currentPage - 1) * itemsPerPage + 1 }} até {{ Math.min(currentPage * itemsPerPage, filteredUsers.length) }} de {{ filteredUsers.length }} usuários</p>
 
             <div class="flex space-x-2">
                 <button @click="previousPage" :disabled="currentPage === 1" class="btn-outline px-3 py-1 disabled:opacity-50 disabled:cursor-not-allowed">
@@ -148,7 +144,20 @@
                     <i class="fas fa-chevron-right ml-1"></i>
                 </button>
             </div>
-        </div>
+        </div> -->
+
+        <!-- New user modal -->
+        <UserModal :show="showUserModal" :user="selectedUser" :is-editing="isEditingMode" :is-submitting="userStore.loading" @close="closeUserModal" @submit="handleSaveUser" />
+
+        <!-- Delete modal -->
+        <ConfirmModal v-if="itemToDelete" :show="showDeleteModal" :entryName="getUserName(itemToDelete)" @confirm="handleConfirmDelete" :action-type="'deletar'" @cancel="closeDeleteModal" />
+
+        <!-- Custom alert message -->
+        <!-- <div class="fixed top-24 left-1/2 -translate-x-1/2 z-50 w-full max-w-xl px-4">
+            <Transition name="fade">
+                <BaseAlert v-if="showAlert" type="success" title="Sucesso!" :message="alertMessage" @close="closeAlert" />
+            </Transition>
+        </div> -->
     </AdminLayout>
 </template>
 
@@ -158,15 +167,25 @@ import { useRouter } from 'vue-router';
 import AdminLayout from '@/components/layouts/AdminLayout.vue';
 import BaseTable from '@/components/tables/BaseTable.vue';
 import { useUserStore } from '@/stores/userStore';
+import { useAlertStore } from '@/stores/alertStore';
+// import BaseAlert from '@/components/common/BaseAlert.vue';
+import UserModal from '@/components/modals/UserModal.vue';
+import ConfirmModal from '@/components/modals/ConfirmModal.vue';
 
 const router = useRouter();
 const userStore = useUserStore();
+const alertStore = useAlertStore();
 
 // States
 const viewMode = ref('table');
 const currentPage = ref(1);
 const itemsPerPage = ref(10);
 const searchTimeout = ref(null);
+const showDeleteModal = ref(false);
+const itemToDelete = ref(null);
+const showUserModal = ref(false);
+const selectedUser = ref(null);
+const isEditingMode = ref(false);
 
 const filters = ref({
     search: '',
@@ -203,6 +222,7 @@ const tableColumns = ref([
         width: '120px',
         type: 'actions',
         actions: [
+            { key: 'view', label: 'Visualizar', icon: 'fas fa-eye', color: 'blue' },
             { key: 'edit', label: 'Editar', icon: 'fas fa-edit', color: 'blue' },
             { key: 'delete', label: 'Excluir', icon: 'fas fa-trash', color: 'red' },
         ],
@@ -241,6 +261,36 @@ const hasActiveFilters = computed(() => {
 });
 
 // Methods
+const openDeleteModal = (user) => {
+    itemToDelete.value = user;
+    showDeleteModal.value = true;
+};
+
+const closeUserModal = () => {
+    showUserModal.value = false;
+    selectedUser.value = null;
+};
+
+// const closeAlert = () => {
+//     showAlert.value = false;
+// };
+
+const closeDeleteModal = () => {
+    showDeleteModal.value = false;
+    itemToDelete.value = null;
+};
+
+// const openAlertWithTimeout = () => {
+//     showAlert.value = false;
+//     setTimeout(() => {
+//         showAlert.value = true;
+
+//         setTimeout(() => {
+//             showAlert.value = false;
+//         }, 3000);
+//     }, 100);
+// };
+
 const getUserName = (user) => {
     if (user.first_name && user.last_name) {
         return `${user.first_name} ${user.last_name}`;
@@ -282,20 +332,42 @@ const loadUsers = async () => {
         await userStore.fetchUsers();
     } catch (error) {
         console.error('Erro ao carregar usuários:', error);
+        alertStore.triggerAlert({ message: 'Erro ao carregar usuários:' + error });
     }
 };
 
 const openCreateModal = () => {
-    // Navegar para página de criação ou abrir modal
-    console.log('Abrir modal de criação');
+    selectedUser.value = null;
+    isEditingMode.value = true;
+    showUserModal.value = true;
 };
 
 const handleRowClick = (user) => {
-    console.log('Ver detalhes do usuário:', user);
+    handleView(user);
+};
+
+const handleSaveUser = async (userData) => {
+    try {
+        if (userData.id) {
+            await userStore.updateUser(userData.id, userData);
+            alertStore.triggerAlert({ message: 'Usuário atualizado com sucesso.' });
+        } else {
+            await userStore.createUser(userData);
+            alertStore.triggerAlert({ message: 'Novo usuário criado com sucesso.' });
+        }
+        await loadUsers();
+        closeUserModal();
+    } catch (error) {
+        const errorMessage = error.response?.data?.detail || 'Não foi possível salvar o usuário. Tente novamente.';
+        alertStore.triggerAlert({ message: errorMessage, type: 'error' });
+    }
 };
 
 const handleTableAction = ({ action, item }) => {
     switch (action) {
+        case 'view':
+            handleView(item);
+            break;
         case 'edit':
             handleEdit(item);
             break;
@@ -305,14 +377,20 @@ const handleTableAction = ({ action, item }) => {
     }
 };
 
+const handleView = (user) => {
+    selectedUser.value = user;
+    isEditingMode.value = false;
+    showUserModal.value = true;
+};
+
 const handleEdit = (user) => {
-    console.log('Editar usuário:', user);
+    selectedUser.value = { ...user };
+    isEditingMode.value = true;
+    showUserModal.value = true;
 };
 
 const handleDelete = (user) => {
-    if (confirm(`Tem certeza que deseja excluir ${getUserName(user)}?`)) {
-        userStore.deleteUser(user.id);
-    }
+    openDeleteModal(user);
 };
 
 const previousPage = () => {
@@ -324,6 +402,25 @@ const previousPage = () => {
 const nextPage = () => {
     if (currentPage.value < totalPages.value) {
         currentPage.value++;
+    }
+};
+
+const handleConfirmDelete = async () => {
+    if (!itemToDelete.value) return;
+
+    try {
+        await userStore.deleteUser(itemToDelete.value.id);
+
+        // alertMessage.value = `O usuário ${getUserName(itemToDelete.value)} foi desativado com sucesso.`;
+        // openAlertWithTimeout();
+        const userName = getUserName(itemToDelete.value);
+        alertStore.triggerAlert({ message: `O usuário ${userName} foi desativado com sucesso.` });
+    } catch (error) {
+        console.error('Erro ao desativar:', error);
+        const errorMessage = error.response?.data?.detail || 'Não foi possível desativar o usuário. Tente novamente.';
+        alertStore.triggerAlert({ message: errorMessage, type: 'error' });
+    } finally {
+        closeDeleteModal();
     }
 };
 
@@ -341,3 +438,18 @@ watch(
     { deep: true },
 );
 </script>
+
+<style>
+.fade-enter-active,
+.fade-leave-active {
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+</style>

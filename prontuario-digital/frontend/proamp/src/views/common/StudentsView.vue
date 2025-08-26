@@ -74,7 +74,7 @@
             </div>
         </div>
         <!-- Pagination -->
-        <div v-if="filteredStudents.length > 0" class="mt-6 flex justify-between items-center">
+        <!-- <div v-if="filteredStudents.length > 0" class="mt-6 flex justify-between items-center">
             <p class="text-sm text-gray-600 font-lato-regular">Mostrando {{ (currentPage - 1) * itemsPerPage + 1 }} até {{ Math.min(currentPage * itemsPerPage, filteredStudents.length) }} de {{ filteredStudents.length }} estudantes</p>
             <div class="flex space-x-2">
                 <button @click="previousPage" :disabled="currentPage === 1" class="btn-outline px-3 py-1 disabled:opacity-50 disabled:cursor-not-allowed">
@@ -86,7 +86,12 @@
                     <i class="fas fa-chevron-right ml-1"></i>
                 </button>
             </div>
-        </div>
+        </div> -->
+
+        <StudentModal :show="showStudentModal" :student="selectedStudent" :is-editing="isEditingMode" :is-submitting="studentStore.loading" @close="closeStudentModal" @submit="handleSaveStudent" />
+
+        <!-- Confirm Modal -->
+        <ConfirmModal v-if="itemForAction" :show="showConfirmModal" :title="modalTitle" :message="modalMessage" :action-type="modalActionName" :entryName="getStudentName(itemForAction)" @confirm="handleConfirmAction" @cancel="closeConfirmModal" />
     </AdminLayout>
 </template>
 
@@ -96,9 +101,24 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import BaseTable from '@/components/tables/BaseTable.vue';
 import { useStudentStore } from '@/stores/studentStore';
+import { useAlertStore } from '@/stores/alertStore';
+import ConfirmModal from '@/components/modals/ConfirmModal.vue';
+import StudentModal from '@/components/modals/StudentModal.vue';
 
 const router = useRouter();
 const studentStore = useStudentStore();
+const alertStore = useAlertStore();
+
+// Modal states
+const showConfirmModal = ref(false);
+const itemForAction = ref(null);
+const modalAction = ref('');
+const modalActionName = ref('');
+const modalTitle = ref('');
+const modalMessage = ref('');
+const showStudentModal = ref(false);
+const selectedStudent = ref(null);
+const isEditingMode = ref(false);
 
 // States
 const currentPage = ref(1);
@@ -110,7 +130,7 @@ const filters = ref({
 });
 
 // Table configuration
-const tableColumns = ref([
+const tableColumns = computed(() => [
     {
         key: 'name',
         label: 'Nome',
@@ -142,18 +162,23 @@ const tableColumns = ref([
         label: 'Ações',
         width: '120px',
         type: 'actions',
-        actions: [
-            { key: 'view', label: 'Visualizar', icon: 'fas fa-eye', color: 'blue' },
-            { key: 'edit', label: 'Editar', icon: 'fas fa-edit', color: 'blue' },
-            { key: 'delete', label: 'Excluir', icon: 'fas fa-trash', color: 'red' },
-        ],
+        actions:
+            filters.value.status === 'active'
+                ? [
+                      { key: 'view', label: 'Visualizar', icon: 'fas fa-eye', color: 'blue' },
+                      { key: 'edit', label: 'Editar', icon: 'fas fa-edit', color: 'blue' },
+                      { key: 'delete', label: 'Excluir', icon: 'fas fa-trash', color: 'red' },
+                  ]
+                : [
+                      { key: 'view', label: 'Visualizar', icon: 'fas fa-eye', color: 'blue' },
+                      { key: 'restore', label: 'Reativar', icon: 'fas fa-undo', color: 'green' },
+                  ],
     },
 ]);
 
 // Computed
 const filteredStudents = computed(() => {
     let students = [...studentStore.students];
-
     if (filters.value.search) {
         const search = filters.value.search.toLowerCase();
         students = students.filter((student) => {
@@ -161,7 +186,6 @@ const filteredStudents = computed(() => {
             return name.includes(search);
         });
     }
-
     return students;
 });
 
@@ -174,17 +198,21 @@ const hasActiveFilters = computed(() => {
 });
 
 // Methods
+const closeStudentModal = () => {
+    showStudentModal.value = false;
+    selectedStudent.value = null;
+};
+
 const getStudentName = (student) => {
-    if (student.name) {
+    if (student?.name) {
         return `${student.name}`;
     }
+    return '';
 };
 
 const debouncedSearch = () => {
     clearTimeout(searchTimeout.value);
-    searchTimeout.value = setTimeout(() => {
-        applyFilters();
-    }, 300);
+    searchTimeout.value = setTimeout(applyFilters, 300);
 };
 
 const applyFilters = () => {
@@ -210,12 +238,14 @@ const loadStudents = async () => {
 };
 
 const openCreateModal = () => {
-    // Navegar para página de criação ou abrir modal
-    console.log('Abrir modal de criação');
+    selectedStudent.value = null;
+    isEditingMode.value = true;
+    showStudentModal.value = true;
 };
 
-const handleRowClick = (user) => {
-    console.log('Ver detalhes do usuário:', user);
+const handleRowClick = (student) => {
+    handleView(student);
+    console.log('Ver detalhes do estudante:', student);
 };
 
 const handleTableAction = ({ action, item }) => {
@@ -229,39 +259,101 @@ const handleTableAction = ({ action, item }) => {
         case 'delete':
             handleDelete(item);
             break;
+        case 'restore':
+            handleRestore(item);
+            break;
+    }
+};
+
+const closeConfirmModal = () => {
+    showConfirmModal.value = false;
+    setTimeout(() => {
+        itemForAction.value = null;
+        modalAction.value = '';
+        modalActionName.value = '';
+    }, 300);
+};
+
+const handleSaveStudent = async (studentData) => {
+    try {
+        if (studentData.id) {
+            await studentStore.updateStudent(studentData.id, studentData);
+            alertStore.triggerAlert({ message: 'Estudante atualizado com sucesso.' });
+        } else {
+            await studentStore.createStudent(studentData);
+            alertStore.triggerAlert({ message: 'Novo estudante criado com sucesso.' });
+        }
+        await loadStudents();
+        closeStudentModal();
+    } catch (error) {
+        const errorMessage = error.response?.data?.detail || 'Não foi possível salvar o estudante. Tente novamente.';
+        alertStore.triggerAlert({ message: errorMessage, type: 'error' });
+    }
+};
+
+const handleConfirmAction = async () => {
+    if (!itemForAction.value) return;
+
+    try {
+        if (modalAction.value === 'delete') {
+            await studentStore.deleteStudent(itemForAction.value.id);
+            //alertMessage.value = `O estudante ${getStudentName(itemForAction.value)} foi desativado com sucesso.`;
+            alertStore.triggerAlert({ message: `O estudante ${getStudentName(itemForAction.value)} foi desativado com sucesso.` });
+        } else if (modalAction.value === 'restore') {
+            await studentStore.restoreStudent(itemForAction.value.id);
+            //alertMessage.value = `O estudante ${getStudentName(itemForAction.value)} foi reativado com sucesso.`;
+            alertStore.triggerAlert({ message: `O estudante ${getStudentName(itemForAction.value)} foi reativado com sucesso.` });
+        }
+        await loadStudents();
+    } catch (error) {
+        //console.error(`Erro ao ${modalAction.value === 'delete' ? 'desativar' : 'reativar'} estudante:`, error);
+        const errorMessage = error.response?.data?.detail || `Não foi possível ${modalAction.value === 'delete' ? 'desativar' : 'reativar'} o estudante. Tente novamente.`;
+        alertStore.triggerAlert({ message: errorMessage, type: 'error' });
+    } finally {
+        closeConfirmModal();
     }
 };
 
 const handleView = (student) => {
-    console.log('Visualizar estudante:', student);
+    selectedStudent.value = student;
+    isEditingMode.value = false;
+    showStudentModal.value = true;
 };
 
 const handleEdit = (student) => {
-    console.log('Editar estudante:', student);
+    selectedStudent.value = { ...student };
+    isEditingMode.value = true;
+    showStudentModal.value = true;
 };
 
 const handleDelete = (student) => {
-    if (confirm(`Tem certeza que deseja destativar ${getStudentName(student)}?`)) {
-        studentStore.deleteStudent(student.id);
-    }
+    itemForAction.value = student;
+    modalAction.value = 'delete';
+    modalTitle.value = 'Confirmar Desativação';
+    modalActionName.value = 'desativar';
+    modalMessage.value = 'Você tem certeza de que deseja desativar este estudante? Ele será movido para a lista de inativos.';
+    showConfirmModal.value = true;
+};
+
+const handleRestore = (student) => {
+    itemForAction.value = student;
+    modalAction.value = 'restore';
+    modalTitle.value = 'Confirmar Restauração';
+    modalActionName.value = 'restaurar';
+    modalMessage.value = 'Você tem certeza de que deseja reativar este estudante? Ele voltará para a lista de ativos.';
+    showConfirmModal.value = true;
 };
 
 const previousPage = () => {
-    if (currentPage.value > 1) {
-        currentPage.value--;
-    }
+    if (currentPage.value > 1) currentPage.value--;
 };
 
 const nextPage = () => {
-    if (currentPage.value < totalPages.value) {
-        currentPage.value++;
-    }
+    if (currentPage.value < totalPages.value) currentPage.value++;
 };
 
 // Lifecycle
-onMounted(() => {
-    loadStudents();
-});
+onMounted(loadStudents);
 
 watch(
     () => filters.value.search,

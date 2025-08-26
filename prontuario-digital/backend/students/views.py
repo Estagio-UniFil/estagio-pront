@@ -20,12 +20,11 @@ def student_list(request, format=None):
         serializer = StudentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(created_by=request.user, updated_by=request.user)
-            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(["GET", "PUT", "DELETE"])
+@api_view(["GET", "PATCH", "DELETE"])
 @permission_classes([IsAdminUser])
 def student_detail(request, pk, format=None):
     try:
@@ -37,8 +36,8 @@ def student_detail(request, pk, format=None):
         serializer = StudentSerializer(student)
         return Response(serializer.data)
 
-    elif request.method == "PUT":
-        serializer = StudentSerializer(student, data=request.data)
+    elif request.method == "PATCH":
+        serializer = StudentSerializer(student, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save(updated_by=request.user)
             return Response(serializer.data, status=status.HTTP_200_OK)

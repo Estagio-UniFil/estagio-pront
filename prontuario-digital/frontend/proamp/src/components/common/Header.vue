@@ -15,7 +15,7 @@
                 </div>
             </div>
 
-            <!-- Right Side - Actions -->
+            <!-- Right Side -->
             <div class="flex items-center space-x-4">
                 <!-- User Menu -->
                 <div class="relative">
@@ -80,7 +80,7 @@ const pageSubtitle = computed(() => {
     if (user?.role == 'admin') {
         const subtitleMap = {
             'admin-dashboard': `Bem vindo, ${name}!`,
-            'admin-users': 'Admin > Funcionários',
+            'admin-users': 'Admin > Usuários',
             'admin-students': 'Admin > Alunos',
             'admin-reports': 'Admin > Relatórios',
             'admin-settings': 'Admin > Configurações',

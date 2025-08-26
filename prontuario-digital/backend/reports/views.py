@@ -1,5 +1,6 @@
 from django.http import HttpResponse
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, renderer_classes
+from rest_framework.renderers import BaseRenderer
 from openpyxl import Workbook
 from medicalentry.models import MedicalEntry
 from rest_framework.response import Response
@@ -9,12 +10,24 @@ from students.models import Student
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 import calendar
+import io
+
+
+class ExcelRenderer(BaseRenderer):
+    media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    format = "xlsx"
+    charset = None
+    render_style = "binary"
+
+    def render(self, data, media_type=None, renderer_context=None):
+        return data
 
 
 @api_view(["GET"])
+@renderer_classes([ExcelRenderer])
 def monthly_report(request):
     """
-    Generate a montly report of all entries in the current or the especified month
+    Generate a monthly report of all entries in the current or the specified month
     """
 
     today = date.today()
@@ -59,20 +72,24 @@ def monthly_report(request):
         ]
         sheet.append(row_data)
 
+    # Salva o workbook em um buffer de memória
+    buffer = io.BytesIO()
+    workbook.save(buffer)
+    buffer.seek(0)
+
+    filename = f"relatorio_mensal_{year}-{month}.xlsx"
+
     response = HttpResponse(
-        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        buffer.getvalue(),
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
-
-    response["Content-Disposition"] = (
-        f'attachment; filename="relatorio_mensal_{year}-{month}.xlsx"'
-    )
-
-    workbook.save(response)
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
 
     return response
 
 
 @api_view(["GET"])
+@renderer_classes([ExcelRenderer])
 def student_interval_report(request, pk):
     """
     Generate a interval report of all entries for a specific student.
@@ -126,13 +143,17 @@ def student_interval_report(request, pk):
         ]
         sheet.append(row_data)
 
-    response = HttpResponse(
-        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
+    # Salva o workbook em um buffer de memória
+    buffer = io.BytesIO()
+    workbook.save(buffer)
+    buffer.seek(0)
 
     filename = f"relatorio_{student_obj.name}_{start_date.strftime('%Y-%m-%d')}_{end_date.strftime('%Y-%m-%d')}.xlsx"
-    response["Content-Disposition"] = f'attachment; filename="{filename}"'
 
-    workbook.save(response)
+    response = HttpResponse(
+        buffer.getvalue(),
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
 
     return response

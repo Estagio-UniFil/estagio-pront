@@ -61,7 +61,7 @@
             <div class="lg:col-span-2 card">
                 <div class="card-header">
                     <h3 class="card-title">Atividade dos Últimos 7 Dias</h3>
-                    <p class="card-subtitle">Consultas e atualizações de prontuários</p>
+                    <p class="card-subtitle">Atendimentos e atualizações de prontuários</p>
                 </div>
 
                 <div class="h-64 flex items-center justify-center bg-gray-50 rounded-lg">

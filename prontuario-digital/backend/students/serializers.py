@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import Student
-from utils import validators
 
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -31,12 +30,6 @@ class StudentSerializer(serializers.ModelSerializer):
             "created_by",
             "updated_by",
         ]
-
-    def validate_guardian_cpf(self, value):
-        cpf_validator = validators.cpf()
-        if value and not cpf_validator.validate_cpf(value):
-            raise serializers.ValidationError("CPF inválido")
-        return value
 
 
 class StudentNestedSerializer(serializers.ModelSerializer):

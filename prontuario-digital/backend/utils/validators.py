@@ -2,18 +2,18 @@ from django.core.exceptions import ValidationError
 # from django.utils.translation import gettext_lazy as _
 
 
-def validate_cpf(cpf_str):
+def validate_cpf(guardian_cpf):
     """
     Validates a brazilian CPF
     """
 
-    cpf = [int(digit) for digit in cpf_str]
+    cpf = [int(digit) for digit in guardian_cpf]
 
-    if len(cpf_str) != 11:
+    if len(guardian_cpf) != 11:
         raise ValidationError("CPF must contain 11 digits.")
 
     # If all digits are the same
-    if cpf_str == cpf_str[0] * 11:
+    if guardian_cpf == guardian_cpf[0] * 11:
         raise ValidationError("Invalid CPF.")
 
     def _calculate_digit(cpf_digits):
@@ -55,7 +55,7 @@ def validate_cpf(cpf_str):
     if not _calculate_digit(cpf):
         raise ValidationError(("Invalid CPF."))
 
-    return cpf_str
+    return guardian_cpf
 
 
 if __name__ == "__main__":

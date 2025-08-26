@@ -1,9 +1,14 @@
 <template>
     <aside class="sidebar" :class="{ open: sidebarOpen }">
         <!-- Logo/Header -->
-        <div class="sidebar-header">
-            <h1 class="sidebar-title">ProAMP</h1>
-            <p class="text-xs text-gray-500 font-lato-light mt-1">Administração</p>
+        <div class="sidebar-header flex items-center gap-2">
+            <div>
+                <img src="../../assets/images/ProAMP-logo.png" alt="proamp-logo" class="w-15 h-15" />
+            </div>
+            <div>
+                <h1 class="sidebar-title">ProAMP</h1>
+                <p class="text-xs text-gray-500 font-lato-light mt-1">Administração</p>
+            </div>
         </div>
 
         <!-- Navigation Menu -->
@@ -17,7 +22,7 @@
             <!-- Funcionários -->
             <router-link :to="{ name: 'admin-users' }" class="nav-link" :class="{ active: $route.name === 'admin-users' }">
                 <i class="fas fa-user-md w-5 mr-3"></i>
-                Funcionários
+                Usuários
             </router-link>
 
             <!-- Alunos -->
@@ -44,16 +49,18 @@
 
         <!-- User Info / Logout -->
         <div class="p-4 border-t border-gray-200">
-            <div class="flex items-center mb-3">
-                <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-lato-bold">
-                    {{ userInitials }}
-                </div>
-                <div class="ml-3 flex-1">
-                    <p class="text-sm font-lato-bold text-gray-900">{{ userName }}</p>
-                    <p class="text-xs text-gray-500">Administrador</p>
-                </div>
-            </div>
+            <router-link :to="{ name: 'admin-profile' }" :class="{ active: $route.name === 'admin-profile' }">
+                <div class="flex items-center mb-3">
+                    <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-lato-bold">
+                        {{ userInitials }}
+                    </div>
 
+                    <div class="ml-3 flex-1">
+                        <p class="text-sm font-lato-bold text-gray-900">{{ userName }}</p>
+                        <p class="text-xs text-gray-500">Administrador</p>
+                    </div>
+                </div>
+            </router-link>
             <button @click="handleLogout" class="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors font-lato-regular" :disabled="authStore.isLoading">
                 <i class="fas fa-sign-out-alt w-4 mr-2"></i>
                 {{ authStore.isLoading ? 'Saindo...' : 'Sair' }}
@@ -66,6 +73,7 @@
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
+import { useElementHover } from '@vueuse/core';
 
 const router = useRouter();
 const authStore = useAuthStore();

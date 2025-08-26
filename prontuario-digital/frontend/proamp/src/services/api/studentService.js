@@ -22,7 +22,7 @@ export const studentService = {
     },
 
     async updateStudent(id, studentData) {
-        const response = await api.put(`api/students/${id}/`, studentData);
+        const response = await api.patch(`api/students/${id}/`, studentData);
         return response.data;
     },
 
@@ -32,7 +32,7 @@ export const studentService = {
     },
 
     async restoreStudent(id) {
-        const response = await api.put(`api/students/inactive/${id}/`);
+        const response = await api.put(`api/students/${id}/restore/`);
         return response.data;
     },
 };

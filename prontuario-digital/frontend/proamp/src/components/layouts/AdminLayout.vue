@@ -3,6 +3,13 @@
         <!-- Sidebar -->
         <Sidebar :sidebarOpen="sidebarOpen" />
 
+        <!-- Custom alert message -->
+        <div class="fixed top-24 left-1/2 -translate-x-1/2 z-100 w-full max-w-xl px-4">
+            <Transition name="fade">
+                <BaseAlert v-if="alertStore.show" :type="alertStore.type" :title="alertStore.title" :message="alertStore.message" @close="alertStore.hideAlert()" />
+            </Transition>
+        </div>
+
         <!-- Main Content Area -->
         <div class="main-content lg:ml-64 lg:px-12">
             <!-- Header -->
@@ -23,9 +30,12 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import Sidebar from '../common/Sidebar.vue';
 import Header from '../common/Header.vue';
+import BaseAlert from '@/components/common/BaseAlert.vue';
+import { useAlertStore } from '../../stores/alertStore';
 
 const sidebarOpen = ref(false);
 const showUserMenu = ref(false);
+const alertStore = useAlertStore();
 
 const toggleSidebar = () => {
     sidebarOpen.value = !sidebarOpen.value;
