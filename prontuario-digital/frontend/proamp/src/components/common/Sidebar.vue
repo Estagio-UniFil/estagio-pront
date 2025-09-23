@@ -3,11 +3,13 @@
         <!-- Logo/Header -->
         <div class="sidebar-header flex items-center gap-2">
             <div>
-                <img src="../../assets/images/ProAMP-logo.png" alt="proamp-logo" class="w-15 h-15" />
+                <a href="/">
+                    <LogoProamp class="w-15 h-auto fill-current text-secondary dark:text-slate-100 transition-colors duration-300" />
+                </a>
             </div>
             <div>
                 <h1 class="sidebar-title">ProAMP</h1>
-                <p class="text-xs text-gray-500 font-lato-light mt-1">Administração</p>
+                <p class="text-xs text-muted font-lato-medium mt-1">Administração</p>
             </div>
         </div>
 
@@ -38,17 +40,17 @@
             </router-link>
 
             <!-- Separador -->
-            <div class="border-t border-gray-200 mx-4 my-4"></div>
+            <!-- <div class="border-t border-primary mx-4 my-4"></div> -->
 
             <!-- Configurações -->
-            <router-link :to="{ name: 'admin-settings' }" class="nav-link" :class="{ active: $route.name === 'admin-settings' }">
+            <!-- <router-link :to="{ name: 'admin-settings' }" class="nav-link" :class="{ active: $route.name === 'admin-settings' }">
                 <i class="fas fa-cog w-5 mr-3"></i>
                 Configurações
-            </router-link>
+            </router-link> -->
         </nav>
 
         <!-- User Info / Logout -->
-        <div class="p-4 border-t border-gray-200">
+        <div class="p-4 border-t border-primary">
             <router-link :to="{ name: 'admin-profile' }" :class="{ active: $route.name === 'admin-profile' }">
                 <div class="flex items-center mb-3">
                     <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-lato-bold">
@@ -56,8 +58,8 @@
                     </div>
 
                     <div class="ml-3 flex-1">
-                        <p class="text-sm font-lato-bold text-gray-900">{{ userName }}</p>
-                        <p class="text-xs text-gray-500">Administrador</p>
+                        <p class="text-sm font-lato-bold text-primary">{{ userName }}</p>
+                        <p class="text-xs text-muted">Administrador</p>
                     </div>
                 </div>
             </router-link>
@@ -74,6 +76,7 @@ import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 import { useElementHover } from '@vueuse/core';
+import LogoProamp from '../logo/LogoProamp.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();

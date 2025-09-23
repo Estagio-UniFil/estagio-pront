@@ -1,0 +1,215 @@
+/* ==========================================================================
+   GLOBAL STYLES - Estilos base da aplicação
+   ========================================================================== */
+
+@layer base {
+    /* ===== HEADINGS ===== */
+    h1 {
+        font-size: var(--h1-size);
+        font-weight: var(--h1-weight);
+        line-height: var(--h1-line-height);
+        letter-spacing: var(--h1-letter-spacing);
+        color: var(--color-text-primary);
+        margin-bottom: 1.5rem;
+    }
+
+    h2 {
+        font-size: var(--h2-size);
+        font-weight: var(--h2-weight);
+        line-height: var(--h2-line-height);
+        letter-spacing: var(--h2-letter-spacing);
+        color: var(--color-text-primary);
+        margin-bottom: 1.25rem;
+    }
+
+    h3 {
+        font-size: var(--h3-size);
+        font-weight: var(--h3-weight);
+        line-height: var(--h3-line-height);
+        letter-spacing: var(--h3-letter-spacing);
+        color: var(--color-text-primary);
+        margin-bottom: 1rem;
+    }
+
+    h4 {
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-semibold);
+        line-height: var(--line-height-snug);
+        color: var(--color-text-primary);
+        margin-bottom: 0.75rem;
+    }
+
+    h5 {
+        font-size: var(--font-size-base);
+        font-weight: var(--font-weight-semibold);
+        line-height: var(--line-height-normal);
+        color: var(--color-text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    h6 {
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-medium);
+        line-height: var(--line-height-normal);
+        color: var(--color-text-secondary);
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: var(--letter-spacing-wider);
+    }
+
+    /* ===== PARAGRAPHS AND TEXT ===== */
+    p {
+        font-size: var(--body-size);
+        font-weight: var(--body-weight);
+        line-height: var(--body-line-height);
+        letter-spacing: var(--body-letter-spacing);
+        color: var(--color-text-primary);
+        margin-bottom: 1rem;
+    }
+
+    small {
+        font-size: var(--small-size);
+        font-weight: var(--small-weight);
+        line-height: var(--small-line-height);
+        color: var(--color-text-secondary);
+    }
+
+    /* ===== LINKS ===== */
+    a {
+        color: var(--color-primary-600);
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    a:hover {
+        color: var(--color-primary-700);
+        text-decoration: underline;
+    }
+
+    a:focus-visible {
+        outline: 2px solid var(--color-focus-ring);
+        outline-offset: 2px;
+        border-radius: 0.25rem;
+    }
+
+    /* ===== LISTS ===== */
+    ul,
+    ol {
+        margin-left: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    ul {
+        list-style-type: disc;
+    }
+
+    ol {
+        list-style-type: decimal;
+    }
+
+    li {
+        margin-bottom: 0.5rem;
+        line-height: var(--line-height-relaxed);
+    }
+
+    /* ===== CODE ===== */
+    code {
+        font-family: var(--font-family-mono);
+        font-size: 0.875em;
+        background-color: var(--color-neutral-100);
+        padding: 0.125rem 0.25rem;
+        border-radius: 0.25rem;
+        color: var(--color-text-primary);
+    }
+
+    pre {
+        font-family: var(--font-family-mono);
+        font-size: var(--font-size-sm);
+        background-color: var(--color-neutral-100);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        margin-bottom: 1rem;
+    }
+
+    pre code {
+        background: none;
+        padding: 0;
+    }
+
+    /* ===== BLOCKQUOTES ===== */
+    blockquote {
+        border-left: 4px solid var(--color-primary-200);
+        padding-left: 1rem;
+        margin: 1.5rem 0;
+        color: var(--color-text-secondary);
+        font-style: italic;
+    }
+
+    /* ===== HORIZONTAL RULES ===== */
+    hr {
+        border: none;
+        height: 1px;
+        background-color: var(--color-border-light);
+        margin: 2rem 0;
+    }
+
+    /* ===== SELECTION ===== */
+    ::selection {
+        background-color: var(--color-primary-200);
+        color: var(--color-text-primary);
+    }
+
+    ::-moz-selection {
+        background-color: var(--color-primary-200);
+        color: var(--color-text-primary);
+    }
+
+    /* ===== PLACEHOLDER TEXT ===== */
+    ::placeholder {
+        color: var(--color-text-tertiary);
+        opacity: 1;
+    }
+
+    ::-webkit-input-placeholder {
+        color: var(--color-text-tertiary);
+    }
+
+    ::-moz-placeholder {
+        color: var(--color-text-tertiary);
+        opacity: 1;
+    }
+
+    :-ms-input-placeholder {
+        color: var(--color-text-tertiary);
+    }
+}
+
+/* ===== DARK THEME ADJUSTMENTS ===== */
+[data-theme='dark'] {
+    code {
+        background-color: var(--color-neutral-800);
+    }
+
+    pre {
+        background-color: var(--color-neutral-800);
+    }
+
+    blockquote {
+        border-left-color: var(--color-primary-700);
+    }
+
+    hr {
+        background-color: var(--color-border-medium);
+    }
+
+    ::selection {
+        background-color: var(--color-primary-700);
+        color: var(--color-text-inverse);
+    }
+
+    ::-moz-selection {
+        background-color: var(--color-primary-700);
+        color: var(--color-text-inverse);
+    }
+}

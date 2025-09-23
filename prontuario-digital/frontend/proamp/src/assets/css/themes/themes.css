@@ -1,0 +1,212 @@
+/* ==========================================================================
+   THEME SYSTEM - Sistema de temas claro e escuro
+   ========================================================================== */
+
+/* ===== TEMA CLARO (PADRÃO) ===== */
+:root,
+[data-theme='light'] {
+    color-scheme: light;
+
+    /* As variáveis de cor já estão definidas em tokens/colors.css */
+    /* Este arquivo serve para ajustes específicos de temas */
+}
+
+/* ===== TEMA ESCURO ===== */
+[data-theme='dark'] {
+    color-scheme: dark;
+
+    /* Ajustes específicos para o tema escuro além dos já definidos em colors.css */
+
+    /* ===== AJUSTES DE SOMBRAS ===== */
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.4);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.4), 0 8px 10px -6px rgb(0 0 0 / 0.4);
+    --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.6);
+    --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.3);
+}
+
+/* ===== TRANSIÇÕES DE TEMA ===== */
+* {
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+/* Excluir alguns elementos das transições para performance */
+.loading-spinner,
+.loading-dot,
+[class*='animate-'],
+.skeleton {
+    transition: none;
+}
+
+/* ===== PREFERÊNCIAS DO SISTEMA ===== */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) {
+        /* Aplicar tema escuro automaticamente se não houver tema definido */
+        /* e o usuário preferir modo escuro */
+        color-scheme: dark;
+
+        /* Copiar variáveis do tema escuro */
+        --color-background: var(--color-neutral-950);
+        --color-background-secondary: var(--color-neutral-900);
+        --color-background-tertiary: var(--color-neutral-800);
+
+        --color-surface: var(--color-neutral-900);
+        --color-surface-elevated: var(--color-neutral-800);
+        --color-surface-overlay: var(--color-neutral-800);
+
+        --color-text-primary: var(--color-neutral-100);
+        --color-text-secondary: var(--color-neutral-300);
+        --color-text-tertiary: var(--color-neutral-400);
+        --color-text-disabled: var(--color-neutral-600);
+        --color-text-inverse: var(--color-neutral-900);
+
+        --color-border-light: var(--color-neutral-800);
+        --color-border-medium: var(--color-neutral-700);
+        --color-border-strong: var(--color-neutral-600);
+
+        --color-focus-ring-offset: var(--color-neutral-950);
+        --color-backdrop: rgb(0 0 0 / 0.8);
+        --color-backdrop-light: rgb(0 0 0 / 0.4);
+
+        /* Sombras do tema escuro */
+        --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+        --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.4);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.4), 0 8px 10px -6px rgb(0 0 0 / 0.4);
+        --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.6);
+        --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.3);
+    }
+}
+
+/* ===== MOTION PREFERENCES ===== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ===== HIGH CONTRAST MODE ===== */
+@media (prefers-contrast: high) {
+    :root {
+        /* Aumentar contraste das bordas */
+        --color-border-light: var(--color-neutral-400);
+        --color-border-medium: var(--color-neutral-500);
+        --color-border-strong: var(--color-neutral-600);
+
+        /* Aumentar contraste do texto */
+        --color-text-secondary: var(--color-neutral-800);
+        --color-text-tertiary: var(--color-neutral-700);
+    }
+
+    [data-theme='dark'] {
+        --color-border-light: var(--color-neutral-600);
+        --color-border-medium: var(--color-neutral-500);
+        --color-border-strong: var(--color-neutral-400);
+
+        --color-text-secondary: var(--color-neutral-200);
+        --color-text-tertiary: var(--color-neutral-300);
+    }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+    * {
+        /* Forçar tema claro para impressão */
+        background-color: white !important;
+        color: black !important;
+        box-shadow: none !important;
+    }
+
+    .sidebar,
+    .mobile-menu-toggle,
+    .btn-primary,
+    .btn-secondary,
+    .btn-danger,
+    [class*='btn-'] {
+        display: none !important;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+    }
+
+    .card {
+        border: 1px solid #ccc !important;
+        break-inside: avoid;
+    }
+}
+
+/* ===== UTILIDADES DE TEMA ===== */
+.theme-transition {
+    transition:
+        background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-toggle {
+    /* Botão para alternar tema */
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 50;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background-color: var(--color-surface);
+    border: 2px solid var(--color-border-medium);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-xl);
+}
+
+.theme-toggle:active {
+    transform: scale(0.95);
+}
+
+/* ===== DEBUG HELPERS ===== */
+.debug-theme::before {
+    content: 'Light Theme';
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: yellow;
+    color: black;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    z-index: 9999;
+}
+
+[data-theme='dark'] .debug-theme::before {
+    content: 'Dark Theme';
+    background: purple;
+    color: white;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) .debug-theme::before {
+        content: 'Auto Dark Theme';
+        background: blue;
+        color: white;
+    }
+}

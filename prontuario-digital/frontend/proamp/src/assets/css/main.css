@@ -1,5 +1,86 @@
 @import 'tailwindcss';
 
+/* ==========================================================================
+   VARIÁVEIS CSS PARA TEMAS
+   ========================================================================== */
+:root {
+    /* Tema Claro */
+    --bg-primary: theme('colors.gray.50');
+    --bg-secondary: theme('colors.white');
+    --bg-tertiary: theme('colors.gray.100');
+
+    --text-primary: theme('colors.gray.900');
+    --text-secondary: theme('colors.gray.700');
+    --text-muted: theme('colors.gray.600');
+
+    --border-primary: theme('colors.gray.200');
+    --border-secondary: theme('colors.gray.100');
+
+    --accent-primary: theme('colors.blue.600');
+    --accent-primary-hover: theme('colors.blue.700');
+    --accent-light: theme('colors.blue.100');
+    --accent-lighter: theme('colors.blue.50');
+
+    --success-bg: theme('colors.green.50');
+    --success-border: theme('colors.green.500');
+    --success-text: theme('colors.green.800');
+    --success-light: theme('colors.green.100');
+
+    --error-bg: theme('colors.red.50');
+    --error-border: theme('colors.red.500');
+    --error-text: theme('colors.red.800');
+    --error-light: theme('colors.red.100');
+
+    --warning-bg: theme('colors.yellow.50');
+    --warning-border: theme('colors.yellow.500');
+    --warning-text: theme('colors.yellow.800');
+    --warning-light: theme('colors.yellow.100');
+
+    --shadow-sm: theme('boxShadow.md');
+    --shadow-lg: theme('boxShadow.lg');
+    --shadow-xl: theme('boxShadow.xl');
+    --shadow-2xl: theme('boxShadow.2xl');
+}
+
+/* Tema Escuro */
+[data-theme='dark'] {
+    --bg-primary: theme('colors.gray.900');
+    --bg-secondary: theme('colors.gray.800');
+    --bg-tertiary: theme('colors.gray.700');
+
+    --text-primary: theme('colors.gray.100');
+    --text-secondary: theme('colors.gray.300');
+    --text-muted: theme('colors.gray.400');
+
+    --border-primary: theme('colors.gray.600');
+    --border-secondary: theme('colors.gray.700');
+
+    --accent-primary: theme('colors.blue.500');
+    --accent-primary-hover: theme('colors.blue.400');
+    --accent-light: theme('colors.blue.900');
+    --accent-lighter: theme('colors.blue.950');
+
+    --success-bg: theme('colors.green.950');
+    --success-border: theme('colors.green.400');
+    --success-text: theme('colors.green.300');
+    --success-light: theme('colors.green.900');
+
+    --error-bg: theme('colors.red.950');
+    --error-border: theme('colors.red.400');
+    --error-text: theme('colors.red.300');
+    --error-light: theme('colors.red.900');
+
+    --warning-bg: theme('colors.yellow.950');
+    --warning-border: theme('colors.yellow.400');
+    --warning-text: theme('colors.yellow.300');
+    --warning-light: theme('colors.yellow.900');
+
+    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+    --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+}
+
 @layer base {
     html,
     body {
@@ -17,10 +98,13 @@
             system-ui,
             -apple-system,
             sans-serif;
-        background-color: theme('colors.gray.50');
-        color: theme('colors.gray.900');
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
         font-weight: 400; /* Lato Regular */
         line-height: 1.6;
+        transition:
+            background-color 0.3s ease,
+            color 0.3s ease;
     }
 
     * {
@@ -37,6 +121,7 @@
         font-family: 'Lato', sans-serif;
         font-weight: 700; /* Lato Bold */
         line-height: 1.2;
+        color: var(--text-primary);
     }
 
     h1 {
@@ -63,12 +148,47 @@
         -ms-overflow-style: none;
         scrollbar-width: none;
     }
+
+    /* Classes utilitárias para backgrounds */
+    .bg-primary {
+        background-color: var(--bg-primary);
+    }
+
+    .bg-secondary {
+        background-color: var(--bg-secondary);
+    }
+
+    .bg-tertiary {
+        background-color: var(--bg-tertiary);
+    }
+
+    /* Classes utilitárias para borders */
+    .border-primary {
+        border-color: var(--border-primary);
+    }
+
+    .border-secondary {
+        border-color: var(--border-secondary);
+    }
+
+    /* Classes utilitárias para texto */
+    .text-primary {
+        color: var(--text-primary);
+    }
+
+    .text-secondary {
+        color: var(--text-secondary);
+    }
+
+    .text-muted {
+        color: var(--text-muted);
+    }
 }
 
 @layer components {
     /* Botões do sistema com Lato */
     .btn-primary {
-        background-color: theme('colors.blue.600');
+        background-color: var(--accent-primary);
         color: theme('colors.white');
         font-family: 'Lato', sans-serif;
         font-weight: 700; /* Lato Bold */
@@ -86,14 +206,14 @@
     }
 
     .btn-primary:hover {
-        background-color: theme('colors.blue.700');
+        background-color: var(--accent-primary-hover);
         transform: translateY(-1px);
-        box-shadow: theme('boxShadow.md');
+        box-shadow: var(--shadow-sm);
     }
 
     .btn-secondary {
-        background-color: theme('colors.gray.200');
-        color: theme('colors.gray.800');
+        background-color: var(--bg-tertiary);
+        color: var(--text-secondary);
         font-family: 'Lato', sans-serif;
         font-weight: 600; /* Lato Semi-Bold */
         font-size: theme('fontSize.sm');
@@ -110,12 +230,12 @@
     }
 
     .btn-secondary:hover {
-        background-color: theme('colors.gray.300');
+        background-color: var(--border-primary);
         transform: translateY(-1px);
     }
 
     .btn-danger {
-        background-color: theme('colors.red.600');
+        background-color: var(--error-border);
         color: theme('colors.white');
         font-family: 'Lato', sans-serif;
         font-weight: 700; /* Lato Bold */
@@ -135,17 +255,17 @@
     .btn-danger:hover {
         background-color: theme('colors.red.700');
         transform: translateY(-1px);
-        box-shadow: theme('boxShadow.md');
+        box-shadow: var(--shadow-sm);
     }
 
     .btn-outline {
         background-color: transparent;
-        color: theme('colors.blue.600');
+        color: var(--accent-primary);
         font-family: 'Lato', sans-serif;
         font-weight: 600; /* Lato Semi-Bold */
         font-size: theme('fontSize.sm');
         padding: theme('spacing.3') theme('spacing.6');
-        border: 2px solid theme('colors.blue.600');
+        border: 2px solid var(--accent-primary);
         border-radius: theme('borderRadius.lg');
         transition: all 0.2s ease;
         cursor: pointer;
@@ -157,21 +277,22 @@
     }
 
     .btn-outline:hover {
-        background-color: theme('colors.blue.600');
+        background-color: var(--accent-primary);
         color: theme('colors.white');
     }
 
     /* Cards com tipografia Lato */
     .card {
-        background-color: theme('colors.white');
+        background-color: var(--bg-secondary);
         border-radius: theme('borderRadius.xl');
-        box-shadow: theme('boxShadow.lg');
+        box-shadow: var(--shadow-lg);
         padding: theme('spacing.8');
-        border: 1px solid theme('colors.gray.100');
+        border: 1px solid var(--border-secondary);
+        transition: all 0.3s ease;
     }
 
     .card-header {
-        border-bottom: 2px solid theme('colors.gray.100');
+        border-bottom: 2px solid var(--border-secondary);
         padding-bottom: theme('spacing.4');
         margin-bottom: theme('spacing.6');
     }
@@ -180,7 +301,7 @@
         font-family: 'Lato', sans-serif;
         font-weight: 700; /* Lato Bold */
         font-size: theme('fontSize.xl');
-        color: theme('colors.gray.900');
+        color: var(--text-primary);
         margin: 0;
     }
 
@@ -188,69 +309,58 @@
         font-family: 'Lato', sans-serif;
         font-weight: 400; /* Lato Regular */
         font-size: theme('fontSize.sm');
-        color: theme('colors.gray.600');
+        color: var(--text-muted);
         margin-top: theme('spacing.1');
     }
 
     /* Inputs com Lato */
-    .input-field:not(:focus):not(:placeholder-shown):invalid {
-        border-color: theme('colors.red.500');
-        background-color: theme('colors.red.50');
-    }
-
-    /* Ou usar uma abordagem baseada em classes de estado */
-    /* .form-submitted .input-field:invalid {
-        border-color: theme('colors.red.500');
-        background-color: theme('colors.red.50');
-    } */
-
-    /* Estados específicos para melhor controle */
     .input-field {
         width: 100%;
         padding: theme('spacing.2');
-        border: 2px solid theme('colors.gray.200');
+        border: 2px solid var(--border-primary);
         border-radius: theme('borderRadius.lg');
         font-family: 'Lato', sans-serif;
         font-weight: 400;
         font-size: theme('fontSize.base');
         transition: all 0.2s ease;
-        background-color: theme('colors.white');
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
     }
 
     .input-field:focus {
         outline: none;
-        border-color: theme('colors.blue.500');
-        box-shadow: 0 0 0 4px theme('colors.blue.100');
-        background-color: theme('colors.blue.50');
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 4px var(--accent-light);
+        background-color: var(--accent-lighter);
     }
 
     /* Estado de sucesso */
     .input-field.success {
-        border-color: theme('colors.green.500');
-        background-color: theme('colors.green.50');
+        border-color: var(--success-border);
+        background-color: var(--success-bg);
     }
 
     .input-field.success:focus {
-        border-color: theme('colors.green.500');
-        box-shadow: 0 0 0 4px theme('colors.green.100');
+        border-color: var(--success-border);
+        box-shadow: 0 0 0 4px var(--success-light);
     }
 
     /* Estado de erro controlado por classe */
     .input-field.error {
-        border-color: theme('colors.red.500');
-        background-color: theme('colors.red.50');
+        border-color: var(--error-border);
+        background-color: var(--error-bg);
     }
 
     .input-field.error:focus {
-        border-color: theme('colors.red.500');
-        box-shadow: 0 0 0 4px theme('colors.red.100');
+        border-color: var(--error-border);
+        box-shadow: 0 0 0 4px var(--error-light);
     }
 
     .input-field:disabled {
-        background-color: theme('colors.gray.100');
-        color: theme('colors.gray.500');
+        background-color: var(--bg-tertiary);
+        color: var(--text-muted);
         cursor: not-allowed;
-        border-color: theme('colors.gray.200');
+        border-color: var(--border-primary);
     }
 
     .input-label {
@@ -258,7 +368,7 @@
         font-family: 'Lato', sans-serif;
         font-size: theme('fontSize.sm');
         font-weight: 600;
-        color: theme('colors.gray.800');
+        color: var(--text-secondary);
         margin-bottom: theme('spacing.1');
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -268,39 +378,41 @@
         font-family: 'Lato', sans-serif;
         font-size: theme('fontSize.xs');
         font-weight: 400;
-        color: theme('colors.red.600');
+        color: var(--error-text);
         margin-top: theme('spacing.1');
     }
 
     /* Layout do dashboard */
     .dashboard-container {
         min-height: 100vh;
-        background-color: theme('colors.gray.50');
+        background-color: var(--bg-primary);
         font-family: 'Lato', sans-serif;
+        transition: background-color 0.3s ease;
     }
 
     .sidebar {
         width: theme('spacing.72');
-        background-color: theme('colors.white');
-        box-shadow: theme('boxShadow.xl');
+        background-color: var(--bg-secondary);
+        box-shadow: var(--shadow-xl);
         height: 100vh;
         position: fixed;
         left: 0;
         top: 0;
         overflow-y: auto;
-        border-right: 1px solid theme('colors.gray.200');
+        border-right: 1px solid var(--border-primary);
+        transition: all 0.3s ease;
     }
 
     .sidebar-header {
         padding: theme('spacing.6');
-        border-bottom: 2px solid theme('colors.gray.100');
+        border-bottom: 2px solid var(--border-secondary);
     }
 
     .sidebar-title {
         font-family: 'Lato', sans-serif;
         font-weight: 900; /* Lato Black */
         font-size: theme('fontSize.xl');
-        color: theme('colors.gray.900');
+        color: var(--text-primary);
         text-transform: uppercase;
         letter-spacing: 1px;
     }
@@ -314,24 +426,25 @@
     .table {
         width: 100%;
         border-collapse: collapse;
-        background-color: theme('colors.white');
+        background-color: var(--bg-secondary);
         border-radius: theme('borderRadius.xl');
         overflow: hidden;
-        box-shadow: theme('boxShadow.lg');
-        border: 1px solid theme('colors.gray.200');
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-primary);
+        transition: all 0.3s ease;
     }
 
     .table th {
-        background-color: theme('colors.gray.100');
+        background-color: var(--bg-tertiary);
         padding: theme('spacing.4') theme('spacing.6');
         text-align: left;
         font-family: 'Lato', sans-serif;
         font-weight: 700; /* Lato Bold */
         font-size: theme('fontSize.sm');
-        color: theme('colors.gray.800');
+        color: var(--text-secondary);
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        border-bottom: 2px solid theme('colors.gray.200');
+        border-bottom: 2px solid var(--border-primary);
     }
 
     .table td {
@@ -339,12 +452,12 @@
         font-family: 'Lato', sans-serif;
         font-weight: 400; /* Lato Regular */
         font-size: theme('fontSize.sm');
-        color: theme('colors.gray.700');
-        border-bottom: 1px solid theme('colors.gray.100');
+        color: var(--text-secondary);
+        border-bottom: 1px solid var(--border-secondary);
     }
 
     .table tbody tr:hover {
-        background-color: theme('colors.blue.50');
+        background-color: var(--accent-lighter);
     }
 
     /* Modais com Lato */
@@ -363,26 +476,27 @@
     }
 
     .modal-content {
-        background-color: theme('colors.white');
+        background-color: var(--bg-secondary);
         border-radius: theme('borderRadius.xl');
-        box-shadow: theme('boxShadow.2xl');
+        box-shadow: var(--shadow-2xl);
         max-width: theme('maxWidth.lg');
         width: 90%;
         max-height: 90vh;
         overflow-y: auto;
-        border: 1px solid theme('colors.gray.200');
+        border: 1px solid var(--border-primary);
+        transition: all 0.3s ease;
     }
 
     .modal-header {
         padding: theme('spacing.8') theme('spacing.8') theme('spacing.4');
-        border-bottom: 2px solid theme('colors.gray.100');
+        border-bottom: 2px solid var(--border-secondary);
     }
 
     .modal-title {
         font-family: 'Lato', sans-serif;
         font-weight: 700; /* Lato Bold */
         font-size: theme('fontSize.xl');
-        color: theme('colors.gray.900');
+        color: var(--text-primary);
         margin: 0;
     }
 
@@ -392,7 +506,7 @@
 
     .modal-footer {
         padding: theme('spacing.4') theme('spacing.8') theme('spacing.8');
-        border-top: 2px solid theme('colors.gray.100');
+        border-top: 2px solid var(--border-secondary);
         display: flex;
         justify-content: flex-end;
         gap: theme('spacing.4');
@@ -403,7 +517,7 @@
         display: flex;
         align-items: center;
         padding: theme('spacing.4') theme('spacing.6');
-        color: theme('colors.gray.700');
+        color: var(--text-secondary);
         text-decoration: none;
         border-radius: theme('borderRadius.lg');
         margin: theme('spacing.1') theme('spacing.4');
@@ -414,13 +528,13 @@
     }
 
     .nav-link:hover {
-        background-color: theme('colors.blue.100');
-        color: theme('colors.blue.800');
+        background-color: var(--accent-light);
+        color: var(--accent-primary);
         transform: translateX(4px);
     }
 
     .nav-link.active {
-        background-color: theme('colors.blue.600');
+        background-color: var(--accent-primary);
         color: theme('colors.white');
         font-weight: 700; /* Lato Bold */
     }
@@ -429,8 +543,8 @@
     .loading-spinner {
         width: theme('spacing.8');
         height: theme('spacing.8');
-        border: 3px solid theme('colors.gray.200');
-        border-top: 3px solid theme('colors.blue.600');
+        border: 3px solid var(--border-primary);
+        border-top: 3px solid var(--accent-primary);
         border-radius: 50%;
         animation: spin 1s linear infinite;
     }
@@ -451,30 +565,31 @@
         font-family: 'Lato', sans-serif;
         font-weight: 400; /* Lato Regular */
         font-size: theme('fontSize.sm');
+        transition: all 0.3s ease;
     }
 
     .alert-success {
-        background-color: theme('colors.green.100');
-        color: theme('colors.green.800');
-        border: 2px solid theme('colors.green.200');
+        background-color: var(--success-light);
+        color: var(--success-text);
+        border: 2px solid var(--success-border);
     }
 
     .alert-error {
-        background-color: theme('colors.red.100');
-        color: theme('colors.red.800');
-        border: 2px solid theme('colors.red.200');
+        background-color: var(--error-light);
+        color: var(--error-text);
+        border: 2px solid var(--error-border);
     }
 
     .alert-warning {
-        background-color: theme('colors.yellow.100');
-        color: theme('colors.yellow.800');
-        border: 2px solid theme('colors.yellow.200');
+        background-color: var(--warning-light);
+        color: var(--warning-text);
+        border: 2px solid var(--warning-border);
     }
 
     .alert-info {
-        background-color: theme('colors.blue.100');
-        color: theme('colors.blue.800');
-        border: 2px solid theme('colors.blue.200');
+        background-color: var(--accent-light);
+        color: var(--accent-primary);
+        border: 2px solid var(--accent-primary);
     }
 
     /* Badges e Tags */
@@ -488,26 +603,63 @@
         font-size: theme('fontSize.xs');
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        transition: all 0.3s ease;
     }
 
     .badge-primary {
-        background-color: theme('colors.blue.100');
-        color: theme('colors.blue.800');
+        background-color: var(--accent-light);
+        color: var(--accent-primary);
     }
 
     .badge-success {
-        background-color: theme('colors.green.100');
-        color: theme('colors.green.800');
+        background-color: var(--success-light);
+        color: var(--success-text);
     }
 
     .badge-danger {
-        background-color: theme('colors.red.100');
-        color: theme('colors.red.800');
+        background-color: var(--error-light);
+        color: var(--error-text);
     }
 
     .badge-warning {
-        background-color: theme('colors.yellow.100');
-        color: theme('colors.yellow.800');
+        background-color: var(--warning-light);
+        color: var(--warning-text);
+    }
+
+    /* Botão de tema */
+    .theme-toggle {
+        position: relative;
+        width: 60px;
+        height: 30px;
+        background-color: var(--bg-tertiary);
+        border: 2px solid var(--border-primary);
+        border-radius: theme('borderRadius.full');
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        padding: 2px;
+    }
+
+    .theme-toggle:hover {
+        border-color: var(--accent-primary);
+    }
+
+    .theme-toggle-slider {
+        width: 22px;
+        height: 22px;
+        background-color: var(--accent-primary);
+        border-radius: 50%;
+        transition: transform 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 12px;
+    }
+
+    [data-theme='dark'] .theme-toggle-slider {
+        transform: translateX(28px);
     }
 }
 

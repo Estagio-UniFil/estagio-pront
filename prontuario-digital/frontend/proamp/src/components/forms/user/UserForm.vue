@@ -3,38 +3,38 @@
         <div class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
                 <div>
-                    <label for="first_name" class="input-label">Nome</label>
-                    <input type="text" id="first_name" v-model="formData.first_name" class="input-field" :class="{ error: errors.first_name }" :disabled="!isEditing" required />
+                    <label for="first_name" class="input-label">Nome{{ isEditing ? '*' : '' }}</label>
+                    <input type="text" id="first_name" v-model="formData.first_name" class="input-field bg-tertiary" :class="{ error: errors.first_name }" :disabled="!isEditing" required />
                     <p v-if="errors.first_name" class="input-error">{{ errors.first_name }}</p>
                 </div>
                 <div class="md:col-span-2">
-                    <label for="last_name" class="input-label">Sobrenome</label>
-                    <input type="text" id="last_name" v-model="formData.last_name" class="input-field" :class="{ error: errors.last_name }" :disabled="!isEditing" required />
+                    <label for="last_name" class="input-label">Sobrenome{{ isEditing ? '*' : '' }}</label>
+                    <input type="text" id="last_name" v-model="formData.last_name" class="input-field bg-tertiary" :class="{ error: errors.last_name }" :disabled="!isEditing" required />
                     <p v-if="errors.last_name" class="input-error">{{ errors.last_name }}</p>
                 </div>
                 <div class="md:col-span-3">
-                    <label for="email" class="input-label">E-mail</label>
-                    <input type="email" id="email" v-model="formData.email" class="input-field" :class="{ error: errors.email }" :disabled="!isEditing" required />
+                    <label for="email" class="input-label">E-mail{{ isEditing ? '*' : '' }}</label>
+                    <input type="email" id="email" v-model="formData.email" class="input-field bg-tertiary" :class="{ error: errors.email }" :disabled="!isEditing" required />
                     <p v-if="errors.email" class="input-error">{{ errors.email }}</p>
                 </div>
             </div>
 
             <div v-if="!user.id" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                 <div>
-                    <label for="password" class="input-label">Senha</label>
-                    <input type="password" id="password" v-model="formData.password" class="input-field" :class="{ error: errors.password }" :disabled="!isEditing" required />
+                    <label for="password" class="input-label">Senha{{ isEditing ? '*' : '' }}</label>
+                    <input type="password" id="password" v-model="formData.password" class="input-field bg-tertiary" :class="{ error: errors.password }" :disabled="!isEditing" required />
                     <p v-if="errors.password" class="input-error">{{ errors.password }}</p>
                 </div>
                 <div>
-                    <label for="password_confirm" class="input-label">Repita a Senha</label>
-                    <input type="password" id="password_confirm" v-model="passwordConfirm" class="input-field" :class="{ error: errors.password_confirm }" :disabled="!isEditing" required />
+                    <label for="password_confirm" class="input-label">Repita a Senha{{ isEditing ? '*' : '' }}</label>
+                    <input type="password" id="password_confirm" v-model="passwordConfirm" class="input-field bg-tertiary" :class="{ error: errors.password_confirm }" :disabled="!isEditing" required />
                     <p v-if="errors.password_confirm" class="input-error">{{ errors.password_confirm }}</p>
                 </div>
             </div>
 
             <div>
-                <label for="role" class="input-label">Tipo de Usuário</label>
-                <select id="role" v-model="formData.role" class="input-field" :class="{ error: errors.role }" :disabled="!isEditing || disableRoleField" required>
+                <label for="role" class="input-label">Tipo de Usuário{{ isEditing ? '*' : '' }}</label>
+                <select id="role" v-model="formData.role" class="input-field bg-tertiary" :class="{ error: errors.role, 'select-readonly': !isEditing }" :disabled="!isEditing || disableRoleField" required>
                     <option value="" disabled>Selecione um tipo</option>
                     <option value="admin">Administrador</option>
                     <option value="manager">Gestor</option>
@@ -46,8 +46,8 @@
             <div v-if="formData.role === 'health_prof'">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                     <div>
-                        <label for="specialty" class="input-label">Especialidade</label>
-                        <select id="specialty" v-model="formData.health_profile.specialty" class="input-field" :class="{ error: errors.specialty }" :disabled="!isEditing" required>
+                        <label for="specialty" class="input-label">Especialidade{{ isEditing ? '*' : '' }}</label>
+                        <select id="specialty" v-model="formData.health_profile.specialty" class="input-field bg-tertiary" :class="{ error: errors.specialty, 'select-readonly': !isEditing }" :disabled="!isEditing" required>
                             <option value="" disabled>Selecione um tipo</option>
                             <option value="psychologist">Psicologia</option>
                             <option value="physiotherapist">Fisioterapia</option>
@@ -57,8 +57,8 @@
                         <p v-if="errors.specialty" class="input-error">{{ errors.specialty }}</p>
                     </div>
                     <div>
-                        <label for="council_number" class="input-label">Número do Conselho</label>
-                        <input type="text" id="council_number" v-model="formData.health_profile.council_number" class="input-field" :class="{ error: errors.council_number }" :disabled="!isEditing" required />
+                        <label for="council_number" class="input-label">Número do Conselho{{ isEditing ? '*' : '' }}</label>
+                        <input type="text" id="council_number" v-model="formData.health_profile.council_number" class="input-field bg-tertiary" :class="{ error: errors.council_number }" :disabled="!isEditing" required />
                         <p v-if="errors.council_number" class="input-error">{{ errors.council_number }}</p>
                     </div>
                 </div>
@@ -286,3 +286,16 @@ const handleSubmit = () => {
     emit('submit', payload);
 };
 </script>
+
+<style scoped>
+.select-readonly {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: none !important;
+}
+
+.select-readonly::-ms-expand {
+    display: none;
+}
+</style>

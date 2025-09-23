@@ -1,6 +1,6 @@
 <template>
     <BaseModal :show="show" title="Confirmar Desativação" :closable="false" maxWidth="32rem">
-        <p class="text-gray-700">Tem certeza que deseja {{ actionType }} o registro de {{ entryName }}?</p>
+        <p class="text-primary">Tem certeza que deseja {{ actionType }} o registro de {{ entryName }}?</p>
 
         <template #footer>
             <div class="flex justify-end w-full space-x-4">

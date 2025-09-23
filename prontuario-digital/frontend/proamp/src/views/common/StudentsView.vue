@@ -3,8 +3,8 @@
         <!-- Page Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
             <div>
-                <h1 class="text-2xl font-lato-bold text-gray-900">Estudantes</h1>
-                <p class="text-gray-600 font-lato-regular mt-1">Gerencie estudantes</p>
+                <h1 class="text-2xl font-lato-bold text-primary">Estudantes</h1>
+                <p class="text-muted font-lato-regular mt-1">Gerencie estudantes</p>
             </div>
             <div class="mt-4 sm:mt-0 flex space-x-3">
                 <button class="btn-primary" @click="openCreateModal">

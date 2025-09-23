@@ -9,6 +9,7 @@ from datetime import date, datetime
 from students.models import Student
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from .models import ReportLog
 import calendar
 import io
 
@@ -33,6 +34,7 @@ def monthly_report(request):
     today = date.today()
     year = today.year
     month = today.month
+    report_type = ReportLog.ReportTypes.GENERAL_MONTHLY
 
     if request.query_params:
         try:
@@ -85,6 +87,8 @@ def monthly_report(request):
     )
     response["Content-Disposition"] = f'attachment; filename="{filename}"'
 
+    ReportLog.objects.create(user_id=request.user, report_type=report_type)
+
     return response
 
 
@@ -99,6 +103,8 @@ def student_interval_report(request, pk):
 
     start_date_str = request.query_params.get("start_date")
     end_date_str = request.query_params.get("end_date")
+
+    report_type = ReportLog.ReportTypes.STUDENT_HISTORY_SPECIFIED_PERIOD
 
     # Parse date string to datetime
     if start_date_str and end_date_str:
@@ -155,5 +161,7 @@ def student_interval_report(request, pk):
         content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
     response["Content-Disposition"] = f'attachment; filename="{filename}"'
+
+    ReportLog.objects.create(user_id=request.user, report_type=report_type)
 
     return response

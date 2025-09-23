@@ -2,8 +2,8 @@
     <AdminLayout>
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
             <div>
-                <h1 class="text-2xl font-lato-bold text-gray-900">Entradas de Prontuário</h1>
-                <p class="text-gray-600 font-lato-regular mt-1">Visualize as últimas entradas de prontuário registradas no sistema.</p>
+                <h1 class="text-2xl font-lato-bold text-primary">Entradas de Prontuário</h1>
+                <p class="text-muted font-lato-regular mt-1">Visualize as últimas entradas de prontuário registradas no sistema.</p>
             </div>
             <button class="btn-outline" @click="openExportModal">
                 <i class="fas fa-download mr-2"></i>

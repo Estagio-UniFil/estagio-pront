@@ -61,9 +61,9 @@ const alertIcon = computed(() => {
 
 const iconColor = computed(() => {
     const colors = {
-        success: 'text-green-800',
-        error: 'text-red-800',
-        warning: 'text-yellow-800',
+        success: 'success-text',
+        error: 'error-text',
+        warning: 'text-warning-text',
         info: 'text-blue-800',
     };
     return colors[props.type] || colors.info;
@@ -71,9 +71,9 @@ const iconColor = computed(() => {
 
 const hoverBgColor = computed(() => {
     const colors = {
-        success: 'hover:bg-green-200',
-        error: 'hover:bg-red-200',
-        warning: 'hover:bg-yellow-200',
+        success: 'hover:bg-success-bg',
+        error: 'hover:bg-error-bg',
+        warning: 'hover:bg-warnig-bg',
         info: 'hover:bg-blue-200',
     };
     return colors[props.type] || colors.info;

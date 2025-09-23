@@ -3,8 +3,8 @@
         <!-- Page Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
             <div>
-                <h1 class="text-2xl font-lato-bold text-gray-900">Painel de usuários</h1>
-                <p class="text-gray-600 font-lato-regular mt-1">Gerencie os usuários</p>
+                <h1 class="text-2xl font-lato-bold text-primary">Painel de usuários</h1>
+                <p class="text-muted font-lato-regular mt-1">Gerencie os usuários</p>
             </div>
 
             <div class="mt-4 sm:mt-0 flex space-x-3">
@@ -50,12 +50,12 @@
                 </div>
 
                 <!-- View Toggle -->
-                <div class="mt-4 sm:mt-0 flex bg-gray-100 rounded-lg p-1">
-                    <button @click="viewMode = 'table'" :class="['px-3 py-1 rounded text-sm font-lato-regular transition-colors', viewMode === 'table' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900']">
-                        <i class="fas fa-list mr-1"></i>
+                <div class="mt-4 sm:mt-0 flex bg-primary rounded-lg p-1">
+                    <button @click="viewMode = 'table'" :class="['px-3 py-1 rounded text-sm font-lato-regular transition-colors', viewMode === 'table' ? 'bg-secondary text-blue-600 shadow-sm cursor-pointer' : 'text-primary hover:text-muted cursor-pointer']">
+                        <i class="fas fa-list mr-1 cursor-pointer"></i>
                         Tabela
                     </button>
-                    <button @click="viewMode = 'cards'" :class="['px-3 py-1 rounded text-sm font-lato-regular transition-colors', viewMode === 'cards' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900']">
+                    <button @click="viewMode = 'cards'" :class="['px-3 py-1 rounded text-sm font-lato-regular transition-colors cursor-pointer', viewMode === 'cards' ? 'bg-secondary text-blue-600 shadow-sm cursor-pointer' : 'text-primary hover:text-muted']">
                         <i class="fas fa-th-large mr-1"></i>
                         Cards
                     </button>
@@ -82,21 +82,21 @@
 
             <!-- Cards View -->
             <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div v-for="user in filteredUsers" :key="user.id" class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer" @click="handleRowClick(user)">
+                <div v-for="user in filteredUsers" :key="user.id" class="bg-tertiary border border-primary rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer" @click="handleRowClick(user)">
                     <!-- User Avatar and Basic Info -->
                     <div class="flex items-center mb-3">
                         <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-lato-bold mr-3">
                             {{ getUserInitials(user) }}
                         </div>
                         <div class="flex-1">
-                            <h4 class="font-lato-bold text-gray-900">{{ getUserName(user) }}</h4>
-                            <p class="text-sm text-gray-600 font-lato-regular">{{ getRoleLabel(user.role) }}</p>
+                            <h4 class="font-lato-bold text-primary">{{ getUserName(user) }}</h4>
+                            <p class="text-sm text-primary font-lato-regular">{{ getRoleLabel(user.role) }}</p>
                         </div>
                     </div>
 
                     <!-- Contact Info -->
                     <div class="space-y-1 mb-3">
-                        <p class="text-sm text-gray-600 font-lato-regular">
+                        <p class="text-sm text-secondary font-lato-regular">
                             <i class="fas fa-envelope w-4 mr-2"></i>
                             {{ user.email }}
                         </p>

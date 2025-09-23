@@ -1,17 +1,17 @@
 <template>
     <AdminLayout>
         <div class="card p-0">
-            <div class="p-6 border-b border-gray-200">
-                <h2 class="text-xl font-lato-bold text-gray-800">Meu Perfil</h2>
-                <p class="text-gray-500 font-lato-regular mt-1">Veja e edite suas informações pessoais.</p>
+            <div class="p-6 border-b border-primary">
+                <h2 class="text-xl font-lato-bold text-primary">Meu Perfil</h2>
+                <p class="text-secondary font-lato-regular mt-1">Veja e edite suas informações pessoais.</p>
             </div>
             <div class="p-6 flex flex-col md:flex-row items-start gap-8">
                 <div class="flex flex-col items-center w-full md:w-48">
                     <div class="avatar-placeholder">
                         <span>{{ userInitials }}</span>
                     </div>
-                    <p class="font-lato-bold text-lg mt-3 text-gray-800">{{ user.first_name }} {{ user.last_name }}</p>
-                    <p class="text-sm text-gray-500">{{ user.email }}</p>
+                    <p class="font-lato-bold text-lg mt-3 text-primary">{{ user.first_name }} {{ user.last_name }}</p>
+                    <p class="text-sm text-muted">{{ user.email }}</p>
                 </div>
                 <div class="flex-1 w-full">
                     <UserForm :user="user" :is-editing="true" :is-submitting="userStore.loading" :disable-role-field="true" :show-cancel-button="false" @submit="handleSave" />
@@ -74,7 +74,7 @@ const handleSave = async (userData) => {
     font-size: 3rem; /* 48px */
     font-weight: 700;
     font-family: 'Lato', sans-serif;
-    border: 4px solid white;
+    border: 4px solid var(--bg-secondary);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -84,7 +84,7 @@ const handleSave = async (userData) => {
 .card :deep(.input-label) {
     font-size: 0.75rem; /* 12px */
     text-transform: uppercase;
-    color: #6b7280; /* tom de cinza */
+    color: var(--text-secondary); /* tom de cinza */
     font-weight: 600;
     letter-spacing: 0.05em;
     margin-bottom: 0.25rem;
@@ -93,14 +93,14 @@ const handleSave = async (userData) => {
 /* A MÁGICA PRINCIPAL: Faz os inputs parecerem texto normal */
 .card :deep(.input-field) {
     border: none; /* Remove todas as bordas */
-    border-bottom: 2px solid #f3f4f6; /* Adiciona uma borda inferior sutil */
+    border-bottom: 2px solid var(--bg-tertiary); /* Adiciona uma borda inferior sutil */
     background-color: transparent !important; /* Remove o fundo */
     border-radius: 0; /* Remove o arredondamento */
     padding-left: 0;
     padding-right: 0;
     padding-bottom: 0.5rem; /* Aumenta o espaçamento inferior */
     font-size: 1rem; /* 16px */
-    color: #1f2937; /* Cor de texto escuro */
+    color: var(--text-secondary); /* Cor de texto escuro */
     font-weight: 500;
     transition: border-color 0.2s ease-in-out;
 }
@@ -114,7 +114,7 @@ const handleSave = async (userData) => {
 
 /* Estilo específico para o campo desabilitado (Tipo de Usuário) */
 .card :deep(.input-field:disabled) {
-    color: #4b5567;
+    color: var(--text-secondary);
     cursor: not-allowed;
     border-bottom-color: transparent;
 }

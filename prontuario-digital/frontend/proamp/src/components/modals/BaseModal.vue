@@ -2,9 +2,9 @@
     <Transition name="modal-fade">
         <div v-if="show" class="modal-overlay" @click.self="close">
             <div class="modal-content" :style="{ maxWidth: maxWidth }">
-                <div class="relative px-8 pt-4 pb-4 border-b-2 border-gray-100">
+                <div class="relative px-8 pt-4 pb-4 border-b-2 border-secondary">
                     <slot name="header">
-                        <h3 class="modal-title">{{ title }}</h3>
+                        <h3 class="modal-title text-secondary">{{ title }}</h3>
                     </slot>
                     <button v-if="closable" @click="close" class="absolute top-0 right-0 w-8 h-8 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center">
                         <i class="fas fa-times text-gray-500 text-lg"></i>

@@ -2,23 +2,23 @@
     <div class="form-container">
         <div class="form-group">
             <label for="student-name" class="input-label">Aluno</label>
-            <input id="student-name" type="text" :value="studentName" class="input-field" disabled />
+            <input id="student-name" type="text" :value="studentName" class="input-field bg-tertiary" disabled />
         </div>
         <div class="form-group">
             <label for="healthpro-name" class="input-label">Profissional de Saúde</label>
-            <input id="healthpro-name" type="text" :value="healthproName" class="input-field" disabled />
+            <input id="healthpro-name" type="text" :value="healthproName" class="input-field bg-tertiary" disabled />
         </div>
         <div class="form-group">
             <label for="entry-date" class="input-label">Data da Entrada</label>
-            <input id="entry-date" type="text" :value="formattedEntryDate" class="input-field" disabled />
+            <input id="entry-date" type="text" :value="formattedEntryDate" class="input-field bg-tertiary" disabled />
         </div>
         <div class="form-group">
             <label for="description" class="input-label">Descrição</label>
-            <textarea id="description" v-model="editableData.description" class="input-field" :readonly="readonly" rows="4" placeholder="Descrição detalhada do atendimento..."></textarea>
+            <textarea id="description" v-model="editableData.description" class="input-field bg-tertiary" :readonly="readonly" rows="4" placeholder="Descrição detalhada do atendimento..."></textarea>
         </div>
         <div class="form-group">
             <label for="notes" class="input-label">Observações Adicionais</label>
-            <textarea id="notes" v-model="editableData.notes" class="input-field" :readonly="readonly" rows="3" placeholder="Notas ou observações adicionais..."></textarea>
+            <textarea id="notes" v-model="editableData.notes" class="input-field bg-tertiary" :readonly="readonly" rows="3" placeholder="Notas ou observações adicionais..."></textarea>
         </div>
     </div>
 </template>
@@ -92,8 +92,8 @@ const formattedEntryDate = computed(() => {
     margin-bottom: 0.5rem;
     font-weight: bold;
 }
-.input-field[readonly],
-.input-field[disabled] {
+.input-field bg-tertiary[readonly],
+.input-field bg-tertiary[disabled] {
     background-color: #f0f0f0;
     cursor: not-allowed;
 }

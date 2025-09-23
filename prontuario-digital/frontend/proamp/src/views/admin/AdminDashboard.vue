@@ -9,8 +9,8 @@
                         <i class="fas fa-user-md text-2xl"></i>
                     </div>
                     <div>
-                        <p class="text-sm font-lato-regular text-gray-600">Funcionários</p>
-                        <p class="text-2xl font-lato-bold text-gray-900">{{ stats.totalEmployees }}</p>
+                        <p class="text-sm font-lato-regular text-muted">Funcionários</p>
+                        <p class="text-2xl font-lato-bold text-primary">{{ stats.totalEmployees }}</p>
                     </div>
                 </div>
             </div>
@@ -22,8 +22,8 @@
                         <i class="fas fa-users text-2xl"></i>
                     </div>
                     <div>
-                        <p class="text-sm font-lato-regular text-gray-600">Alunos Ativos</p>
-                        <p class="text-2xl font-lato-bold text-gray-900">{{ stats.activeStudents }}</p>
+                        <p class="text-sm font-lato-regular text-muted">Alunos Ativos</p>
+                        <p class="text-2xl font-lato-bold text-primary">{{ stats.activeStudents }}</p>
                     </div>
                 </div>
             </div>
@@ -35,8 +35,8 @@
                         <i class="fas fa-calendar-check text-2xl"></i>
                     </div>
                     <div>
-                        <p class="text-sm font-lato-regular text-gray-600">Atendimentos Mensais</p>
-                        <p class="text-2xl font-lato-bold text-gray-900">{{ stats.appointmentsThisMonth }}</p>
+                        <p class="text-sm font-lato-regular text-muted">Atendimentos Mensais</p>
+                        <p class="text-2xl font-lato-bold text-primary">{{ stats.appointmentsThisMonth }}</p>
                     </div>
                 </div>
             </div>
@@ -48,8 +48,8 @@
                         <i class="fas fa-file-medical text-2xl"></i>
                     </div>
                     <div>
-                        <p class="text-sm font-lato-regular text-gray-600">Prontuários Hoje</p>
-                        <p class="text-2xl font-lato-bold text-gray-900">{{ stats.recordsToday }}</p>
+                        <p class="text-sm font-lato-regular text-muted">Prontuários Hoje</p>
+                        <p class="text-2xl font-lato-bold text-primary">{{ stats.recordsToday }}</p>
                     </div>
                 </div>
             </div>
@@ -64,11 +64,11 @@
                     <p class="card-subtitle">Atendimentos e atualizações de prontuários</p>
                 </div>
 
-                <div class="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
+                <div class="h-64 flex items-center justify-center bg-tertiary rounded-lg">
                     <div class="text-center">
-                        <i class="fas fa-chart-line text-4xl text-gray-400 mb-4"></i>
-                        <p class="text-gray-500 font-lato-regular">Gráfico de atividade</p>
-                        <p class="text-sm text-gray-400 font-lato-light">Em desenvolvimento</p>
+                        <i class="fas fa-chart-line text-4xl text-muted mb-4"></i>
+                        <p class="text-muted font-lato-regular">Gráfico de atividade</p>
+                        <p class="text-sm text-muted font-lato-light">Em desenvolvimento</p>
                     </div>
                 </div>
             </div>
@@ -96,9 +96,9 @@
                         Gerar Relatório
                     </router-link>
 
-                    <router-link :to="{ name: 'admin-settings' }" class="btn-outline w-full">
-                        <i class="fas fa-cog mr-2"></i>
-                        Configurações
+                    <router-link :to="{ name: 'admin-profile' }" class="btn-outline w-full">
+                        <i class="fa-solid fa-user mr-2"></i>
+                        Meu Perfil
                     </router-link>
                 </div>
             </div>

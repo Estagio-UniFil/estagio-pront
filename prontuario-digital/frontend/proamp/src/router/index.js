@@ -17,8 +17,8 @@ const router = createRouter({
         },
         {
             path: '/',
-            name: 'test',
-            component: TestPage,
+            name: 'default',
+            redirect: '/login',
         },
         {
             path: '/modals',

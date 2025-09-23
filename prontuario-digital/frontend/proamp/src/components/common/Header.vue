@@ -1,5 +1,5 @@
 <template>
-    <header class="bg-white border-b border-gray-200 px-6 py-4">
+    <header class="bg-secondary border-b rounded-md border-primary px-6 py-4">
         <div class="flex items-center justify-between">
             <!-- Mobile Menu Button + Title -->
             <div class="flex items-center">
@@ -10,13 +10,14 @@
 
                 <!-- Page Title -->
                 <div>
-                    <h1 class="text-xl font-lato-bold text-gray-900">Painel de administrador</h1>
-                    <p v-if="pageSubtitle" class="text-sm text-gray-600 font-lato-regular">{{ pageSubtitle }}</p>
+                    <h1 class="text-xl font-lato-bold text-primary">{{ headerTitle }}</h1>
+                    <p v-if="pageSubtitle" class="text-sm text-muted font-lato-regular">{{ pageSubtitle }}</p>
                 </div>
             </div>
 
             <!-- Right Side -->
             <div class="flex items-center space-x-4">
+                <ThemeToggle />
                 <!-- User Menu -->
                 <div class="relative">
                     <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-lato-bold">
@@ -32,6 +33,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
+import ThemeToggle from './ThemeToggle.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -43,6 +45,14 @@ const props = defineProps({
     showSearch: {
         type: Boolean,
         default: false,
+    },
+    config: {
+        type: Object,
+        default: () => ({}),
+    },
+    userType: {
+        type: String,
+        default: 'admin',
     },
 });
 
@@ -62,16 +72,12 @@ const notifications = ref([
 
 // Computed
 const pageTitle = computed(() => {
-    if (user?.role == 'admin') {
-        const routeMap = {
-            'admin-dashboard': 'Dashboard',
-            'admin-users': 'Funcionários',
-            'admin-students': 'Alunos',
-            'admin-reports': 'Relatórios',
-            'admin-settings': 'Configurações',
-        };
-        return routeMap[route.name];
-    }
+    const routeMap = props.config.routeMap || {};
+    return routeMap[route.name] || 'Dashboard';
+});
+
+const headerTitle = computed(() => {
+    return props.config.title || 'Painel de administrador';
 });
 
 const pageSubtitle = computed(() => {

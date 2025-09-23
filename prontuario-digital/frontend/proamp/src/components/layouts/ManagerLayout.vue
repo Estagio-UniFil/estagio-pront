@@ -1,8 +1,5 @@
 <template>
-    <BaseLayout
-        user-type="admin"
-        :layout-config="adminConfig"
-    >
+    <BaseLayout user-type="manager" :layout-config="managerConfig">
         <slot />
     </BaseLayout>
 </template>
@@ -11,6 +8,6 @@
 import BaseLayout from './BaseLayout.vue';
 import { getLayoutConfig } from '@/config/layoutConfigs.js';
 
-// Configuração específica do admin
-const adminConfig = getLayoutConfig('admin');
+// Configuração específica do gestor
+const managerConfig = getLayoutConfig('manager');
 </script>

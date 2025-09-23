@@ -25,11 +25,13 @@ from drf_spectacular.views import (
 from authentication.views import CustomAuthToken
 from rest_framework.routers import DefaultRouter
 from authentication.views import UserViewSet
+from authentication.views import view_health_pros
 
 router = DefaultRouter()
 router.register(r"users", UserViewSet, basename="user")
 
 urlpatterns = [
+    path("api/managerview/", view_health_pros),
     path("admin/", admin.site.urls),
     path("", include("students.urls")),
     path("", include("medicalentry.urls")),

@@ -3,23 +3,23 @@
         <div class="space-y-4 pb-2">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                 <div>
-                    <label for="name" class="input-label">Nome Completo*</label>
-                    <input type="text" class="input-field" id="name" v-model="formData.name" :disabled="!isEditing" required />
+                    <label for="name" class="input-label">Nome Completo{{ isEditing ? '*' : '' }}</label>
+                    <input type="text" class="input-field bg-tertiary" id="name" v-model="formData.name" :disabled="!isEditing" required />
                 </div>
                 <div>
-                    <label for="cgm" class="input-label">CGM*</label>
-                    <input type="text" class="input-field" id="cgm" v-model="formData.cgm" :disabled="!isEditing" required />
+                    <label for="cgm" class="input-label">CGM{{ isEditing ? '*' : '' }}</label>
+                    <input type="text" class="input-field bg-tertiary" id="cgm" v-model="formData.cgm" :disabled="!isEditing" required />
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                 <div>
-                    <label for="dob" class="input-label">Data de Nascimento*</label>
-                    <input type="date" class="input-field" id="dob" v-model="formData.dob" :disabled="!isEditing" required />
+                    <label for="dob" class="input-label">Data de Nascimento{{ isEditing ? '*' : '' }}</label>
+                    <input type="date" class="input-field bg-tertiary" id="dob" v-model="formData.dob" :disabled="!isEditing" required />
                 </div>
                 <div>
-                    <label for="gender" class="input-label">Gênero*</label>
-                    <select id="gender" class="input-field" v-model="formData.gender" :disabled="!isEditing" required>
+                    <label for="gender" class="input-label">Gênero{{ isEditing ? '*' : '' }}</label>
+                    <select id="gender" class="input-field bg-tertiary" v-model="formData.gender" :disabled="!isEditing" required>
                         <option value="M">Masculino</option>
                         <option value="F">Feminino</option>
                         <option value="O">Outro</option>
@@ -29,34 +29,34 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                 <div>
-                    <label for="guardian" class="input-label">Nome do Responsável*</label>
-                    <input type="text" class="input-field" id="guardian" v-model="formData.guardian" :disabled="!isEditing" required />
+                    <label for="guardian" class="input-label">Nome do Responsável{{ isEditing ? '*' : '' }}</label>
+                    <input type="text" class="input-field bg-tertiary" id="guardian" v-model="formData.guardian" :disabled="!isEditing" required />
                 </div>
                 <div>
-                    <label for="guardian_cpf" class="input-label">CPF do Responsável*</label>
-                    <input type="text" class="input-field" id="guardian_cpf" v-model="formData.guardian_cpf" placeholder="000.000.000-00" maxlength="14" :disabled="!isEditing" required />
+                    <label for="guardian_cpf" class="input-label">CPF do Responsável{{ isEditing ? '*' : '' }}</label>
+                    <input type="text" class="input-field bg-tertiary" id="guardian_cpf" v-model="formData.guardian_cpf" placeholder="000.000.000-00" maxlength="14" :disabled="!isEditing" required />
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-1 gap-x-6 gap-y-4">
                 <div>
-                    <label for="address" class="input-label">Endereço*</label>
-                    <input type="text" class="input-field" id="address" v-model="formData.address" required />
+                    <label for="address" class="input-label">Endereço{{ isEditing ? '*' : '' }}</label>
+                    <input type="text" class="input-field bg-tertiary" id="address" v-model="formData.address" :disabled="!isEditing" required />
                 </div>
             </div>
 
             <div class="grid grid-cols-3 md:grid-cols-3 gap-x-6 gap-y-4">
                 <div>
-                    <label for="cep" class="input-label">CEP*</label>
-                    <input type="text" class="input-field" id="cep" v-model="formData.cep" maxlength="9" placeholder="00000-000" required />
+                    <label for="cep" class="input-label">CEP{{ isEditing ? '*' : '' }}</label>
+                    <input type="text" class="input-field bg-tertiary" id="cep" v-model="formData.cep" maxlength="9" placeholder="00000-000" :disabled="!isEditing" required />
                 </div>
                 <div>
-                    <label for="city" class="input-label">Cidade*</label>
-                    <input type="text" class="input-field" id="city" v-model="formData.city" required />
+                    <label for="city" class="input-label">Cidade{{ isEditing ? '*' : '' }}</label>
+                    <input type="text" class="input-field bg-tertiary" id="city" v-model="formData.city" :disabled="!isEditing" required />
                 </div>
                 <div>
-                    <label for="state" class="input-label">Estado*</label>
-                    <input type="text" class="input-field" id="state" v-model="formData.state" required maxlength="2" />
+                    <label for="state" class="input-label">Estado{{ isEditing ? '*' : '' }}</label>
+                    <input type="text" class="input-field bg-tertiary" id="state" v-model="formData.state" :disabled="!isEditing" required maxlength="2" />
                 </div>
             </div>
 

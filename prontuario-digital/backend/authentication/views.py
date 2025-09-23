@@ -2,9 +2,13 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework import viewsets
+from rest_framework.decorators import api_view, permission_classes
 from .models import User
 from .serializers import UserSerializer
-from .permissions import IsAdminUser
+from authentication.permissions import (
+    IsManagerUser,
+    IsAdminUser,
+)
 
 # Create your views here.
 
@@ -20,7 +24,7 @@ class CustomAuthToken(ObtainAuthToken):
         user = serializer.validated_data["user"]
         token, created = Token.objects.get_or_create(user=user)
 
-        # Retorna o token e a role dele (importante para as pemissoes)
+        # Retorna o token e a role para permissões
         return Response(
             {
                 "token": token.key,
@@ -33,8 +37,17 @@ class CustomAuthToken(ObtainAuthToken):
         )
 
 
+@permission_classes([IsAdminUser])
 class UserViewSet(viewsets.ModelViewSet):
     # Endpoint para admins gerenciarem users
     queryset = User.objects.all().order_by("first_name")
     serializer_class = UserSerializer
     permission_classes = [IsAdminUser]
+
+
+@api_view(["GET"])
+@permission_classes([IsManagerUser])
+def view_health_pros(request):
+    queryset = User.objects.filter(role="health_professional").order_by("first_name")
+    serializer = UserSerializer(queryset, many=True)
+    return Response(serializer.data)

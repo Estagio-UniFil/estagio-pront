@@ -4,7 +4,7 @@
             <!-- Table Header -->
             <thead>
                 <tr>
-                    <th v-for="column in columns" :key="column.key" :style="{ width: column.width }" :class="[column.sortable ? 'cursor-pointer hover:bg-gray-200' : '', column.align === 'center' ? 'text-center' : '', column.align === 'right' ? 'text-right' : '']" @click="column.sortable ? handleSort(column.key) : null">
+                    <th v-for="column in columns" :key="column.key" :style="{ width: column.width }" :class="[column.sortable ? 'cursor-pointer hover:bg-secondary' : '', column.align === 'center' ? 'text-center' : '', column.align === 'right' ? 'text-right' : '']" @click="column.sortable ? handleSort(column.key) : null">
                         <div class="flex items-center justify-between">
                             <span>{{ column.label }}</span>
                             <div v-if="column.sortable" class="ml-2">
@@ -38,7 +38,7 @@
                 </tr>
 
                 <!-- Data Rows -->
-                <tr v-else v-for="(item, index) in paginatedData" :key="getRowKey(item, index)" class="hover:bg-blue-50 cursor-pointer transition-colors" @click="$emit('row-click', item, index)">
+                <tr v-else v-for="(item, index) in paginatedData" :key="getRowKey(item, index)" class="hover:bg-secondary cursor-pointer transition-colors" @click="$emit('row-click', item, index)">
                     <td v-for="column in columns" :key="`${getRowKey(item, index)}-${column.key}`" :class="[column.align === 'center' ? 'text-center' : '', column.align === 'right' ? 'text-right' : '']">
                         <!-- Avatar Column -->
                         <div v-if="column.type === 'avatar'" class="flex items-center justify-center">
@@ -59,7 +59,7 @@
 
                         <!-- Actions Column -->
                         <div v-else-if="column.type === 'actions'" class="flex items-center justify-center space-x-2">
-                            <button v-for="action in column.actions" :key="action.key" @click.stop="$emit('action', { action: action.key, item, index })" :class="['p-1 rounded hover:bg-gray-100 transition-colors', `text-${action.color}-600 hover:text-${action.color}-800`]" :title="action.label">
+                            <button v-for="action in column.actions" :key="action.key" @click.stop="$emit('action', { action: action.key, item, index })" :class="['p-1 rounded hover:bg-secondary transition-colors', `text-${action.color}-600 hover:text-${action.color}-800`]" :title="action.label">
                                 <i :class="action.icon"></i>
                             </button>
                         </div>
@@ -90,7 +90,7 @@
 
         <!-- Pagination -->
         <div v-if="showPagination && !loading && sortedData.length > itemsPerPage" class="flex items-center justify-between px-6 py-4 border-t border-gray-200">
-            <div class="text-sm text-gray-600 font-lato-regular">Mostrando {{ startItem }} até {{ endItem }} de {{ totalItems }} registros</div>
+            <div class="text-sm text-muted font-lato-regular">Mostrando {{ startItem }} até {{ endItem }} de {{ totalItems }} registros</div>
 
             <div class="flex items-center space-x-2">
                 <button @click="previousPage" :disabled="currentPage === 1" class="btn-outline px-3 py-1 text-xs disabled:opacity-50 disabled:cursor-not-allowed">
