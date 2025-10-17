@@ -63,6 +63,24 @@ class AdminWriteHealthProfRead(permissions.BasePermission):
         return request.user.role == "admin"
 
 
+class AdminWriteAllRead(permissions.BasePermission):
+    """
+    Admins: podem fazer tudo (GET, POST, PUT, DELETE)
+    Restante: apenas leitura (GET)
+    """
+
+    def has_permission(self, request, view):
+        if not (request.user and request.user.is_authenticated):
+            return False
+
+        # Métodos de leitura: ambos podem acessar
+        if request.method in permissions.SAFE_METHODS:  # GET, HEAD, OPTIONS
+            return request.user.role in ["admin", "manager", "health_prof"]
+
+        # Métodos de escrita: apenas admin
+        return request.user.role == "admin"
+
+
 class HealthProfWriteAdminRead(permissions.BasePermission):
     """
     Health Professionals: podem fazer tudo (GET, POST, PUT, DELETE)

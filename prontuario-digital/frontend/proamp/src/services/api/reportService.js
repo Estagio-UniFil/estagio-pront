@@ -7,6 +7,11 @@ export const reportService = {
         });
         return response;
     },
+
+    async getReportLog() {
+        const response = await api.get('api/reports/report-logs');
+        return response;
+    },
 };
 
 export default reportService;

@@ -5,6 +5,7 @@ import { userService } from '@/services/api/userService';
 export const useUserStore = defineStore('user', {
     state: () => ({
         users: [],
+        pros: [],
         loading: false,
         error: null,
         pagination: {
@@ -13,6 +14,7 @@ export const useUserStore = defineStore('user', {
             total: 0,
             from: 0,
             to: 0,
+            pageSize: 10,
         },
     }),
 
@@ -30,11 +32,9 @@ export const useUserStore = defineStore('user', {
         async fetchUsers() {
             this.loading = true;
             this.error = null;
-
             try {
-                const response = await userService.getUsers();
-
-                // Se a resposta for um array simples (sem paginação)
+                const response = await userService.getAllUsers();
+                // No pagination
                 if (Array.isArray(response)) {
                     this.users = response;
                     this.pagination = {
@@ -45,7 +45,7 @@ export const useUserStore = defineStore('user', {
                         to: response.length,
                     };
                 } else {
-                    // Se tiver paginação do DRF
+                    // DRF paginations
                     this.users = response.results || response;
                     this.pagination = {
                         currentPage: 1,
@@ -56,10 +56,60 @@ export const useUserStore = defineStore('user', {
                     };
                 }
             } catch (error) {
+                this.error = error.response?.data?.message || 'Erro ao carregar estudantes';
+                console.error('Erro ao buscar estudantes:', error);
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        async fetchAllHealthPros(page = 1) {
+            this.loading = true;
+            this.error = null;
+
+            try {
+                const offset = (page - 1) * this.pagination.pageSize;
+                const params = {
+                    limit: this.pagination.pageSize,
+                    offset: offset,
+                };
+
+                const response = await userService.getAllHealthPros(params);
+
+                // Resposta paginada do DRF
+                this.pros = response || [];
+                this.pagination = {
+                    currentPage: page,
+                    totalPages: Math.ceil(response.count / this.pagination.pageSize),
+                    total: response.count,
+                    from: offset + 1,
+                    to: offset + (response.results?.length || 0),
+                    pageSize: this.pagination.pageSize,
+                };
+                console.log(this.pros.length);
+            } catch (error) {
                 this.error = error.response?.data?.message || 'Erro ao carregar usuários';
                 console.error('Erro ao buscar usuários:', error);
             } finally {
                 this.loading = false;
+            }
+        },
+
+        async goToPage(page) {
+            if (page >= 1 && page <= this.pagination.totalPages) {
+                await this.fetchUsers(page);
+            }
+        },
+
+        async nextPage() {
+            if (this.pagination.currentPage < this.pagination.totalPages) {
+                await this.goToPage(this.pagination.currentPage + 1);
+            }
+        },
+
+        async previousPage() {
+            if (this.pagination.currentPage > 1) {
+                await this.goToPage(this.pagination.currentPage - 1);
             }
         },
 
@@ -69,7 +119,8 @@ export const useUserStore = defineStore('user', {
 
             try {
                 const newUser = await userService.createUser(userData);
-                this.users.unshift(newUser);
+                // Recarrega a página atual para manter consistência
+                await this.fetchUsers(this.pagination.currentPage);
                 return newUser;
             } catch (error) {
                 this.error = error.response?.data?.message || 'Erro ao criar usuário';
@@ -85,6 +136,7 @@ export const useUserStore = defineStore('user', {
 
             try {
                 const updatedUser = await userService.updateUser(id, userData);
+                // Atualiza o usuário na lista atual
                 const index = this.users.findIndex((user) => user.id === id);
                 if (index !== -1) {
                     this.users[index] = updatedUser;
@@ -104,7 +156,8 @@ export const useUserStore = defineStore('user', {
 
             try {
                 await userService.deleteUser(id);
-                this.users = this.users.filter((user) => user.id !== id);
+                // Recarrega a página atual
+                await this.fetchUsers(this.pagination.currentPage);
             } catch (error) {
                 this.error = error.response?.data?.message || 'Erro ao excluir usuário';
                 throw error;

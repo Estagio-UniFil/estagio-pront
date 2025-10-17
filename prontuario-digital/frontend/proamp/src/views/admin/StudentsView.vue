@@ -1,111 +1,92 @@
 <template>
-    <AdminLayout>
-        <!-- Page Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+    <!-- Page Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+        <div>
+            <h1 class="text-2xl font-lato-bold text-primary">Estudantes</h1>
+            <p class="text-muted font-lato-regular mt-1">Gerencie estudantes</p>
+        </div>
+        <div class="mt-4 sm:mt-0 flex space-x-3">
+            <button class="btn-primary" @click="openCreateModal">
+                <i class="fas fa-plus mr-2"></i>
+                Novo Estudante
+            </button>
+        </div>
+    </div>
+    <!-- Filters and Search -->
+    <div class="card mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Search -->
+            <div class="md:col-span-2">
+                <label class="input-label">Buscar</label>
+                <div class="relative">
+                    <input v-model="filters.search" type="text" placeholder="Nome do aluno..." class="input-field pl-10" @input="debouncedSearch" />
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+            </div>
+            <!-- Status Filter -->
             <div>
-                <h1 class="text-2xl font-lato-bold text-primary">Estudantes</h1>
-                <p class="text-muted font-lato-regular mt-1">Gerencie estudantes</p>
-            </div>
-            <div class="mt-4 sm:mt-0 flex space-x-3">
-                <button class="btn-primary" @click="openCreateModal">
-                    <i class="fas fa-plus mr-2"></i>
-                    Novo Estudante
-                </button>
+                <label class="input-label">Status</label>
+                <select v-model="filters.status" class="input-field" @change="handleStatusChange">
+                    <option value="active">Ativos</option>
+                    <option value="inactive">Inativos</option>
+                </select>
             </div>
         </div>
-        <!-- Filters and Search -->
-        <div class="card mb-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <!-- Search -->
-                <div class="md:col-span-2">
-                    <label class="input-label">Buscar</label>
-                    <div class="relative">
-                        <input v-model="filters.search" type="text" placeholder="Nome do aluno..." class="input-field pl-10" @input="debouncedSearch" />
-                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    </div>
-                </div>
-                <!-- Status Filter -->
-                <div>
-                    <label class="input-label">Status</label>
-                    <select v-model="filters.status" class="input-field" @change="handleStatusChange">
-                        <option value="active">Ativos</option>
-                        <option value="inactive">Inativos</option>
-                    </select>
-                </div>
+    </div>
+    <!-- Users Table -->
+    <div class="card">
+        <!-- Table Header with Stats -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+            <div>
+                <h3 class="card-title">Lista de estudantes</h3>
+                <p class="card-subtitle">{{ studentStore.students.length }} estudantes {{ studentStatusText }} no total</p>
             </div>
         </div>
-        <!-- Users Table -->
-        <div class="card">
-            <!-- Table Header with Stats -->
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-                <div>
-                    <h3 class="card-title">Lista de estudantes</h3>
-                    <p class="card-subtitle">{{ filteredStudents.length }} de {{ studentStore.students.length }} estudantes</p>
-                </div>
-            </div>
-            <!-- Loading State -->
-            <div v-if="studentStore.loading" class="flex justify-center items-center h-64">
-                <div class="loading-spinner w-8 h-8"></div>
-                <span class="ml-3 text-gray-600 font-lato-regular">Carregando estudantes...</span>
-            </div>
-            <!-- Error State -->
-            <div v-else-if="studentStore.error" class="alert alert-error">
-                <i class="fas fa-exclamation-triangle mr-2"></i>
-                {{ studentStore.error }}
-                <button @click="loadStudents" class="ml-4 text-red-800 underline hover:no-underline">Tentar novamente</button>
-            </div>
-            <!-- Table View -->
-            <div class="overflow-x-auto">
-                <BaseTable :columns="tableColumns" :data="filteredStudents" :loading="studentStore.loading" @row-click="handleRowClick" @action="handleTableAction" />
-            </div>
-            <!-- Empty State -->
-            <div v-if="!studentStore.loading && filteredStudents.length === 0" class="text-center py-12">
-                <i class="fas fa-users text-4xl text-gray-400 mb-4"></i>
-                <h3 class="text-lg font-lato-bold text-gray-900 mb-2">
-                    {{ hasActiveFilters ? 'Nenhum estudante encontrado' : 'Nenhum estudante cadastrado' }}
-                </h3>
-                <p class="text-gray-600 font-lato-regular mb-4">
-                    {{ hasActiveFilters ? 'Tente ajustar os filtros de busca' : 'Comece adicionando o primeiro estudante' }}
-                </p>
-                <button v-if="!hasActiveFilters" @click="openCreateModal" class="btn-primary">
-                    <i class="fas fa-plus mr-2"></i>
-                    Adicionar Estudante
-                </button>
-            </div>
+        <!-- Loading State -->
+        <div v-if="studentStore.loading" class="flex justify-center items-center h-64">
+            <div class="loading-spinner w-8 h-8"></div>
+            <span class="ml-3 text-gray-600 font-lato-regular">Carregando estudantes...</span>
         </div>
-        <!-- Pagination -->
-        <!-- <div v-if="filteredStudents.length > 0" class="mt-6 flex justify-between items-center">
-            <p class="text-sm text-gray-600 font-lato-regular">Mostrando {{ (currentPage - 1) * itemsPerPage + 1 }} até {{ Math.min(currentPage * itemsPerPage, filteredStudents.length) }} de {{ filteredStudents.length }} estudantes</p>
-            <div class="flex space-x-2">
-                <button @click="previousPage" :disabled="currentPage === 1" class="btn-outline px-3 py-1 disabled:opacity-50 disabled:cursor-not-allowed">
-                    <i class="fas fa-chevron-left mr-1"></i>
-                    Anterior
-                </button>
-                <button @click="nextPage" :disabled="currentPage >= totalPages" class="btn-outline px-3 py-1 disabled:opacity-50 disabled:cursor-not-allowed">
-                    Próximo
-                    <i class="fas fa-chevron-right ml-1"></i>
-                </button>
-            </div>
-        </div> -->
+        <!-- Error State -->
+        <div v-else-if="studentStore.error" class="alert alert-error">
+            <i class="fas fa-exclamation-triangle mr-2"></i>
+            {{ studentStore.error }}
+            <button @click="loadStudents" class="ml-4 text-red-800 underline hover:no-underline">Tentar novamente</button>
+        </div>
+        <!-- Table View -->
+        <div class="overflow-x-auto">
+            <BaseTable :columns="tableColumns" :data="filteredStudents" :loading="studentStore.loading" @row-click="handleRowClick" @action="handleTableAction" />
+        </div>
+        <!-- Empty State -->
+        <div v-if="!studentStore.loading && filteredStudents.length === 0" class="text-center py-12">
+            <i class="fas fa-users text-4xl text-gray-400 mb-4"></i>
+            <h3 class="text-lg font-lato-bold text-gray-900 mb-2">
+                {{ hasActiveFilters ? 'Nenhum estudante encontrado' : 'Nenhum estudante cadastrado' }}
+            </h3>
+            <p class="text-gray-600 font-lato-regular mb-4">
+                {{ hasActiveFilters ? 'Tente ajustar os filtros de busca' : 'Comece adicionando o primeiro estudante' }}
+            </p>
+            <button v-if="!hasActiveFilters" @click="openCreateModal" class="btn-primary">
+                <i class="fas fa-plus mr-2"></i>
+                Adicionar Estudante
+            </button>
+        </div>
+    </div>
 
-        <StudentModal :show="showStudentModal" :student="selectedStudent" :is-editing="isEditingMode" :is-submitting="studentStore.loading" @close="closeStudentModal" @submit="handleSaveStudent" />
+    <StudentModal :show="showStudentModal" :student="selectedStudent" :is-editing="isEditingMode" :is-submitting="studentStore.loading" @close="closeStudentModal" @submit="handleSaveStudent" />
 
-        <!-- Confirm Modal -->
-        <ConfirmModal v-if="itemForAction" :show="showConfirmModal" :title="modalTitle" :message="modalMessage" :action-type="modalActionName" :entryName="getStudentName(itemForAction)" @confirm="handleConfirmAction" @cancel="closeConfirmModal" />
-    </AdminLayout>
+    <!-- Confirm Modal -->
+    <ConfirmModal v-if="itemForAction" :show="showConfirmModal" :title="modalTitle" :message="modalMessage" :action-type="modalActionName" :entryName="getStudentName(itemForAction)" @confirm="handleConfirmAction" @cancel="closeConfirmModal" />
 </template>
 
 <script setup>
-import AdminLayout from '@/components/layouts/AdminLayout.vue';
 import { ref, computed, onMounted, watch } from 'vue';
-import { useRouter } from 'vue-router';
 import BaseTable from '@/components/tables/BaseTable.vue';
 import { useStudentStore } from '@/stores/studentStore';
 import { useAlertStore } from '@/stores/alertStore';
 import ConfirmModal from '@/components/modals/ConfirmModal.vue';
 import StudentModal from '@/components/modals/StudentModal.vue';
 
-const router = useRouter();
 const studentStore = useStudentStore();
 const alertStore = useAlertStore();
 
@@ -122,7 +103,6 @@ const isEditingMode = ref(false);
 
 // States
 const currentPage = ref(1);
-const itemsPerPage = ref(10);
 const searchTimeout = ref(null);
 const filters = ref({
     search: '',
@@ -189,12 +169,16 @@ const filteredStudents = computed(() => {
     return students;
 });
 
-const totalPages = computed(() => {
-    return Math.ceil(filteredStudents.value.length / itemsPerPage.value);
-});
-
 const hasActiveFilters = computed(() => {
     return filters.value.search;
+});
+
+const studentStatusText = computed(() => {
+    if (filters.value.status === 'active') {
+        return 'ativos';
+    }
+
+    return 'inativos';
 });
 
 // Methods
@@ -342,14 +326,6 @@ const handleRestore = (student) => {
     modalActionName.value = 'restaurar';
     modalMessage.value = 'Você tem certeza de que deseja reativar este estudante? Ele voltará para a lista de ativos.';
     showConfirmModal.value = true;
-};
-
-const previousPage = () => {
-    if (currentPage.value > 1) currentPage.value--;
-};
-
-const nextPage = () => {
-    if (currentPage.value < totalPages.value) currentPage.value++;
 };
 
 // Lifecycle

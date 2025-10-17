@@ -1,6 +1,6 @@
 <template>
     <BaseLayout user-type="health-professional" :layout-config="healthProfessionalConfig">
-        <slot />
+        <router-view />
     </BaseLayout>
 </template>
 

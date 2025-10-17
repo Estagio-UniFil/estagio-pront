@@ -12,4 +12,9 @@ urlpatterns = [
         views.student_interval_report,
         name="student_interval_report",
     ),
+    path(
+        "api/reports/report-logs",
+        views.view_history,
+        name="history_log",
+    ),
 ]

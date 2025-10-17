@@ -28,17 +28,17 @@
                 </tr>
 
                 <!-- Empty State -->
-                <tr v-else-if="sortedData.length === 0">
+                <tr v-else-if="displayData.length === 0">
                     <td :colspan="columns.length" class="text-center py-8">
                         <div class="text-gray-500">
-                            <i class="fas fa-inbox text-2xl mb-2 block"></i>
+                            <i class="fas fa-inbox text-2xl mb-2 block"> </i>
                             <span class="font-lato-regular">{{ emptyMessage }}</span>
                         </div>
                     </td>
                 </tr>
 
                 <!-- Data Rows -->
-                <tr v-else v-for="(item, index) in paginatedData" :key="getRowKey(item, index)" class="hover:bg-secondary cursor-pointer transition-colors" @click="$emit('row-click', item, index)">
+                <tr v-else v-for="(item, index) in displayData" :key="getRowKey(item, index)" class="hover:bg-secondary cursor-pointer transition-colors" @click="$emit('row-click', item, index)">
                     <td v-for="column in columns" :key="`${getRowKey(item, index)}-${column.key}`" :class="[column.align === 'center' ? 'text-center' : '', column.align === 'right' ? 'text-right' : '']">
                         <!-- Avatar Column -->
                         <div v-if="column.type === 'avatar'" class="flex items-center justify-center">
@@ -89,21 +89,21 @@
         </table>
 
         <!-- Pagination -->
-        <div v-if="showPagination && !loading && sortedData.length > itemsPerPage" class="flex items-center justify-between px-6 py-4 border-t border-gray-200">
-            <div class="text-sm text-muted font-lato-regular">Mostrando {{ startItem }} até {{ endItem }} de {{ totalItems }} registros</div>
+        <div v-if="showPagination && !loading && shouldShowPagination" class="flex items-center justify-between px-6 py-4 border-t border-gray-200">
+            <div class="text-sm text-muted font-lato-regular">Mostrando {{ paginationInfo.from }} até {{ paginationInfo.to }} de {{ paginationInfo.total }} registros</div>
 
             <div class="flex items-center space-x-2">
-                <button @click="previousPage" :disabled="currentPage === 1" class="btn-outline px-3 py-1 text-xs disabled:opacity-50 disabled:cursor-not-allowed">
+                <button @click="goToPreviousPage" :disabled="!canGoPrevious || loading" class="btn-outline px-3 py-1 text-xs disabled:opacity-50 disabled:cursor-not-allowed">
                     <i class="fas fa-chevron-left"></i>
                 </button>
 
                 <div class="flex space-x-1">
-                    <button v-for="page in visiblePages" :key="page" @click="goToPage(page)" :class="['px-3 py-1 text-xs rounded transition-colors', page === currentPage ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200']">
+                    <button v-for="page in visiblePageNumbers" :key="page" @click="goToSpecificPage(page)" :disabled="loading" :class="['px-3 py-1 text-xs rounded transition-colors', page === paginationInfo.currentPage ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:cursor-not-allowed']">
                         {{ page }}
                     </button>
                 </div>
 
-                <button @click="nextPage" :disabled="currentPage === totalPages" class="btn-outline px-3 py-1 text-xs disabled:opacity-50 disabled:cursor-not-allowed">
+                <button @click="goToNextPage" :disabled="!canGoNext || loading" class="btn-outline px-3 py-1 text-xs disabled:opacity-50 disabled:cursor-not-allowed">
                     <i class="fas fa-chevron-right"></i>
                 </button>
             </div>
@@ -131,7 +131,7 @@ const props = defineProps({
     },
     emptyMessage: {
         type: String,
-        default: 'Nenhum registro encontrado',
+        default: ' Nenhum registro encontrado',
     },
     itemsPerPage: {
         type: Number,
@@ -141,6 +141,10 @@ const props = defineProps({
         type: Boolean,
         default: true,
     },
+    backendPagination: {
+        type: Object,
+        default: null, // { currentPage, totalPages, total, from, to }
+    },
     rowKey: {
         type: String,
         default: 'id',
@@ -148,23 +152,25 @@ const props = defineProps({
 });
 
 // Emits
-const emit = defineEmits(['row-click', 'action', 'sort']);
+const emit = defineEmits(['row-click', 'action', 'sort', 'page-change']);
 
-// State
+// State (apenas para paginação frontend)
 const sortColumn = ref('');
 const sortDirection = ref('asc');
-const currentPage = ref(1);
+const frontendCurrentPage = ref(1);
 
-// Computed
+// Computed - Determina se usa paginação frontend ou backend
+const isBackendPagination = computed(() => props.backendPagination !== null);
+
+// Computed - Dados após ordenação (apenas para paginação frontend)
 const sortedData = computed(() => {
-    if (!sortColumn.value) return props.data;
+    if (isBackendPagination.value || !sortColumn.value) return props.data;
 
     return [...props.data].sort((a, b) => {
         const aValue = getValue(a, sortColumn.value);
         const bValue = getValue(b, sortColumn.value);
 
         let comparison = 0;
-
         if (aValue < bValue) comparison = -1;
         else if (aValue > bValue) comparison = 1;
 
@@ -172,49 +178,69 @@ const sortedData = computed(() => {
     });
 });
 
-const totalItems = computed(() => sortedData.value.length);
-const totalPages = computed(() => Math.ceil(totalItems.value / props.itemsPerPage));
+// Computed - Dados a serem exibidos
+const displayData = computed(() => {
+    if (isBackendPagination.value) {
+        // Paginação backend: mostra os dados como recebidos
+        return props.data;
+    }
 
-const paginatedData = computed(() => {
+    // Paginação frontend: aplica paginação local
     if (!props.showPagination) return sortedData.value;
 
-    const start = (currentPage.value - 1) * props.itemsPerPage;
+    const start = (frontendCurrentPage.value - 1) * props.itemsPerPage;
     const end = start + props.itemsPerPage;
     return sortedData.value.slice(start, end);
 });
 
-const startItem = computed(() => {
-    return totalItems.value === 0 ? 0 : (currentPage.value - 1) * props.itemsPerPage + 1;
+// Computed - Informações de paginação unificadas
+const paginationInfo = computed(() => {
+    if (isBackendPagination.value) {
+        // Usa dados do backend
+        return props.backendPagination;
+    }
+
+    // Calcula paginação frontend
+    const total = sortedData.value.length;
+    const totalPages = Math.ceil(total / props.itemsPerPage);
+    const from = total === 0 ? 0 : (frontendCurrentPage.value - 1) * props.itemsPerPage + 1;
+    const to = Math.min(frontendCurrentPage.value * props.itemsPerPage, total);
+
+    return {
+        currentPage: frontendCurrentPage.value,
+        totalPages,
+        total,
+        from,
+        to,
+    };
 });
 
-const endItem = computed(() => {
-    return Math.min(currentPage.value * props.itemsPerPage, totalItems.value);
+// Computed - Deve mostrar paginação?
+const shouldShowPagination = computed(() => {
+    if (isBackendPagination.value) {
+        return paginationInfo.value.totalPages > 1;
+    }
+    return paginationInfo.value.total > props.itemsPerPage;
 });
 
-const visiblePages = computed(() => {
+// Computed - Pode ir para página anterior?
+const canGoPrevious = computed(() => paginationInfo.value.currentPage > 1);
+
+// Computed - Pode ir para próxima página?
+const canGoNext = computed(() => paginationInfo.value.currentPage < paginationInfo.value.totalPages);
+
+// Computed - Números de páginas visíveis
+const visiblePageNumbers = computed(() => {
+    const current = paginationInfo.value.currentPage;
+    const total = paginationInfo.value.totalPages;
     const delta = 2;
     const range = [];
-    const rangeWithDots = [];
 
-    for (let i = Math.max(2, currentPage.value - delta); i <= Math.min(totalPages.value - 1, currentPage.value + delta); i++) {
+    for (let i = Math.max(1, current - delta); i <= Math.min(total, current + delta); i++) {
         range.push(i);
     }
 
-    if (currentPage.value - delta > 2) {
-        rangeWithDots.push(1, '...');
-    } else {
-        rangeWithDots.push(1);
-    }
-
-    rangeWithDots.push(...range);
-
-    if (currentPage.value + delta < totalPages.value - 1) {
-        rangeWithDots.push('...', totalPages.value);
-    } else if (totalPages.value > 1) {
-        rangeWithDots.push(totalPages.value);
-    }
-
-    return rangeWithDots.filter((item, index, arr) => arr.indexOf(item) === index);
+    return range;
 });
 
 // Methods
@@ -228,12 +254,20 @@ const getValue = (item, key) => {
         return getUserName(item);
     }
 
+    if (key === 'user_id') {
+        return getUserNameRep(item);
+    }
+
     if (key === 'city') {
         return getFullAddress(item);
     }
 
     if (key === 'dob') {
         return item[key];
+    }
+
+    if (key === 'user_id') {
+        return getUserName(item);
     }
 
     return item[key];
@@ -244,6 +278,12 @@ const getUserName = (user) => {
         return `${user.first_name} ${user.last_name}`;
     }
     return user.email;
+};
+
+const getUserNameRep = (report) => {
+    if (report.user_id.first_name && report.user_id.last_name) {
+        return `${report.user_id.first_name} ${report.user_id.last_name}`;
+    }
 };
 
 const getFullAddress = (student) => {
@@ -311,21 +351,30 @@ const handleSort = (column) => {
     emit('sort', { column, direction: sortDirection.value });
 };
 
-const goToPage = (page) => {
-    if (page !== '...' && page >= 1 && page <= totalPages.value) {
-        currentPage.value = page;
+// Métodos de paginação
+const goToSpecificPage = (page) => {
+    if (page < 1 || page > paginationInfo.value.totalPages) return;
+
+    if (isBackendPagination.value) {
+        // Emite evento para o componente pai gerenciar
+        emit('page-change', page);
+    } else {
+        // Gerencia paginação frontend localmente
+        frontendCurrentPage.value = page;
     }
 };
 
-const previousPage = () => {
-    if (currentPage.value > 1) {
-        currentPage.value--;
+const goToPreviousPage = () => {
+    const targetPage = paginationInfo.value.currentPage - 1;
+    if (targetPage >= 1) {
+        goToSpecificPage(targetPage);
     }
 };
 
-const nextPage = () => {
-    if (currentPage.value < totalPages.value) {
-        currentPage.value++;
+const goToNextPage = () => {
+    const targetPage = paginationInfo.value.currentPage + 1;
+    if (targetPage <= paginationInfo.value.totalPages) {
+        goToSpecificPage(targetPage);
     }
 };
 
@@ -333,7 +382,10 @@ const nextPage = () => {
 watch(
     () => props.data,
     () => {
-        currentPage.value = 1;
+        // Reset frontend pagination quando dados mudam
+        if (!isBackendPagination.value) {
+            frontendCurrentPage.value = 1;
+        }
     },
 );
 </script>

@@ -10,6 +10,7 @@ from students.models import Student
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from .models import ReportLog
+from .serializers import ReportLogSerializer
 import calendar
 import io
 
@@ -165,3 +166,11 @@ def student_interval_report(request, pk):
     ReportLog.objects.create(user_id=request.user, report_type=report_type)
 
     return response
+
+
+@api_view(["GET"])
+def view_history(request):
+    if request.method == "GET":
+        reportLog = ReportLog.objects.order_by("date")
+        serializer = ReportLogSerializer(reportLog, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -1,19 +1,6 @@
 <template>
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <!-- Total Funcionários -->
-        <div class="card">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
-                    <i class="fas fa-user-md text-2xl"></i>
-                </div>
-                <div>
-                    <p class="text-sm font-lato-regular text-muted">Funcionários</p>
-                    <p class="text-2xl font-lato-bold text-primary">{{ stats.totalEmployees }}</p>
-                </div>
-            </div>
-        </div>
-
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <!-- Total Alunos Ativos -->
         <div class="card">
             <div class="flex items-center">
@@ -22,7 +9,7 @@
                 </div>
                 <div>
                     <p class="text-sm font-lato-regular text-muted">Alunos Ativos</p>
-                    <p class="text-2xl font-lato-bold text-primary">{{ stats.activeStudents }}</p>
+                    <p class="text-2xl font-lato-bold text-primary">temp</p>
                 </div>
             </div>
         </div>
@@ -35,7 +22,7 @@
                 </div>
                 <div>
                     <p class="text-sm font-lato-regular text-muted">Atendimentos Mensais</p>
-                    <p class="text-2xl font-lato-bold text-primary">{{ stats.appointmentsThisMonth }}</p>
+                    <p class="text-2xl font-lato-bold text-primary">temp</p>
                 </div>
             </div>
         </div>
@@ -48,7 +35,7 @@
                 </div>
                 <div>
                     <p class="text-sm font-lato-regular text-muted">Prontuários Hoje</p>
-                    <p class="text-2xl font-lato-bold text-primary">{{ stats.recordsToday }}</p>
+                    <p class="text-2xl font-lato-bold text-primary">temp</p>
                 </div>
             </div>
         </div>
@@ -82,22 +69,12 @@
             <div class="space-y-3">
                 <router-link :to="{ name: 'admin-users' }" class="btn-outline w-full">
                     <i class="fas fa-user-plus mr-2"></i>
-                    Novo Funcionário
+                    Nova Entrada
                 </router-link>
 
                 <router-link :to="{ name: 'admin-students' }" class="btn-outline w-full">
                     <i class="fas fa-user-graduate mr-2"></i>
-                    Novo Aluno
-                </router-link>
-
-                <router-link :to="{ name: 'admin-reports' }" class="btn-outline w-full">
-                    <i class="fas fa-file-download mr-2"></i>
-                    Gerar Relatório
-                </router-link>
-
-                <router-link :to="{ name: 'admin-profile' }" class="btn-outline w-full">
-                    <i class="fa-solid fa-user mr-2"></i>
-                    Meu Perfil
+                    Exportar Relatório
                 </router-link>
             </div>
         </div>
@@ -105,36 +82,10 @@
 </template>
 
 <script setup>
-import { onMounted, computed } from 'vue';
-
-import { useUserStore } from '@/stores/userStore';
-import { useStudentStore } from '@/stores/studentStore';
-
-const userStore = useUserStore();
-const studentStore = useStudentStore();
-
-const totalUsers = computed(() => userStore.users.length);
-const activeStudents = computed(() => studentStore.students.filter((student) => student.active).length);
-
-const loadData = async () => {
-    try {
-        await userStore.fetchUsers();
-        await studentStore.fetchStudents(true);
-    } catch (error) {
-        console.error('Erro ao carregar dados:', error);
-    }
-};
-
-const stats = computed(() => ({
-    totalEmployees: totalUsers.value,
-    activeStudents: activeStudents.value,
-    appointmentsThisMonth: 12,
-    recordsToday: 8,
-}));
+import { onMounted } from 'vue';
 
 // Lifecycle
 onMounted(async () => {
     console.log('Dashboard carregado');
-    await loadData();
 });
 </script>

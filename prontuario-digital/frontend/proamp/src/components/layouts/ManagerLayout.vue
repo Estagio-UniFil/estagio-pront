@@ -1,6 +1,6 @@
 <template>
     <BaseLayout user-type="manager" :layout-config="managerConfig">
-        <slot />
+        <router-view />
     </BaseLayout>
 </template>
 

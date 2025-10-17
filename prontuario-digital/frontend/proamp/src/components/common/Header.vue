@@ -60,51 +60,24 @@ const props = defineProps({
 const emit = defineEmits(['toggle-sidebar']);
 
 // State
-const searchQuery = ref('');
 const showNotifications = ref(false);
 const showUserMenu = ref(false);
-const notificationCount = ref(3); // Mock data
-const notifications = ref([
-    { id: 1, message: 'Novo funcionário cadastrado', time: '5 min atrás' },
-    { id: 2, message: 'Relatório mensal disponível', time: '1 hora atrás' },
-    { id: 3, message: 'Sistema atualizado', time: '2 horas atrás' },
-]);
 
 // Computed
-const pageTitle = computed(() => {
-    const routeMap = props.config.routeMap || {};
-    return routeMap[route.name] || 'Dashboard';
-});
-
 const headerTitle = computed(() => {
     return props.config.title || 'Painel de administrador';
 });
 
 const pageSubtitle = computed(() => {
-    const name = user?.first_name;
+    const subtitleMap = props.config.subtitleMap || {};
+    let subtitle = subtitleMap[route.name] || '';
 
-    if (user?.role == 'admin') {
-        const subtitleMap = {
-            'admin-dashboard': `Bem vindo, ${name}!`,
-            'admin-users': 'Admin > Usuários',
-            'admin-students': 'Admin > Alunos',
-            'admin-reports': 'Admin > Relatórios',
-            'admin-settings': 'Admin > Configurações',
-        };
-        return subtitleMap[route.name] || null;
+    // Substituir placeholder {name} pelo nome do usuário
+    if (subtitle.includes('{name}') && user?.first_name) {
+        subtitle = subtitle.replace('{name}', user.first_name);
     }
-});
 
-const userName = computed(() => {
-    const user = authStore.user;
-    if (user?.first_name) {
-        return `${user.first_name}`;
-    }
-    return user?.email || 'Usuário';
-});
-
-const userEmail = computed(() => {
-    return authStore.user?.email || '';
+    return subtitle;
 });
 
 const userInitials = computed(() => {
@@ -119,25 +92,6 @@ const userInitials = computed(() => {
 });
 
 // Methods
-const toggleNotifications = () => {
-    showNotifications.value = !showNotifications.value;
-    showUserMenu.value = false;
-};
-
-const toggleUserMenu = () => {
-    showUserMenu.value = !showUserMenu.value;
-    showNotifications.value = false;
-};
-
-const handleLogout = async () => {
-    try {
-        await authStore.logout();
-        router.push({ name: 'login' });
-    } catch (error) {
-        console.error('Erro no logout:', error);
-    }
-};
-
 const closeDropdowns = () => {
     showNotifications.value = false;
     showUserMenu.value = false;

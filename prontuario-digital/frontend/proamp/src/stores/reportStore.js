@@ -5,6 +5,7 @@ export const useReportStore = defineStore('report', {
     state: () => ({
         isLoading: false,
         error: null,
+        logEntries: [],
     }),
 
     actions: {
@@ -61,6 +62,27 @@ export const useReportStore = defineStore('report', {
                     this.error = 'Não foi possível gerar o relatório. Tente novamente mais tarde.';
                 }
                 console.error('Erro ao gerar relatório:', err);
+            } finally {
+                this.isLoading = false;
+            }
+        },
+
+        async fetchAllLogEntries() {
+            this.isLoading = true;
+            this.error = null;
+            this.logEntries = [];
+
+            try {
+                const response = await reportService.getReportLog();
+                console.log(response.data);
+                console.log(response);
+                this.logEntries = Array.isArray(response.data) ? response.data : [];
+                console.log(this.logEntries);
+                console.log('Todas as entradas de log carregadas:', this.logEntries.length);
+            } catch (error) {
+                console.error('Erro ao buscar entradas de log:', error);
+                this.error = this._extractErrorMessage(error);
+                this.logEntries = [];
             } finally {
                 this.isLoading = false;
             }

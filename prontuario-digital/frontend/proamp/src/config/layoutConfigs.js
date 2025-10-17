@@ -1,4 +1,4 @@
-// Configurações específicas para cada tipo de layout
+// Layout config for each user type
 
 export const layoutConfigs = {
     admin: {
@@ -63,16 +63,12 @@ export const layoutConfigs = {
             routeMap: {
                 'manager-dashboard': 'Dashboard',
                 'manager-team': 'Equipe',
-                'manager-students': 'Alunos',
                 'manager-reports': 'Relatórios',
-                'manager-schedule': 'Agenda',
             },
             subtitleMap: {
                 'manager-dashboard': 'Bem vindo, {name}!',
                 'manager-team': 'Gestão > Equipe',
-                'manager-students': 'Gestão > Alunos',
                 'manager-reports': 'Gestão > Relatórios',
-                'manager-schedule': 'Gestão > Agenda',
             },
         },
         sidebar: {
@@ -91,19 +87,9 @@ export const layoutConfigs = {
                     icon: 'fas fa-users',
                 },
                 {
-                    name: 'Alunos',
-                    route: 'manager-students',
-                    icon: 'fas fa-graduation-cap',
-                },
-                {
                     name: 'Relatórios',
                     route: 'manager-reports',
                     icon: 'fas fa-chart-line',
-                },
-                {
-                    name: 'Agenda',
-                    route: 'manager-schedule',
-                    icon: 'fas fa-calendar-alt',
                 },
             ],
         },
@@ -118,17 +104,15 @@ export const layoutConfigs = {
             userRole: 'health-professional',
             routeMap: {
                 'health-dashboard': 'Dashboard',
-                'health-patients': 'Pacientes',
-                'health-appointments': 'Consultas',
+                'health-students': 'Estudantes',
                 'health-records': 'Prontuários',
-                'health-schedule': 'Agenda',
+                'health-reports': 'Relatórios',
             },
             subtitleMap: {
                 'health-dashboard': 'Bem vindo, {name}!',
-                'health-patients': 'Atendimento > Pacientes',
-                'health-appointments': 'Atendimento > Consultas',
+                'health-students': 'Atendimento > Estudantes',
                 'health-records': 'Atendimento > Prontuários',
-                'health-schedule': 'Atendimento > Agenda',
+                'health-reports': 'Atendimento > Relatórios',
             },
         },
         sidebar: {
@@ -142,14 +126,9 @@ export const layoutConfigs = {
                     icon: 'fas fa-tachometer-alt',
                 },
                 {
-                    name: 'Pacientes',
-                    route: 'health-patients',
+                    name: 'Estudantes',
+                    route: 'health-students',
                     icon: 'fas fa-user-injured',
-                },
-                {
-                    name: 'Consultas',
-                    route: 'health-appointments',
-                    icon: 'fas fa-stethoscope',
                 },
                 {
                     name: 'Prontuários',
@@ -157,16 +136,16 @@ export const layoutConfigs = {
                     icon: 'fas fa-file-medical',
                 },
                 {
-                    name: 'Agenda',
-                    route: 'health-schedule',
-                    icon: 'fas fa-calendar-check',
+                    name: 'Relatórios',
+                    route: 'health-reports',
+                    icon: 'fas fa-chart-bar',
                 },
             ],
         },
     },
 };
 
-// Função helper para obter configuração por tipo de usuário
+// Helper by user type
 export const getLayoutConfig = (userType) => {
     return layoutConfigs[userType] || layoutConfigs.admin;
 };

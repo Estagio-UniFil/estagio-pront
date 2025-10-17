@@ -1,30 +1,45 @@
 <template>
     <div class="form-container">
-        <div class="form-group">
+        <!-- Dropdown de Seleção de Estudante (apenas no modo create) -->
+        <div v-if="mode === 'create'" class="form-group">
+            <label for="student-select" class="input-label">Selecionar Estudante*</label>
+            <select id="student-select" v-model="selectedStudentId" class="input-field bg-tertiary" @change="handleStudentChange" required>
+                <option value="" disabled>Selecione um estudante</option>
+                <option v-for="student in students" :key="student.id" :value="student.id">{{ student.name }} - CGM: {{ student.cgm }}</option>
+            </select>
+        </div>
+
+        <!-- Campos somente leitura (view mode) -->
+        <div v-if="mode !== 'create'" class="form-group">
             <label for="student-name" class="input-label">Aluno</label>
             <input id="student-name" type="text" :value="studentName" class="input-field bg-tertiary" disabled />
         </div>
-        <div class="form-group">
+
+        <div v-if="mode !== 'create'" class="form-group">
             <label for="healthpro-name" class="input-label">Profissional de Saúde</label>
             <input id="healthpro-name" type="text" :value="healthproName" class="input-field bg-tertiary" disabled />
         </div>
-        <div class="form-group">
+
+        <div v-if="mode !== 'create'" class="form-group">
             <label for="entry-date" class="input-label">Data da Entrada</label>
             <input id="entry-date" type="text" :value="formattedEntryDate" class="input-field bg-tertiary" disabled />
         </div>
+
+        <!-- Campos editáveis -->
         <div class="form-group">
-            <label for="description" class="input-label">Descrição</label>
-            <textarea id="description" v-model="editableData.description" class="input-field bg-tertiary" :readonly="readonly" rows="4" placeholder="Descrição detalhada do atendimento..."></textarea>
+            <label for="description" class="input-label">Descrição{{ mode === 'create' ? '*' : '' }}</label>
+            <textarea id="description" v-model="localDescription" class="input-field bg-tertiary" :readonly="readonly" rows="4" placeholder="Descrição detalhada do atendimento..." :required="mode === 'create'"></textarea>
         </div>
+
         <div class="form-group">
             <label for="notes" class="input-label">Observações Adicionais</label>
-            <textarea id="notes" v-model="editableData.notes" class="input-field bg-tertiary" :readonly="readonly" rows="3" placeholder="Notas ou observações adicionais..."></textarea>
+            <textarea id="notes" v-model="localNotes" class="input-field bg-tertiary" :readonly="readonly" rows="3" placeholder="Notas ou observações adicionais..."></textarea>
         </div>
     </div>
 </template>
 
 <script setup>
-import { computed, ref, watch, defineProps, defineEmits } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 const props = defineProps({
     modelValue: {
@@ -35,27 +50,50 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    mode: {
+        type: String,
+        default: 'view',
+        validator: (value) => ['view', 'create', 'delete'].includes(value),
+    },
+    students: {
+        type: Array,
+        default: () => [],
+    },
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'student-selected']);
 
-const editableData = ref({ ...props.modelValue });
+// Usar refs locais para evitar loop infinito
+const selectedStudentId = ref(props.modelValue.student?.id || '');
+const localDescription = ref(props.modelValue.description || '');
+const localNotes = ref(props.modelValue.notes || '');
 
+// Atualizar valores locais quando modelValue mudar (apenas do pai para o filho)
 watch(
     () => props.modelValue,
     (newValue) => {
-        editableData.value = { ...newValue };
+        selectedStudentId.value = newValue.student?.id || '';
+        localDescription.value = newValue.description || '';
+        localNotes.value = newValue.notes || '';
     },
     { deep: true },
 );
 
-watch(
-    editableData,
-    (newValue) => {
-        emit('update:modelValue', newValue);
-    },
-    { deep: true },
-);
+// Emitir mudanças apenas quando os campos editáveis mudarem (filho para pai)
+watch([localDescription, localNotes], () => {
+    emit('update:modelValue', {
+        ...props.modelValue,
+        description: localDescription.value,
+        notes: localNotes.value,
+    });
+});
+
+const handleStudentChange = () => {
+    const student = props.students.find((s) => s.id === selectedStudentId.value);
+    if (student) {
+        emit('student-selected', student);
+    }
+};
 
 // Formatting
 const studentName = computed(() => {
@@ -63,9 +101,10 @@ const studentName = computed(() => {
 });
 
 const getHealthProName = (user) => {
-    if (user.first_name && user.last_name) {
+    if (user?.first_name && user?.last_name) {
         return `${user.first_name} ${user.last_name}`;
     }
+    return null;
 };
 
 const healthproName = computed(() => {
@@ -92,9 +131,17 @@ const formattedEntryDate = computed(() => {
     margin-bottom: 0.5rem;
     font-weight: bold;
 }
-.input-field bg-tertiary[readonly],
-.input-field bg-tertiary[disabled] {
+.input-field[readonly],
+.input-field[disabled] {
     background-color: #f0f0f0;
+    cursor: not-allowed;
+}
+
+select.input-field {
+    cursor: pointer;
+}
+
+select.input-field:disabled {
     cursor: not-allowed;
 }
 </style>

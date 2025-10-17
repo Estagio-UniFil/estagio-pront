@@ -1,30 +1,27 @@
 <template>
-    <AdminLayout>
-        <div class="card p-0">
-            <div class="p-6 border-b border-primary">
-                <h2 class="text-xl font-lato-bold text-primary">Meu Perfil</h2>
-                <p class="text-secondary font-lato-regular mt-1">Veja e edite suas informações pessoais.</p>
+    <div class="card p-0">
+        <div class="p-6 border-b border-primary">
+            <h2 class="text-xl font-lato-bold text-primary">Meu Perfil</h2>
+            <p class="text-secondary font-lato-regular mt-1">Veja e edite suas informações pessoais.</p>
+        </div>
+        <div class="p-6 flex flex-col md:flex-row items-start gap-8">
+            <div class="flex flex-col items-center w-full md:w-48">
+                <div class="avatar-placeholder">
+                    <span>{{ userInitials }}</span>
+                </div>
+                <p class="font-lato-bold text-lg mt-3 text-primary">{{ user.first_name }} {{ user.last_name }}</p>
+                <p class="text-sm text-muted">{{ user.email }}</p>
             </div>
-            <div class="p-6 flex flex-col md:flex-row items-start gap-8">
-                <div class="flex flex-col items-center w-full md:w-48">
-                    <div class="avatar-placeholder">
-                        <span>{{ userInitials }}</span>
-                    </div>
-                    <p class="font-lato-bold text-lg mt-3 text-primary">{{ user.first_name }} {{ user.last_name }}</p>
-                    <p class="text-sm text-muted">{{ user.email }}</p>
-                </div>
-                <div class="flex-1 w-full">
-                    <UserForm :user="user" :is-editing="true" :is-submitting="userStore.loading" :disable-role-field="true" :show-cancel-button="false" @submit="handleSave" />
-                </div>
+            <div class="flex-1 w-full">
+                <UserForm :user="user" :is-editing="true" :is-submitting="userStore.loading" :disable-role-field="true" :show-cancel-button="false" @submit="handleSave" />
             </div>
         </div>
-    </AdminLayout>
+    </div>
 </template>
 
 <script setup>
 import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
-import AdminLayout from '@/components/layouts/AdminLayout.vue';
 import UserForm from '@/components/forms/user/UserForm.vue';
 import { useAuthStore } from '@/stores/authStore';
 import { useUserStore } from '@/stores/userStore';
@@ -40,6 +37,7 @@ const { user } = storeToRefs(authStore);
 const userInitials = computed(() => {
     const firstName = user.value?.first_name || '';
     const lastName = user.value?.last_name || '';
+    console.log(user.value?.health_profile);
     if (firstName && lastName) {
         return `${firstName[0]}${lastName[0]}`.toUpperCase();
     }
@@ -90,7 +88,6 @@ const handleSave = async (userData) => {
     margin-bottom: 0.25rem;
 }
 
-/* A MÁGICA PRINCIPAL: Faz os inputs parecerem texto normal */
 .card :deep(.input-field) {
     border: none; /* Remove todas as bordas */
     border-bottom: 2px solid var(--bg-tertiary); /* Adiciona uma borda inferior sutil */

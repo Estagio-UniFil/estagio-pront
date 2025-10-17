@@ -51,12 +51,11 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 import AuthLayout from '@/components/layouts/AuthLayout.vue';
 
 const router = useRouter();
-const route = useRoute();
 const authStore = useAuthStore();
 
 // Estado do formulário
@@ -111,7 +110,7 @@ const handleLogin = async () => {
         await authStore.login(form.value.email, form.value.password);
 
         // Redireciona baseado no role do usuário
-        const redirectTo = route.query.redirect || getDefaultRoute();
+        const redirectTo = getDefaultRoute();
         router.push(redirectTo);
     } catch (error) {
         // Erro já está sendo tratado no store

@@ -8,58 +8,29 @@
                 </a>
             </div>
             <div>
-                <h1 class="sidebar-title">ProAMP</h1>
-                <p class="text-xs text-muted font-lato-medium mt-1">Administração</p>
+                <h1 class="sidebar-title">{{ config.title }}</h1>
+                <p class="text-xs text-muted font-lato-medium mt-1">{{ config.subtitle }}</p>
             </div>
         </div>
 
         <!-- Navigation Menu -->
         <nav class="flex-1 py-4">
-            <!-- Dashboard -->
-            <router-link :to="{ name: 'admin-dashboard' }" class="nav-link" :class="{ active: $route.name === 'admin-dashboard' }">
-                <i class="fas fa-tachometer-alt w-5 mr-3"></i>
-                Dashboard
+            <router-link v-for="item in config.navigation" :key="item.route" :to="{ name: item.route }" class="nav-link" :class="{ active: $route.name === item.route }">
+                <i :class="item.icon" class="w-5 mr-3"></i>
+                {{ item.name }}
             </router-link>
-
-            <!-- Funcionários -->
-            <router-link :to="{ name: 'admin-users' }" class="nav-link" :class="{ active: $route.name === 'admin-users' }">
-                <i class="fas fa-user-md w-5 mr-3"></i>
-                Usuários
-            </router-link>
-
-            <!-- Alunos -->
-            <router-link :to="{ name: 'admin-students' }" class="nav-link" :class="{ active: $route.name === 'admin-students' }">
-                <i class="fas fa-users w-5 mr-3"></i>
-                Alunos
-            </router-link>
-
-            <!-- Relatórios -->
-            <router-link :to="{ name: 'admin-reports' }" class="nav-link" :class="{ active: $route.name === 'admin-reports' }">
-                <i class="fas fa-chart-bar w-5 mr-3"></i>
-                Relatórios
-            </router-link>
-
-            <!-- Separador -->
-            <!-- <div class="border-t border-primary mx-4 my-4"></div> -->
-
-            <!-- Configurações -->
-            <!-- <router-link :to="{ name: 'admin-settings' }" class="nav-link" :class="{ active: $route.name === 'admin-settings' }">
-                <i class="fas fa-cog w-5 mr-3"></i>
-                Configurações
-            </router-link> -->
         </nav>
 
         <!-- User Info / Logout -->
         <div class="p-4 border-t border-primary">
-            <router-link :to="{ name: 'admin-profile' }" :class="{ active: $route.name === 'admin-profile' }">
+            <router-link :to="{ name: `${userType}-profile` }" :class="{ active: $route.name === `${userType}-profile` }">
                 <div class="flex items-center mb-3">
                     <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-lato-bold">
                         {{ userInitials }}
                     </div>
-
                     <div class="ml-3 flex-1">
                         <p class="text-sm font-lato-bold text-primary">{{ userName }}</p>
-                        <p class="text-xs text-muted">Administrador</p>
+                        <p class="text-xs text-muted">{{ config.userRole }}</p>
                     </div>
                 </div>
             </router-link>
@@ -75,7 +46,6 @@
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
-import { useElementHover } from '@vueuse/core';
 import LogoProamp from '../logo/LogoProamp.vue';
 
 const router = useRouter();
@@ -86,6 +56,14 @@ const props = defineProps({
     sidebarOpen: {
         type: Boolean,
         default: false,
+    },
+    config: {
+        type: Object,
+        required: true,
+    },
+    userType: {
+        type: String,
+        required: true,
     },
 });
 

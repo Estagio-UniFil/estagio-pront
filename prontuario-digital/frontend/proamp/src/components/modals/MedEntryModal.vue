@@ -1,12 +1,12 @@
 <template>
     <BaseModal :show="show" @close="handleClose" :title="modalTitle">
-        <MedEntryForm v-if="mode === 'view' || mode === 'create'" v-model="formData" :readonly="isViewMode" />
+        <MedEntryForm v-if="mode === 'view' || mode === 'create'" v-model="formData" :readonly="isViewMode" :mode="mode" :students="studentList" @student-selected="handleStudentSelected" />
 
         <div v-if="mode === 'delete'">
-            <p>Você tem certeza que deseja excluir esta entrada de prontuário? Esta ação não pode ser desfeita.</p>
+            <p class="mb-6">Você tem certeza que deseja excluir esta entrada de prontuário? Esta ação não pode ser desfeita.</p>
             <div class="form-group">
-                <label for="delete-reason" class="font-weight-bold">Motivo da Exclusão</label>
-                <textarea id="delete-reason" v-model="deleteReason" class="form-control" rows="3" placeholder="É obrigatório informar o motivo da exclusão."></textarea>
+                <label for="delete-reason" class="input-label">Motivo da Exclusão</label>
+                <input type="text" class="input-field bg-tertiary" id="delete-reason" v-model="deleteReason" placeholder="É obrigatório informar o motivo da exclusão." /><input />
             </div>
         </div>
 
@@ -15,7 +15,7 @@
                 {{ isViewMode ? 'Fechar' : 'Cancelar' }}
             </button>
 
-            <button v-if="mode === 'create'" @click="submitCreate" class="btn btn-primary" :disabled="isLoading">
+            <button v-if="mode === 'create'" @click="submitCreate" class="btn btn-primary" :disabled="isLoading || !selectedStudentId || !formData.description">
                 {{ isLoading ? 'Salvando...' : 'Salvar' }}
             </button>
 
@@ -27,53 +27,90 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, defineProps, defineEmits } from 'vue';
+import { ref, computed, watch } from 'vue';
 import BaseModal from '@/components/modals/BaseModal.vue';
 import MedEntryForm from '@/components/forms/student/MedEntryForm.vue';
 import { useAlertStore } from '@/stores/alertStore';
-import medEntryService from '@/services/api/medEntryService';
+import { useStudentStore } from '@/stores/studentStore';
+import { useMedEntryStore } from '@/stores/medEntryStore';
+import { useAuth } from '@/composables/useAuth';
 
 const props = defineProps({
     show: {
         type: Boolean,
         required: true,
     },
-    // 'view', 'create', 'delete'
     mode: {
         type: String,
         required: true,
         validator: (value) => ['view', 'create', 'delete'].includes(value),
     },
-    // Med Entry object to view and delete
     entryData: {
         type: Object,
         default: () => ({}),
-    },
-    // For creating a new entry
-    studentId: {
-        type: [String, Number],
-        default: null,
     },
 });
 
 const emit = defineEmits(['close', 'success']);
 
 const alertStore = useAlertStore();
+const studentStore = useStudentStore();
+const medEntryStore = useMedEntryStore();
+const { user } = useAuth();
+
 const isLoading = ref(false);
 const formData = ref({});
 const deleteReason = ref('');
+const selectedStudentId = ref(null);
+const studentList = ref([]);
 
-// Look to entry data to populate the form
+// Carregar lista de estudantes quando o modal abrir no modo create
 watch(
-    () => props.entryData,
-    (newEntry) => {
-        formData.value = { ...newEntry };
+    () => props.show,
+    async (newValue) => {
+        if (newValue && props.mode === 'create') {
+            await loadStudents();
+            initializeCreateMode();
+        } else if (newValue && (props.mode === 'view' || props.mode === 'delete')) {
+            formData.value = { ...props.entryData };
+        }
     },
-    { immediate: true, deep: true },
+    { immediate: true },
 );
 
-// Title and mode logic
+const loadStudents = async () => {
+    try {
+        if (studentStore.students.length === 0) {
+            await studentStore.fetchStudents(true); // true = ativos
+        }
+        studentList.value = studentStore.students;
+    } catch (error) {
+        console.error('Erro ao carregar estudantes:', error);
+        alertStore.triggerAlert({ message: 'Erro ao carregar lista de estudantes.', type: 'error' });
+    }
+};
+
+const initializeCreateMode = () => {
+    selectedStudentId.value = null;
+    formData.value = {
+        description: '',
+        notes: '',
+        student: null,
+        healthpro: user.value,
+        entry_date: new Date().toISOString(),
+    };
+};
+
+const handleStudentSelected = (student) => {
+    selectedStudentId.value = student.id;
+    formData.value.student = {
+        id: student.id,
+        name: student.name,
+    };
+};
+
 const isViewMode = computed(() => props.mode === 'view');
+
 const modalTitle = computed(() => {
     if (props.mode === 'view') return 'Detalhes da Entrada de Prontuário';
     if (props.mode === 'create') return 'Nova Entrada de Prontuário';
@@ -81,33 +118,40 @@ const modalTitle = computed(() => {
     return '';
 });
 
-// Methods
 const handleClose = () => {
     if (!isLoading.value) {
         deleteReason.value = '';
+        selectedStudentId.value = null;
+        formData.value = {};
         emit('close');
     }
 };
 
 const submitCreate = async () => {
-    if (!props.studentId) {
-        alertStore.triggerAlert({ message: 'ID do aluno não fornecido.', type: 'error' });
+    if (!selectedStudentId.value) {
+        alertStore.triggerAlert('Selecione um estudante.', 'warning');
+        return;
+    }
+
+    if (!formData.value.description || !formData.value.description.trim()) {
+        alertStore.triggerAlert('A descrição é obrigatória.', 'warning');
         return;
     }
 
     isLoading.value = true;
     try {
         const payload = {
+            student_id: selectedStudentId.value,
             description: formData.value.description,
-            notes: formData.value.notes,
+            notes: formData.value.notes || '',
         };
-        // A API espera o student_id na query param
-        await medEntryService.createEntry(props.studentId, payload);
-        alertStore.showAlert('Entrada criada com sucesso!', 'success');
-        emit('success'); // Emite um evento para o pai (ex: para recarregar a lista)
+
+        await medEntryStore.createEntry(payload);
+        alertStore.triggerAlert('Entrada criada com sucesso!', 'success');
+        emit('success');
         handleClose();
     } catch (error) {
-        alertStore.showAlert('Erro ao criar entrada.', 'error');
+        alertStore.triggerAlert('Erro ao criar entrada.', 'error');
         console.error(error);
     } finally {
         isLoading.value = false;
@@ -116,19 +160,19 @@ const submitCreate = async () => {
 
 const submitDelete = async () => {
     if (!deleteReason.value.trim()) {
-        alertStore.showAlert('O motivo da exclusão é obrigatório.', 'warning');
+        alertStore.triggerAlert('O motivo da exclusão é obrigatório.', 'warning');
         return;
     }
 
     isLoading.value = true;
     try {
-        const payload = { delete_reason: deleteReason.value };
-        await medEntryService.deleteEntry(props.entryData.id, payload);
-        alertStore.showAlert('Entrada excluída com sucesso!', 'success');
+        await medEntryStore.deleteEntry(props.entryData.id, deleteReason.value);
+        deleteReason.value = '';
+        alertStore.triggerAlert('Entrada excluída com sucesso!', 'success');
         emit('success');
         handleClose();
     } catch (error) {
-        alertStore.showAlert('Erro ao excluir entrada.', 'error');
+        alertStore.triggerAlert('Erro ao excluir entrada.', 'error');
         console.error(error);
     } finally {
         isLoading.value = false;

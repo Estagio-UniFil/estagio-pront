@@ -4,10 +4,12 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
 from .models import User
+from rest_framework import status
 from .serializers import UserSerializer
 from authentication.permissions import (
     IsManagerUser,
     IsAdminUser,
+    AdminWriteAllRead,
 )
 
 # Create your views here.
@@ -37,7 +39,7 @@ class CustomAuthToken(ObtainAuthToken):
         )
 
 
-@permission_classes([IsAdminUser])
+@permission_classes([AdminWriteAllRead])
 class UserViewSet(viewsets.ModelViewSet):
     # Endpoint para admins gerenciarem users
     queryset = User.objects.all().order_by("first_name")
@@ -48,6 +50,10 @@ class UserViewSet(viewsets.ModelViewSet):
 @api_view(["GET"])
 @permission_classes([IsManagerUser])
 def view_health_pros(request):
-    queryset = User.objects.filter(role="health_professional").order_by("first_name")
-    serializer = UserSerializer(queryset, many=True)
-    return Response(serializer.data)
+    if request.method == "GET":
+        queryset = User.objects.filter(role="health_prof").order_by("first_name")
+        serializer = UserSerializer(queryset, many=True)
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK,
+        )

@@ -4,13 +4,12 @@ export const requireAuth = (to, from, next) => {
     const authStore = useAuthStore();
 
     if (!authStore.isAuthenticated) {
-        // Redireciona para login se não estiver autenticado
         next({
             name: 'login',
-            query: { redirect: to.fullPath }, // Salva para onde estava indo
+            query: { redirect: to.fullPath },
         });
     } else {
-        next(); // Permite acesso
+        next();
     }
 };
 
@@ -21,7 +20,6 @@ export const requireAdmin = (to, from, next) => {
     if (!authStore.isAuthenticated) {
         next({ name: 'login', query: { redirect: to.fullPath } });
     } else if (!authStore.isAdmin) {
-        // Redireciona para página não autorizada
         next({ name: 'unauthorized' });
     } else {
         next();
@@ -46,16 +44,17 @@ export const requireGuest = (to, from, next) => {
     const authStore = useAuthStore();
 
     if (authStore.isAuthenticated) {
-        // Se já está logado, redireciona para dashboard baseado no role
         if (authStore.isAdmin) {
             next({ name: 'admin-dashboard' });
         } else if (authStore.isManager) {
             next({ name: 'manager-dashboard' });
+        } else if (authStore.isProfessional) {
+            next({ name: 'health-dashboard' });
         } else {
-            next({ name: 'professional-dashboard' });
+            next({ name: 'unauthorized' });
         }
     } else {
-        next(); // Permite acesso ao login
+        next();
     }
 };
 
@@ -67,4 +66,28 @@ export const initializeAuth = (to, from, next) => {
     authStore.initializeAuth();
 
     next();
+};
+
+export const requireManager = (to, from, next) => {
+    const authStore = useAuthStore();
+
+    if (!authStore.isAuthenticated) {
+        next({ name: 'login', query: { redirect: to.fullPath } });
+    } else if (!authStore.isManager) {
+        next({ name: 'unauthorized' });
+    } else {
+        next();
+    }
+};
+
+export const requireHealthProfessional = (to, from, next) => {
+    const authStore = useAuthStore();
+
+    if (!authStore.isAuthenticated) {
+        next({ name: 'login', query: { redirect: to.fullPath } });
+    } else if (!authStore.isProfessional) {
+        next({ name: 'unauthorized' });
+    } else {
+        next();
+    }
 };

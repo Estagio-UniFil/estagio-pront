@@ -1,8 +1,19 @@
 import api from './baseService';
 
 export const userService = {
-    async getUsers() {
+    async getUsers(params = {}) {
+        // Get users with params for pagination
+        const response = await api.get('api/auth/users/', { params });
+        return response.data;
+    },
+
+    async getAllUsers() {
         const response = await api.get('api/auth/users/');
+        return response.data;
+    },
+
+    async getAllHealthPros(params = {}) {
+        const response = await api.get('api/managerview/', { params });
         return response.data;
     },
 

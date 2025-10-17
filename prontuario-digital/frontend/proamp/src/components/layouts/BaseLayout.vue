@@ -12,10 +12,9 @@
 
         <!-- Main Content Area -->
         <div :class="layoutConfig.mainContentClass">
-            <!-- Header -->
-            <Header @toggle-sidebar="toggleSidebar" @toggle-UserMenu="toggleUserMenu" :config="layoutConfig.header" :userType="userType" />
+            <Header @toggle-sidebar="toggleSidebar" @toggle-UserMenu="toggleUserMenu" :config="layoutConfig.header" :userType="userType" :showSearch="layoutConfig.header.showSearch" />
 
-            <!-- Page Content -->
+            <!-- Page content -->
             <main class="mt-6">
                 <slot />
             </main>

@@ -7,9 +7,32 @@
             <h1 class="text-2xl font-lato-bold text-gray-900 mb-2">Acesso Negado</h1>
             <p class="text-gray-600 font-lato-regular mb-6">Você não tem permissão para acessar esta página.</p>
             <div class="space-y-3">
-                <router-link :to="{ name: 'login' }" class="btn-primary w-full"> Fazer Login </router-link>
+                <button @click="redirectToLogin" class="btn-primary w-full">Fazer Login</button>
                 <button @click="$router.go(-1)" class="btn-outline w-full">Voltar</button>
             </div>
         </div>
     </div>
 </template>
+
+<script setup>
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/authStore';
+
+const router = useRouter();
+const authStore = useAuthStore();
+
+const redirectToLogin = () => {
+    const redirectTo = getDefaultRoute();
+    router.push(redirectTo);
+};
+
+const getDefaultRoute = () => {
+    if (authStore.isAdmin) {
+        return '/admin/dashboard';
+    } else if (authStore.isManager) {
+        return '/manager/dashboard';
+    } else {
+        return '/professional/dashboard';
+    }
+};
+</script>
