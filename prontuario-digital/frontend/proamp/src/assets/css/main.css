@@ -1,4 +1,7 @@
 @import 'tailwindcss';
+@import 'flowbite/src/themes/default';
+@plugin "flowbite/plugin";
+@source "../node_modules/flowbite";
 
 /* ==========================================================================
    VARIÁVEIS CSS PARA TEMAS
@@ -8,10 +11,12 @@
     --bg-primary: theme('colors.gray.50');
     --bg-secondary: theme('colors.white');
     --bg-tertiary: theme('colors.gray.100');
+    --bg-accent: theme('colors.blue.600');
 
     --text-primary: theme('colors.gray.900');
     --text-secondary: theme('colors.gray.700');
     --text-muted: theme('colors.gray.600');
+    --text-white: theme('colors.white');
 
     --border-primary: theme('colors.gray.200');
     --border-secondary: theme('colors.gray.100');
@@ -20,6 +25,7 @@
     --accent-primary-hover: theme('colors.blue.700');
     --accent-light: theme('colors.blue.100');
     --accent-lighter: theme('colors.blue.50');
+    --accent-badge: theme('colors.blue.600');
 
     --success-bg: theme('colors.green.50');
     --success-border: theme('colors.green.500');
@@ -47,10 +53,12 @@
     --bg-primary: theme('colors.gray.900');
     --bg-secondary: theme('colors.gray.800');
     --bg-tertiary: theme('colors.gray.700');
+    --bg-accent: theme('colors.blue.500');
 
     --text-primary: theme('colors.gray.100');
     --text-secondary: theme('colors.gray.300');
     --text-muted: theme('colors.gray.400');
+    --text-white: theme('colors.white');
 
     --border-primary: theme('colors.gray.600');
     --border-secondary: theme('colors.gray.700');
@@ -59,6 +67,7 @@
     --accent-primary-hover: theme('colors.blue.400');
     --accent-light: theme('colors.blue.900');
     --accent-lighter: theme('colors.blue.950');
+    --accent-badge: theme('colors.gray.100');
 
     --success-bg: theme('colors.green.950');
     --success-border: theme('colors.green.400');
@@ -608,7 +617,7 @@
 
     .badge-primary {
         background-color: var(--accent-light);
-        color: var(--accent-primary);
+        color: var(--accent-badge);
     }
 
     .badge-success {

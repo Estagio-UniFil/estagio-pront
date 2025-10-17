@@ -63,12 +63,8 @@
                 <p class="card-subtitle">Atendimentos e atualizações de prontuários</p>
             </div>
 
-            <div class="h-64 flex items-center justify-center bg-tertiary rounded-lg">
-                <div class="text-center">
-                    <i class="fas fa-chart-line text-4xl text-muted mb-4"></i>
-                    <p class="text-muted font-lato-regular">Gráfico de atividade</p>
-                    <p class="text-sm text-muted font-lato-light">Em desenvolvimento</p>
-                </div>
+            <div class="pt-4" style="height: 280px">
+                <Line :data="chartData" :options="chartOptions" />
             </div>
         </div>
 
@@ -105,21 +101,29 @@
 </template>
 
 <script setup>
-import { onMounted, computed } from 'vue';
+import { onMounted, computed, ref } from 'vue';
+import { Line } from 'vue-chartjs';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler } from 'chart.js';
 
 import { useUserStore } from '@/stores/userStore';
 import { useStudentStore } from '@/stores/studentStore';
+import { useMedEntryStore } from '@/stores/medEntryStore';
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
 const userStore = useUserStore();
 const studentStore = useStudentStore();
+const medEntryStore = useMedEntryStore();
 
 const totalUsers = computed(() => userStore.users.length);
 const activeStudents = computed(() => studentStore.students.filter((student) => student.active).length);
+const totalEntries = computed(() => medEntryStore.entries.length);
 
 const loadData = async () => {
     try {
         await userStore.fetchUsers();
         await studentStore.fetchStudents(true);
+        await medEntryStore.fetchAllEntries();
     } catch (error) {
         console.error('Erro ao carregar dados:', error);
     }
@@ -128,9 +132,47 @@ const loadData = async () => {
 const stats = computed(() => ({
     totalEmployees: totalUsers.value,
     activeStudents: activeStudents.value,
-    appointmentsThisMonth: 12,
-    recordsToday: 8,
+    appointmentsThisMonth: totalEntries.value,
+    recordsToday: totalEntries.value,
 }));
+
+// Chart
+const chartData = ref({
+    labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
+    datasets: [
+        {
+            label: 'Atendimentos',
+            data: [31, 40, 28, 51, 42, 109, 100],
+            backgroundColor: 'rgba(26, 86, 219, 0.2)',
+            borderColor: 'rgba(26, 86, 219, 1)',
+            tension: 0.3,
+            fill: true,
+        },
+        {
+            label: 'Prontuários',
+            data: [11, 32, 45, 32, 34, 52, 41],
+            backgroundColor: 'rgba(255, 153, 0, 0.2)',
+            borderColor: 'rgba(255, 153, 0, 1)',
+            tension: 0.3,
+            fill: true,
+        },
+    ],
+});
+
+const chartOptions = ref({
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: {
+            position: 'top',
+        },
+    },
+    scales: {
+        y: {
+            beginAtZero: true,
+        },
+    },
+});
 
 // Lifecycle
 onMounted(async () => {

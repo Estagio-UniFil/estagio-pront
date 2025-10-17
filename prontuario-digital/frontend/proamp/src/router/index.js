@@ -119,7 +119,7 @@ const router = createRouter({
                 {
                     path: 'reports',
                     name: 'health-reports',
-                    component: () => import('@/views/common/ReportsView.vue'),
+                    component: () => import('@/views/professional/HealthProfessionalReportsView.vue'),
                 },
                 {
                     path: 'profile',

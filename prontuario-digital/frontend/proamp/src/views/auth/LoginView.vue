@@ -29,9 +29,15 @@
                 </div>
 
                 <!-- Lembrar de mim -->
-                <div class="flex items-center">
-                    <input v-model="form.rememberMe" type="checkbox" id="remember" class="mr-2" :disabled="authStore.isLoading" />
-                    <label for="remember" class="text-sm text-gray-600"> Lembrar de mim </label>
+                <div class="flex items-center justify-between">
+                    <div class="relative">
+                        <input v-model="form.rememberMe" type="checkbox" id="remember" class="mr-2" :disabled="authStore.isLoading" />
+                        <label for="remember" class="text-sm text-muted"> Lembrar de mim </label>
+                    </div>
+
+                    <div>
+                        <ThemeToggle />
+                    </div>
                 </div>
 
                 <!-- Botão de login -->
@@ -54,6 +60,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 import AuthLayout from '@/components/layouts/AuthLayout.vue';
+import ThemeToggle from '../../components/common/ThemeToggle.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();

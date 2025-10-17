@@ -38,7 +38,7 @@
         </div>
     </div>
 
-    <MedEntryModal :show="isModalVisible" :mode="modalMode" :entry-data="selectedEntry" @close="closeModal" @success="fetchEntries" />
+    <ReportParamsModal :show="isModalVisible" @close="closeModal" />
 </template>
 
 <script setup>
@@ -46,14 +46,12 @@ import { ref, onMounted } from 'vue';
 import BaseTable from '@/components/tables/BaseTable.vue';
 import { useMedEntryStore } from '@/stores/medEntryStore';
 import { useReportStore } from '@/stores/reportStore';
-import MedEntryModal from '@/components/modals/MedEntryModal.vue';
+import ReportParamsModal from '@/components/modals/ReportParamsModal.vue';
 
 const medEntryStore = useMedEntryStore();
 const reportStore = useReportStore();
 
 const isModalVisible = ref(false);
-const modalMode = ref('view');
-const selectedEntry = ref(null);
 
 const tableColumns = ref([
     {
@@ -78,28 +76,18 @@ const tableColumns = ref([
 // Métodos
 const openExportModal = () => {
     console.log('modal de exportação');
+    isModalVisible.value = true;
     //debugger;
-    reportStore.exportMonthlyReport();
+    //reportStore.exportMonthlyReport();
 };
 
 const fetchEntries = () => {
     reportStore.fetchAllLogEntries();
 };
 
-const openViewModal = (entry) => {
-    selectedEntry.value = entry;
-    modalMode.value = 'view';
-    isModalVisible.value = true;
-};
-
 const closeModal = () => {
     isModalVisible.value = false;
-    selectedEntry.value = null;
 };
-
-// Funções utilitárias
-const format = (dateString) => new Date(dateString).toLocaleString('pt-BR');
-const truncate = (text, length = 50) => (text.length > length ? text.substring(0, length) + '...' : text);
 
 onMounted(() => {
     fetchEntries();

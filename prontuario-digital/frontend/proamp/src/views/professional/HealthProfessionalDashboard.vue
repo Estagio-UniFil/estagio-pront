@@ -9,7 +9,7 @@
                 </div>
                 <div>
                     <p class="text-sm font-lato-regular text-muted">Alunos Ativos</p>
-                    <p class="text-2xl font-lato-bold text-primary">temp</p>
+                    <p class="text-2xl font-lato-bold text-primary">{{ stats.activeStudents }}</p>
                 </div>
             </div>
         </div>
@@ -82,7 +82,30 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, computed } from 'vue';
+
+import { useStudentStore } from '@/stores/studentStore';
+import { useMedEntryStore } from '@/stores/medEntryStore';
+
+const studentStore = useStudentStore();
+const medEntryStore = useMedEntryStore();
+
+const activeStudents = computed(() => studentStore.students.filter((student) => student.active).length);
+const totalEntries = computed(() => medEntryStore.entries.length);
+
+const loadData = async () => {
+    try {
+        await studentStore.fetchStudents(true);
+        await medEntryStore.fetchAllEntries();
+    } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+    }
+};
+
+const stats = computed(() => ({
+    activeStudents: activeStudents.value,
+    appointmentsThisMonth: totalEntries.value,
+}));
 
 // Lifecycle
 onMounted(async () => {

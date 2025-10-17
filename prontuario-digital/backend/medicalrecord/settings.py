@@ -93,6 +93,7 @@ SPECTACULAR_SETTINGS = {
 }
 
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_EXPOSE_HEADERS = ["Content-Disposition"]
 
 ROOT_URLCONF = "medicalrecord.urls"
 

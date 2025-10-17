@@ -57,6 +57,11 @@
                             {{ getRoleLabel(getValue(item, column.key)) }}
                         </span>
 
+                        <!-- Report Type Column -->
+                        <span v-else-if="column.type === 'report_type'" class="badge badge-primary">
+                            {{ getReportLabel(getValue(item, column.key)) }}
+                        </span>
+
                         <!-- Actions Column -->
                         <div v-else-if="column.type === 'actions'" class="flex items-center justify-center space-x-2">
                             <button v-for="action in column.actions" :key="action.key" @click.stop="$emit('action', { action: action.key, item, index })" :class="['p-1 rounded hover:bg-secondary transition-colors', `text-${action.color}-600 hover:text-${action.color}-800`]" :title="action.label">
@@ -98,7 +103,7 @@
                 </button>
 
                 <div class="flex space-x-1">
-                    <button v-for="page in visiblePageNumbers" :key="page" @click="goToSpecificPage(page)" :disabled="loading" :class="['px-3 py-1 text-xs rounded transition-colors', page === paginationInfo.currentPage ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:cursor-not-allowed']">
+                    <button v-for="page in visiblePageNumbers" :key="page" @click="goToSpecificPage(page)" :disabled="loading" :class="['px-3 py-1 text-xs rounded transition-colors', page === paginationInfo.currentPage ? 'bg-blue-600 text-white' : 'bg-primary text-secondary hover:bg-tertiary disabled:cursor-not-allowed']">
                         {{ page }}
                     </button>
                 </div>
@@ -316,6 +321,16 @@ const getRoleLabel = (role) => {
         health_prof: 'Prof. de Saúde',
     };
     return roleMap[role] || role;
+};
+
+const getReportLabel = (report_type) => {
+    const map = {
+        GM: 'Relatório Mensal Geral',
+        GSP: 'Relatório Geral por Período',
+        SHAT: 'Histórico Geral de Estudante',
+        SHSP: 'Relatório de Estudante por Período',
+    };
+    return map[report_type] || report_type;
 };
 
 const formatDate = (date) => {

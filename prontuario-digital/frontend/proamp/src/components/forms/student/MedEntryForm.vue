@@ -3,7 +3,7 @@
         <!-- Dropdown de Seleção de Estudante (apenas no modo create) -->
         <div v-if="mode === 'create'" class="form-group">
             <label for="student-select" class="input-label">Selecionar Estudante*</label>
-            <select id="student-select" v-model="selectedStudentId" class="input-field bg-tertiary" @change="handleStudentChange" required>
+            <select id="student-select" v-model="selectedStudentId" class="input-field" @change="handleStudentChange" required>
                 <option value="" disabled>Selecione um estudante</option>
                 <option v-for="student in students" :key="student.id" :value="student.id">{{ student.name }} - CGM: {{ student.cgm }}</option>
             </select>
@@ -12,28 +12,28 @@
         <!-- Campos somente leitura (view mode) -->
         <div v-if="mode !== 'create'" class="form-group">
             <label for="student-name" class="input-label">Aluno</label>
-            <input id="student-name" type="text" :value="studentName" class="input-field bg-tertiary" disabled />
+            <input id="student-name" type="text" :value="studentName" class="input-field" disabled />
         </div>
 
         <div v-if="mode !== 'create'" class="form-group">
             <label for="healthpro-name" class="input-label">Profissional de Saúde</label>
-            <input id="healthpro-name" type="text" :value="healthproName" class="input-field bg-tertiary" disabled />
+            <input id="healthpro-name" type="text" :value="healthproName" class="input-field" disabled />
         </div>
 
         <div v-if="mode !== 'create'" class="form-group">
             <label for="entry-date" class="input-label">Data da Entrada</label>
-            <input id="entry-date" type="text" :value="formattedEntryDate" class="input-field bg-tertiary" disabled />
+            <input id="entry-date" type="text" :value="formattedEntryDate" class="input-field" disabled />
         </div>
 
         <!-- Campos editáveis -->
         <div class="form-group">
             <label for="description" class="input-label">Descrição{{ mode === 'create' ? '*' : '' }}</label>
-            <textarea id="description" v-model="localDescription" class="input-field bg-tertiary" :readonly="readonly" rows="4" placeholder="Descrição detalhada do atendimento..." :required="mode === 'create'"></textarea>
+            <textarea id="description" v-model="localDescription" class="input-field" :readonly="readonly" rows="4" placeholder="Descrição detalhada do atendimento..." :required="mode === 'create'"></textarea>
         </div>
 
         <div class="form-group">
             <label for="notes" class="input-label">Observações Adicionais</label>
-            <textarea id="notes" v-model="localNotes" class="input-field bg-tertiary" :readonly="readonly" rows="3" placeholder="Notas ou observações adicionais..."></textarea>
+            <textarea id="notes" v-model="localNotes" class="input-field" :readonly="readonly" rows="3" placeholder="Notas ou observações adicionais..."></textarea>
         </div>
     </div>
 </template>
@@ -133,7 +133,8 @@ const formattedEntryDate = computed(() => {
 }
 .input-field[readonly],
 .input-field[disabled] {
-    background-color: #f0f0f0;
+    background-color: var(--bg-tertiary);
+    color: var(--text-muted);
     cursor: not-allowed;
 }
 

@@ -6,7 +6,7 @@
             <p class="mb-6">Você tem certeza que deseja excluir esta entrada de prontuário? Esta ação não pode ser desfeita.</p>
             <div class="form-group">
                 <label for="delete-reason" class="input-label">Motivo da Exclusão</label>
-                <input type="text" class="input-field bg-tertiary" id="delete-reason" v-model="deleteReason" placeholder="É obrigatório informar o motivo da exclusão." /><input />
+                <input type="text" class="input-field" id="delete-reason" v-model="deleteReason" placeholder="É obrigatório informar o motivo da exclusão." /><input />
             </div>
         </div>
 

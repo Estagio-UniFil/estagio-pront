@@ -1,11 +1,13 @@
 <template>
-    <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <!-- gradient-to-br from-blue-50 to-indigo-100 -->
+    <div class="min-h-screen bg-primary flex items-center justify-center p-4">
+        <ThemeToggle />
         <!-- Main Container -->
         <div class="relative w-full max-w-md">
             <!-- Logo/Header Section -->
             <div class="text-center mb-8">
-                <h1 class="text-3xl font-lato-black text-gray-800 mb-2">ProAMP</h1>
-                <p class="text-gray-600 font-lato-regular">Prontuário Digital Anna Maria Pietta</p>
+                <h1 class="text-3xl font-lato-black text-primary mb-2">ProAMP</h1>
+                <p class="text-muted font-lato-regular">Prontuário Digital Anna Maria Pietta</p>
             </div>
 
             <!-- Content Slot -->
