@@ -6,6 +6,7 @@ export const useUserStore = defineStore('user', {
     state: () => ({
         users: [],
         pros: [],
+        user: [],
         loading: false,
         error: null,
         pagination: {
@@ -56,10 +57,20 @@ export const useUserStore = defineStore('user', {
                     };
                 }
             } catch (error) {
-                this.error = error.response?.data?.message || 'Erro ao carregar estudantes';
-                console.error('Erro ao buscar estudantes:', error);
+                this.error = error.response?.data?.message || 'Erro ao carregar usuários';
+                console.error('Erro ao buscar usuários:', error);
             } finally {
                 this.loading = false;
+            }
+        },
+
+        async fetchUserById(id) {
+            try {
+                const response = await userService.getUser(id);
+                this.user = response.data;
+                return response.data;
+            } catch (e) {
+                this.error = e.response?.data?.message || 'Erro ao carregar usuário';
             }
         },
 

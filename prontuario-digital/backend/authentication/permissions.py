@@ -1,14 +1,6 @@
 from rest_framework import permissions
 
 
-class IsAuthenticated(permissions.BasePermission):
-    def has_permission(self, request, view):
-        if not (request.user and request.user.is_authenticated):
-            return False
-
-        return super().has_permission(request, view)
-
-
 class IsAdminUser(permissions.BasePermission):
     """
     Permite acesso apenas para usuários com role 'admin'

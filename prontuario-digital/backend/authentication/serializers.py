@@ -91,6 +91,23 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
 
+class MeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["email", "first_name", "last_name"]
+        extra_kwargs = {
+            "email": {"required": True},
+            "first_name": {"required": False, "allow_blank": True},
+            "last_name": {"required": False, "allow_blank": True},
+        }
+
+    def validate_email(self, value):
+        user = self.context["request"].user
+        if User.objects.exclude(pk=user.pk).filter(email=value).exists():
+            raise serializers.ValidationError("Este e-mail já está em uso.")
+        return value
+
+
 class UserNestedSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

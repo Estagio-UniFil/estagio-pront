@@ -72,8 +72,8 @@ AUTH_USER_MODEL = "authentication.User"
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
@@ -81,6 +81,24 @@ REST_FRAMEWORK = {
     # "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     # "PAGE_SIZE": 10,
 }
+
+# Session Configs
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
+SESSION_COOKIE_NAME = "sessionid"
+SESSION_COOKIE_AGE = 86400  # Default 24 hours
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_SECURE = False  # for HTTPS
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# CSRF configs
+CSRF_COOKIE_NAME = "csrftoken"
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SAMESITE = "Lax"
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+]
 
 SPECTACULAR_SETTINGS = {
     "SWAGGER_UI_DIST": "SIDECAR",
@@ -93,7 +111,11 @@ SPECTACULAR_SETTINGS = {
 }
 
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_EXPOSE_HEADERS = ["Content-Disposition"]
+CORS_ALLOW_CREDENTIALS = True  # Allow sending cookies
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # Vue.js dev server
+]
+CORS_EXPOSE_HEADERS = ["Content-Disposition", "X-CSRFToken"]
 
 ROOT_URLCONF = "medicalrecord.urls"
 

@@ -4,7 +4,7 @@
             <h1 class="text-2xl font-lato-bold text-primary">Logs de Geração de Relatórios</h1>
             <p class="text-muted font-lato-regular mt-1">Visualize o histórico de geração de relatórios para auditoria.</p>
         </div>
-        <button class="btn-outline" @click="openExportModal">
+        <button class="btn-outline" @click="exportReport">
             <i class="fas fa-download mr-2"></i>
             Exportar
         </button>
@@ -37,8 +37,6 @@
             <p class="text-gray-600 font-lato-regular">Ainda não há nenhuma entrada de prontuário registrada.</p>
         </div>
     </div>
-
-    <MedEntryModal :show="isModalVisible" :mode="modalMode" :entry-data="selectedEntry" @close="closeModal" @success="fetchEntries" />
 </template>
 
 <script setup>
@@ -46,14 +44,10 @@ import { ref, onMounted } from 'vue';
 import BaseTable from '@/components/tables/BaseTable.vue';
 import { useMedEntryStore } from '@/stores/medEntryStore';
 import { useReportStore } from '@/stores/reportStore';
-import MedEntryModal from '@/components/modals/MedEntryModal.vue';
 
 const medEntryStore = useMedEntryStore();
 const reportStore = useReportStore();
-
-const isModalVisible = ref(false);
-const modalMode = ref('view');
-const selectedEntry = ref(null);
+const params = { reportType: 'general_monthly', year: null, month: null, studentId: null, startDate: '', endDate: '' };
 
 const tableColumns = ref([
     {
@@ -76,30 +70,16 @@ const tableColumns = ref([
 ]);
 
 // Métodos
-const openExportModal = () => {
-    console.log('modal de exportação');
+
+const exportReport = () => {
     //debugger;
-    reportStore.exportMonthlyReport();
+    console.log('exportação' + params);
+    reportStore.exportMonthlyReport(params);
 };
 
 const fetchEntries = () => {
     reportStore.fetchAllLogEntries();
 };
-
-const openViewModal = (entry) => {
-    selectedEntry.value = entry;
-    modalMode.value = 'view';
-    isModalVisible.value = true;
-};
-
-const closeModal = () => {
-    isModalVisible.value = false;
-    selectedEntry.value = null;
-};
-
-// Funções utilitárias
-const format = (dateString) => new Date(dateString).toLocaleString('pt-BR');
-const truncate = (text, length = 50) => (text.length > length ? text.substring(0, length) + '...' : text);
 
 onMounted(() => {
     fetchEntries();

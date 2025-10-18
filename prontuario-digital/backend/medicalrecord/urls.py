@@ -22,10 +22,10 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
     SpectacularRedocView,
 )
-from authentication.views import CustomAuthToken
+
+# from authentication.views import CustomAuthToken
 from rest_framework.routers import DefaultRouter
-from authentication.views import UserViewSet
-from authentication.views import view_health_pros
+from authentication.views import UserViewSet, SessionLoginView, view_health_pros
 
 router = DefaultRouter()
 router.register(r"users", UserViewSet, basename="user")
@@ -33,11 +33,15 @@ router.register(r"users", UserViewSet, basename="user")
 urlpatterns = [
     path("api/managerview/", view_health_pros),
     path("admin/", admin.site.urls),
+    path("login/", SessionLoginView.login_view, name="login"),
+    path("logout/", SessionLoginView.logout_view, name="logout"),
+    path("csrf/", SessionLoginView.get_csrf_token, name="csrf_token"),
+    path("check-auth/", SessionLoginView.check_auth, name="check_auth"),
     path("", include("students.urls")),
     path("", include("medicalentry.urls")),
     path("", include("reports.urls")),
     path("api/auth/", include(router.urls)),
-    path("api/login/", CustomAuthToken.as_view(), name="api_login"),
+    # path("api/login/", CustomAuthToken.as_view(), name="api_login"),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     # documentações
     path(

@@ -5,7 +5,7 @@ export const useMedEntryStore = defineStore('medEntry', {
     state: () => ({
         entries: [],
         currentEntry: null,
-        studentEntries: null, // Para armazenar dados do novo endpoint
+        studentEntries: null,
         isLoading: false,
         isCreating: false,
         isDeleting: false,
@@ -16,27 +16,22 @@ export const useMedEntryStore = defineStore('medEntry', {
     getters: {
         entryCount: (state) => state.entries.length,
 
-        // Verificar se há entradas
         hasEntries: (state) => state.entries.length > 0,
 
-        // Entradas ordenadas por data (mais recentes primeiro)
         entriesByDate: (state) => {
             return [...state.entries].sort((a, b) => {
                 return new Date(b.entry_date) - new Date(a.entry_date);
             });
         },
 
-        // Verificar se há dados de estudante específico
         hasStudentEntries: (state) => {
             return state.studentEntries && state.studentEntries.entries && state.studentEntries.entries.length > 0;
         },
 
-        // Obter entradas do estudante atual
         currentStudentEntries: (state) => {
             return state.studentEntries?.entries || [];
         },
 
-        // Informações do estudante atual
         currentStudentInfo: (state) => {
             if (!state.studentEntries) return null;
             return {
@@ -46,7 +41,6 @@ export const useMedEntryStore = defineStore('medEntry', {
             };
         },
 
-        // Estados de loading
         isAnyLoading: (state) => state.isLoading || state.isCreating || state.isDeleting,
     },
 

@@ -35,9 +35,8 @@ const { user } = storeToRefs(authStore);
 
 // Avatar
 const userInitials = computed(() => {
-    const firstName = user.value?.first_name || '';
-    const lastName = user.value?.last_name || '';
-    console.log(user.value?.health_profile);
+    const firstName = user.value.first_name || '';
+    const lastName = user.value.last_name || '';
     if (firstName && lastName) {
         return `${firstName[0]}${lastName[0]}`.toUpperCase();
     }
@@ -46,11 +45,15 @@ const userInitials = computed(() => {
 
 const handleSave = async (userData) => {
     try {
-        if (userData.id) {
-            const updatedUser = await userStore.updateUser(userData.id, userData);
-            authStore.setUser(updatedUser);
-            alertStore.triggerAlert({ message: 'Dados atualizados com sucesso.' });
-        }
+        const payload = {
+            email: userData.email,
+            first_name: userData.first_name,
+            last_name: userData.last_name,
+        };
+        const updatedUser = await authStore.updateMe(payload);
+        console.log(updatedUser);
+        authStore.setUser(updatedUser);
+        alertStore.triggerAlert({ message: 'Dados atualizados com sucesso.' });
     } catch (error) {
         const errorMessage = error.response?.data?.detail || 'Não foi possível alterar seus dados. Tente novamente.';
         alertStore.triggerAlert({ message: errorMessage, type: 'error' });
@@ -76,9 +79,6 @@ const handleSave = async (userData) => {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* --- Estilização do Formulário para parecer uma View --- */
-
-/* Altera os labels para parecerem títulos de seção */
 .card :deep(.input-label) {
     font-size: 0.75rem; /* 12px */
     text-transform: uppercase;
@@ -123,12 +123,9 @@ const handleSave = async (userData) => {
 }
 
 .card :deep(select#role.input-field:disabled) {
-    -webkit-appearance: none; /* Para Chrome, Safari, etc. */
-    -moz-appearance: none; /* Para Firefox */
-    appearance: none; /* Padrão */
-
-    /* Opcional: remove o padding extra que alguns navegadores adicionam
-       para a seta, alinhando o texto perfeitamente. */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
     padding-right: 0;
 }
 </style>

@@ -1,6 +1,7 @@
 <template>
     <AuthLayout>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
         <div class="card max-w-md mx-auto">
             <!-- Mensagem de erro -->
             <div v-if="authStore.error" class="alert alert-error mb-6">
@@ -30,9 +31,9 @@
 
                 <!-- Lembrar de mim -->
                 <div class="flex items-center justify-between">
-                    <div class="relative">
+                    <div class="relative flex items-center">
                         <input v-model="form.rememberMe" type="checkbox" id="remember" class="mr-2" :disabled="authStore.isLoading" />
-                        <label for="remember" class="text-sm text-muted"> Lembrar de mim </label>
+                        <label for="remember" class="text-sm text-muted select-none cursor-pointer"> Lembrar de mim </label>
                     </div>
 
                     <div>
@@ -41,7 +42,7 @@
                 </div>
 
                 <!-- Botão de login -->
-                <button type="submit" class="btn-primary w-full" :disabled="authStore.isLoading || !isFormValid">
+                <button type="submit" class="btn-primary w-full flex items-center justify-center" :disabled="authStore.isLoading || !isFormValid">
                     <div v-if="authStore.isLoading" class="loading-spinner w-4 h-4 mr-2"></div>
                     {{ authStore.isLoading ? 'Entrando...' : 'Entrar' }}
                 </button>
@@ -60,7 +61,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 import AuthLayout from '@/components/layouts/AuthLayout.vue';
-import ThemeToggle from '../../components/common/ThemeToggle.vue';
+import ThemeToggle from '@/components/common/ThemeToggle.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -105,45 +106,91 @@ const validateForm = () => {
 };
 
 const handleLogin = async () => {
-    // Limpa erros anteriores
     authStore.clearError();
+    errors.value = {};
 
-    // Valida formulário
     if (!validateForm()) {
         return;
     }
 
     try {
-        await authStore.login(form.value.email, form.value.password);
+        // Faz o login com remember me
+        const userData = await authStore.login(form.value.email, form.value.password, form.value.rememberMe);
 
-        // Redireciona baseado no role do usuário
-        const redirectTo = getDefaultRoute();
-        router.push(redirectTo);
+        // Redireciona baseado na role do usuário
+        switch (userData.role) {
+            case 'admin':
+                router.push('/admin/dashboard');
+                break;
+            case 'manager':
+                router.push('/manager/dashboard');
+                break;
+            case 'health_prof':
+                router.push('/professional/dashboard');
+                break;
+            default:
+                router.push('/');
+        }
     } catch (error) {
-        // Erro já está sendo tratado no store
+        // O erro já está sendo tratado no store e será exibido na tela
         console.error('Erro no login:', error);
-    }
-};
 
-const getDefaultRoute = () => {
-    if (authStore.isAdmin) {
-        return '/admin/dashboard';
-    } else if (authStore.isManager) {
-        return '/manager/dashboard';
-    } else {
-        return '/professional/dashboard';
+        // Se for erro de validação do servidor
+        if (error.response?.data?.errors) {
+            errors.value = error.response.data.errors;
+        }
     }
 };
 
 // Lifecycle
 onMounted(() => {
-    // Limpa erros ao montar o componente
     authStore.clearError();
 
-    // Foco no campo de email
-    const emailInput = document.querySelector('input[type="email"]');
-    if (emailInput) {
-        emailInput.focus();
+    // Authenticated redirect
+    if (authStore.isAuthenticated) {
+        const role = authStore.userRole;
+        if (role === 'admin') {
+            router.push('/admin/dashboard');
+        } else if (role === 'manager') {
+            router.push('/manager/dashboard');
+        } else if (role === 'health_prof') {
+            router.push('/professional/dashboard');
+        }
     }
+
+    setTimeout(() => {
+        const emailInput = document.querySelector('input[type="email"]');
+        if (emailInput) {
+            emailInput.focus();
+        }
+    }, 100);
 });
 </script>
+
+<style scoped>
+.loading-spinner {
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.input-field:disabled {
+    background-color: #f3f4f6;
+    cursor: not-allowed;
+}
+</style>

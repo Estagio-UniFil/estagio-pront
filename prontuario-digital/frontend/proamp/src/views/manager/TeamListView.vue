@@ -5,13 +5,6 @@
             <h1 class="text-2xl font-lato-bold text-primary">Painel de usuários</h1>
             <p class="text-muted font-lato-regular mt-1">Gerencie os usuários</p>
         </div>
-
-        <div class="mt-4 sm:mt-0 flex space-x-3">
-            <button class="btn-primary" @click="openCreateModal">
-                <i class="fas fa-plus mr-2"></i>
-                Novo Usuário
-            </button>
-        </div>
     </div>
 
     <!-- Filters and Search -->

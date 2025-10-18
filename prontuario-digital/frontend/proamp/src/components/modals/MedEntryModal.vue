@@ -33,7 +33,7 @@ import MedEntryForm from '@/components/forms/student/MedEntryForm.vue';
 import { useAlertStore } from '@/stores/alertStore';
 import { useStudentStore } from '@/stores/studentStore';
 import { useMedEntryStore } from '@/stores/medEntryStore';
-import { useAuth } from '@/composables/useAuth';
+import { useAuthStore } from '@/stores/authStore';
 
 const props = defineProps({
     show: {
@@ -56,7 +56,7 @@ const emit = defineEmits(['close', 'success']);
 const alertStore = useAlertStore();
 const studentStore = useStudentStore();
 const medEntryStore = useMedEntryStore();
-const { user } = useAuth();
+const { user } = useAuthStore();
 
 const isLoading = ref(false);
 const formData = ref({});

@@ -108,6 +108,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement
 import { useUserStore } from '@/stores/userStore';
 import { useStudentStore } from '@/stores/studentStore';
 import { useMedEntryStore } from '@/stores/medEntryStore';
+import { endOfToday, endOfYesterday, startOfToday } from 'date-fns';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
@@ -145,14 +146,6 @@ const chartData = ref({
             data: [31, 40, 28, 51, 42, 109, 100],
             backgroundColor: 'rgba(26, 86, 219, 0.2)',
             borderColor: 'rgba(26, 86, 219, 1)',
-            tension: 0.3,
-            fill: true,
-        },
-        {
-            label: 'Prontuários',
-            data: [11, 32, 45, 32, 34, 52, 41],
-            backgroundColor: 'rgba(255, 153, 0, 0.2)',
-            borderColor: 'rgba(255, 153, 0, 1)',
             tension: 0.3,
             fill: true,
         },

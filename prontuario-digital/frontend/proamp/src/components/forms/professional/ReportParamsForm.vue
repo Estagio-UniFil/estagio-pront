@@ -4,7 +4,7 @@
             <label for="report-type" class="input-label">Tipo de Relatório*</label>
             <select id="report-type" class="input-field bg-tertiary" :value="params.reportType" @change="emitUpdate('reportType', $event.target.value)">
                 <option value="general_monthly">Relatório Mensal Geral</option>
-                <option value="student_interval">Relatório de Aluno por Período</option>
+                <option value="student_interval">Relatório de Aluno</option>
             </select>
         </div>
 
@@ -47,11 +47,9 @@
 </template>
 
 <script setup>
-// Removemos ref e watch, não são mais necessários
 import { defineProps, defineEmits } from 'vue';
 
 const props = defineProps({
-    // Renomeamos de modelValue para 'params'
     params: {
         type: Object,
         required: true,
@@ -62,19 +60,14 @@ const props = defineProps({
     },
 });
 
-// Renomeamos o emit
 const emit = defineEmits(['update']);
 
-// Removemos TODOS os 'localParams' e 'watch'
-
-// Helper para emitir a atualização
 const emitUpdate = (key, value) => {
     emit('update', { key, value });
 };
 </script>
 
 <style scoped>
-/* Estilos permanecem os mesmos */
 .form-container {
     display: flex;
     flex-direction: column;

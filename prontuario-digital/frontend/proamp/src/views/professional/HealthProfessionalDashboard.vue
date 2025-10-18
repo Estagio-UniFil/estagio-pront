@@ -86,9 +86,11 @@ import { onMounted, computed } from 'vue';
 
 import { useStudentStore } from '@/stores/studentStore';
 import { useMedEntryStore } from '@/stores/medEntryStore';
+import { useAuthStore } from '@/stores/authStore';
 
 const studentStore = useStudentStore();
 const medEntryStore = useMedEntryStore();
+const authStore = useAuthStore();
 
 const activeStudents = computed(() => studentStore.students.filter((student) => student.active).length);
 const totalEntries = computed(() => medEntryStore.entries.length);
@@ -110,5 +112,6 @@ const stats = computed(() => ({
 // Lifecycle
 onMounted(async () => {
     console.log('Dashboard carregado');
+    console.log(authStore.fetchMe());
 });
 </script>

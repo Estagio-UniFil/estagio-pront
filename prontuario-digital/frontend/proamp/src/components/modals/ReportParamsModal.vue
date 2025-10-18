@@ -74,7 +74,6 @@ const loadStudents = async () => {
 };
 
 const handleClose = () => {
-    // Só permite fechar se não estiver carregando
     if (!isLoading.value) {
         formData.value = getInitialFormData();
         emit('close');
@@ -88,7 +87,6 @@ const isFormValid = computed(() => {
     return true;
 });
 
-// 4. Lógica de submit atualizada
 const submitGenerate = async () => {
     if (!isFormValid.value) {
         alertStore.triggerAlert('Preencha os campos obrigatórios.', 'warning');
@@ -116,11 +114,9 @@ const submitGenerate = async () => {
 };
 
 const handleFormUpdate = ({ key, value }) => {
-    // 1. Atualiza o valor que mudou
     formData.value[key] = value;
 
-    // 2. APLICA A LÓGICA DE RESET AQUI (no pai)
-    // Se a mudança foi no 'reportType', resetamos os outros campos.
+    // reset
     if (key === 'reportType') {
         formData.value.year = null;
         formData.value.month = null;

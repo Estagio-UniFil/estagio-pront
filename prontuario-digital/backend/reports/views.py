@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from rest_framework.decorators import api_view, renderer_classes
+from rest_framework.decorators import api_view, renderer_classes, permission_classes
 from rest_framework.renderers import BaseRenderer
 from openpyxl import Workbook
 from medicalentry.models import MedicalEntry
@@ -9,6 +9,7 @@ from datetime import date, datetime
 from students.models import Student
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from rest_framework.permissions import IsAuthenticated as DRFIsAuthenticated
 from .models import ReportLog
 from .serializers import ReportLogSerializer
 import calendar
@@ -27,6 +28,7 @@ class ExcelRenderer(BaseRenderer):
 
 @api_view(["GET"])
 @renderer_classes([ExcelRenderer])
+@permission_classes([DRFIsAuthenticated])
 def monthly_report(request):
     """
     Generate a monthly report of all entries in the current or the specified month
@@ -95,6 +97,7 @@ def monthly_report(request):
 
 @api_view(["GET"])
 @renderer_classes([ExcelRenderer])
+@permission_classes([DRFIsAuthenticated])
 def student_interval_report(request, pk):
     """
     Generate a interval report of all entries for a specific student.

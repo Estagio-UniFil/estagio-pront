@@ -1,7 +1,6 @@
 <template>
     <!-- gradient-to-br from-blue-50 to-indigo-100 -->
     <div class="min-h-screen bg-primary flex items-center justify-center p-4">
-        <ThemeToggle />
         <!-- Main Container -->
         <div class="relative w-full max-w-md">
             <!-- Logo/Header Section -->
