@@ -73,7 +73,7 @@
         </div>
     </div>
 
-    <StudentModal :show="showStudentModal" :student="selectedStudent" :is-editing="isEditingMode" :is-submitting="studentStore.loading" @close="closeStudentModal" @submit="handleSaveStudent" />
+    <StudentModal :show="showStudentModal" :student="selectedStudent" :is-editing="isEditingMode" :is-submitting="studentStore.loading" :validation-errors="validationErrors" @close="closeStudentModal" @submit="handleSaveStudent" />
 
     <!-- Confirm Modal -->
     <ConfirmModal v-if="itemForAction" :show="showConfirmModal" :title="modalTitle" :message="modalMessage" :action-type="modalActionName" :entryName="getStudentName(itemForAction)" @confirm="handleConfirmAction" @cancel="closeConfirmModal" />
@@ -100,6 +100,7 @@ const modalMessage = ref('');
 const showStudentModal = ref(false);
 const selectedStudent = ref(null);
 const isEditingMode = ref(false);
+const validationErrors = ref({});
 
 // States
 const currentPage = ref(1);
@@ -185,6 +186,7 @@ const studentStatusText = computed(() => {
 const closeStudentModal = () => {
     showStudentModal.value = false;
     selectedStudent.value = null;
+    validationErrors.value = {};
 };
 
 const getStudentName = (student) => {
@@ -225,6 +227,7 @@ const openCreateModal = () => {
     selectedStudent.value = null;
     isEditingMode.value = true;
     showStudentModal.value = true;
+    validationErrors.value = {};
 };
 
 const handleRowClick = (student) => {
@@ -259,6 +262,7 @@ const closeConfirmModal = () => {
 };
 
 const handleSaveStudent = async (studentData) => {
+    validationErrors.value = {};
     try {
         if (studentData.id) {
             await studentStore.updateStudent(studentData.id, studentData);
@@ -270,8 +274,16 @@ const handleSaveStudent = async (studentData) => {
         await loadStudents();
         closeStudentModal();
     } catch (error) {
-        const errorMessage = error.response?.data?.detail || 'Não foi possível salvar o estudante. Tente novamente.';
-        alertStore.triggerAlert({ message: errorMessage, type: 'error' });
+        if (error.response?.status === 400 && typeof error.response.data === 'object') {
+            validationErrors.value = error.response.data;
+            alertStore.triggerAlert({
+                message: 'Por favor, corrija os erros no formulário.',
+                type: 'error',
+            });
+        } else {
+            const errorMessage = error.response?.data?.detail || 'Não foi possível salvar o estudante. Tente novamente.';
+            alertStore.triggerAlert({ message: errorMessage, type: 'error' });
+        }
     }
 };
 
@@ -308,6 +320,7 @@ const handleEdit = (student) => {
     selectedStudent.value = { ...student };
     isEditingMode.value = true;
     showStudentModal.value = true;
+    validationErrors.value = {};
 };
 
 const handleDelete = (student) => {

@@ -3,7 +3,7 @@ import { ref, computed } from 'vue';
 import { authService } from '@/services/api/authService';
 
 export const useAuthStore = defineStore('auth', () => {
-    // Estados
+    // States
     const user = ref(JSON.parse(localStorage.getItem('user') || 'null'));
     const isLoading = ref(false);
     const error = ref(null);
@@ -29,6 +29,8 @@ export const useAuthStore = defineStore('auth', () => {
         return userRole.value === 'manager';
     });
 
+    const mustChangePassword = computed(() => user.value?.must_change_password || false);
+
     // Actions
     const login = async (email, password, rememberMe = false) => {
         try {
@@ -37,7 +39,6 @@ export const useAuthStore = defineStore('auth', () => {
 
             const response = await authService.login(email, password, rememberMe);
 
-            // Salva dados do usuário
             user.value = {
                 id: response.data.user_id,
                 email: response.data.email,
@@ -45,19 +46,18 @@ export const useAuthStore = defineStore('auth', () => {
                 first_name: response.data.first_name || '',
                 last_name: response.data.last_name || '',
                 session_expiry: response.data.session_expiry,
+                must_change_password: response.data.must_change_password,
             };
 
-            // Se for profissional de saúde, adiciona dados do perfil
+            // For Health Pro
             if (response.data.health_profile) {
                 user.value.health_profile = response.data.health_profile;
             }
 
-            // Persiste no localStorage
             localStorage.setItem('user', JSON.stringify(user.value));
 
             return response.data;
         } catch (err) {
-            // Trata mensagens de erro do backend
             if (err.response?.data?.error) {
                 error.value = err.response.data.error;
             } else if (err.response?.status === 401) {
@@ -75,16 +75,14 @@ export const useAuthStore = defineStore('auth', () => {
         try {
             isLoading.value = true;
 
-            // Chama o logout no backend
             await authService.logout();
 
-            // Limpa o estado local
+            // Clear local data
             user.value = null;
             error.value = null;
             localStorage.removeItem('user');
         } catch (err) {
             console.error('Erro no logout:', err);
-            // Mesmo com erro, limpa dados locais
             user.value = null;
             localStorage.removeItem('user');
         } finally {
@@ -96,32 +94,34 @@ export const useAuthStore = defineStore('auth', () => {
         try {
             const response = await authService.checkAuth();
 
-            if (response.data.is_authenticated && user.value.health_profile) {
-                user.value = {
-                    id: response.data.user_id,
-                    email: response.data.email,
-                    role: response.data.role,
-                    first_name: response.data.first_name || '',
-                    last_name: response.data.last_name || '',
-                    health_profile: user.value.health_profile,
-                };
+            // if (response.data.is_authenticated && user.value.health_profile) {
+            //     user.value = {
+            //         ...(user.value || {}),
+            //         id: response.data.user_id,
+            //         email: response.data.email,
+            //         role: response.data.role,
+            //         first_name: response.data.first_name || '',
+            //         last_name: response.data.last_name || '',
+            //     };
 
-                localStorage.setItem('user', JSON.stringify(user.value));
-                return true;
-            } else if (response.data.is_authenticated) {
-                // Atualiza dados do usuário
+            //     localStorage.setItem('user', JSON.stringify(user.value));
+            //     return true;
+            // }
+            if (response.data.is_authenticated) {
                 user.value = {
+                    ...(user.value || {}),
                     id: response.data.user_id,
                     email: response.data.email,
                     role: response.data.role,
                     first_name: response.data.first_name || '',
                     last_name: response.data.last_name || '',
+                    must_change_password: response.data.must_change_password,
                 };
 
                 localStorage.setItem('user', JSON.stringify(user.value));
                 return true;
             } else {
-                // Não autenticado
+                // Not authenticated
                 user.value = null;
                 localStorage.removeItem('user');
                 return false;
@@ -143,6 +143,7 @@ export const useAuthStore = defineStore('auth', () => {
         const savedUser = localStorage.getItem('user');
 
         if (savedUser) {
+            user.value = JSON.parse(savedUser);
             checkAuthStatus().then((isValid) => {
                 if (!isValid) {
                     user.value = null;
@@ -162,12 +163,32 @@ export const useAuthStore = defineStore('auth', () => {
         localStorage.removeItem('user');
     };
 
+    const setPassword = async (passwordData) => {
+        try {
+            isLoading.value = true;
+            error.value = null;
+            await authService.setPassword(passwordData);
+            // If success, update local data
+            if (user.value) {
+                user.value.must_change_password = false;
+                localStorage.setItem('user', JSON.stringify(user.value));
+            }
+        } catch (err) {
+            const errorMessage = err.response?.data?.error || err.response?.data?.confirm_password?.[0] || 'Erro ao alterar a senha.';
+            error.value = errorMessage;
+            throw err;
+        } finally {
+            isLoading.value = false;
+        }
+    };
+
     const fetchMe = async () => {
         isLoading.value = true;
         error.value = null;
         try {
-            const me = await authService.getUserLogged();
-            user.value = { ...(user.value || {}), ...me };
+            const meData = await authService.getUserLogged();
+            user.value = { ...(user.value || {}), ...meData };
+            localStorage.setItem('user', JSON.stringify(user.value));
             return user.value;
         } catch (e) {
             error.value = e.data || e.message || 'Falha ao carregar perfil';
@@ -181,8 +202,9 @@ export const useAuthStore = defineStore('auth', () => {
         isLoading.value = true;
         error.value = null;
         try {
-            const updated = await authService.patchUserLogged(payload);
-            user.value = { ...(user.value || {}), ...updated };
+            const updatedData = await authService.patchUserLogged(payload);
+            user.value = { ...(user.value || {}), ...updatedData };
+            localStorage.setItem('user', JSON.stringify(user.value));
             return user.value;
         } catch (e) {
             error.value = e.data || e.message || 'Falha ao atualizar perfil';
@@ -193,7 +215,7 @@ export const useAuthStore = defineStore('auth', () => {
     };
 
     return {
-        // Estados
+        // States
         user: computed(() => user.value),
         isLoading: computed(() => isLoading.value),
         error: computed(() => error.value),
@@ -204,11 +226,13 @@ export const useAuthStore = defineStore('auth', () => {
         isAdmin,
         isProfessional,
         isManager,
+        mustChangePassword,
 
         // Actions
         login,
         logout,
         checkAuthStatus,
+        setPassword,
         initializeAuth,
         clearError,
         clearAuth,

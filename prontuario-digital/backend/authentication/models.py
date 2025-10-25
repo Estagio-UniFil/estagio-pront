@@ -17,6 +17,7 @@ class User(AbstractUser):
     )
     role = models.CharField(max_length=11, choices=ROLE_CHOICES)
     email = models.EmailField(unique=True, verbose_name="E-mail")
+    must_change_password = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"
 

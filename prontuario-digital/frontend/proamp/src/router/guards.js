@@ -1,42 +1,33 @@
 import { useAuthStore } from '@/stores/authStore';
-import { authService } from '@/services/api/authService';
 
-// Guard genérico para rotas autenticadas
-export const requireAuth = async (to, from, next) => {
-    const authStore = useAuthStore();
-
-    // Se não tem dados de usuário no store
+async function checkAuthenticationAndRedirect(authStore, to) {
     if (!authStore.isAuthenticated) {
-        // Tenta verificar com o backend se existe sessão ativa
         const isAuthenticated = await authStore.checkAuthStatus();
-
         if (!isAuthenticated) {
-            next({
-                name: 'login',
-                query: { redirect: to.fullPath },
-            });
-            return;
+            return { name: 'login', query: { redirect: to.fullPath } };
         }
     }
 
-    next();
-};
+    if (authStore.mustChangePassword && to.name !== 'force-password-change') {
+        return { name: 'force-password-change' };
+    }
 
-// Guard para rotas que só admin pode acessar
+    if (!authStore.mustChangePassword && to.name === 'force-password-change') {
+        if (authStore.isAdmin) return { name: 'admin-dashboard' };
+        if (authStore.isManager) return { name: 'manager-dashboard' };
+        if (authStore.isProfessional) return { name: 'health-dashboard' };
+        return { name: 'login' };
+    }
+
+    return null;
+}
+
+// Admin Guard
 export const requireAdmin = async (to, from, next) => {
     const authStore = useAuthStore();
+    const redirect = await checkAuthenticationAndRedirect(authStore, to);
+    if (redirect) return next(redirect);
 
-    // Primeiro verifica autenticação
-    if (!authStore.isAuthenticated) {
-        const isAuthenticated = await authStore.checkAuthStatus();
-
-        if (!isAuthenticated) {
-            next({ name: 'login', query: { redirect: to.fullPath } });
-            return;
-        }
-    }
-
-    // Depois verifica se é admin
     if (!authStore.isAdmin) {
         next({ name: 'unauthorized' });
     } else {
@@ -44,18 +35,11 @@ export const requireAdmin = async (to, from, next) => {
     }
 };
 
-// Guard para rotas que só manager pode acessar
+// Manager Guard
 export const requireManager = async (to, from, next) => {
     const authStore = useAuthStore();
-
-    if (!authStore.isAuthenticated) {
-        const isAuthenticated = await authStore.checkAuthStatus();
-
-        if (!isAuthenticated) {
-            next({ name: 'login', query: { redirect: to.fullPath } });
-            return;
-        }
-    }
+    const redirect = await checkAuthenticationAndRedirect(authStore, to);
+    if (redirect) return next(redirect);
 
     if (!authStore.isManager) {
         next({ name: 'unauthorized' });
@@ -64,18 +48,11 @@ export const requireManager = async (to, from, next) => {
     }
 };
 
-// Guard para rotas que só profissional de saúde pode acessar
+// Health Pro Guard
 export const requireHealthProfessional = async (to, from, next) => {
     const authStore = useAuthStore();
-
-    if (!authStore.isAuthenticated) {
-        const isAuthenticated = await authStore.checkAuthStatus();
-
-        if (!isAuthenticated) {
-            next({ name: 'login', query: { redirect: to.fullPath } });
-            return;
-        }
-    }
+    const redirect = await checkAuthenticationAndRedirect(authStore, to);
+    if (redirect) return next(redirect);
 
     if (!authStore.isProfessional) {
         next({ name: 'unauthorized' });
@@ -84,62 +61,34 @@ export const requireHealthProfessional = async (to, from, next) => {
     }
 };
 
-// Guard para admin OU manager
-export const requireAdminOrManager = async (to, from, next) => {
+export const requirePasswordChange = async (to, from, next) => {
     const authStore = useAuthStore();
-
-    if (!authStore.isAuthenticated) {
-        const isAuthenticated = await authStore.checkAuthStatus();
-
-        if (!isAuthenticated) {
-            next({ name: 'login', query: { redirect: to.fullPath } });
-            return;
-        }
+    const redirect = await checkAuthenticationAndRedirect(authStore, to);
+    if (redirect) {
+        return next(redirect);
     }
-
-    if (!authStore.isAdmin && !authStore.isManager) {
-        next({ name: 'unauthorized' });
-    } else {
-        next();
-    }
-};
-
-// Guard para rotas que só usuários NÃO autenticados podem acessar (login)
-export const requireGuest = async (to, from, next) => {
-    const authStore = useAuthStore();
-
-    // Se tem dados de usuário, verifica se a sessão ainda é válida
-    if (authStore.isAuthenticated) {
-        // Verifica com o backend
-        const isAuthenticated = await authStore.checkAuthStatus();
-
-        if (isAuthenticated) {
-            // Redireciona baseado na role
-            if (authStore.isAdmin) {
-                next({ name: 'admin-dashboard' });
-            } else if (authStore.isManager) {
-                next({ name: 'manager-dashboard' });
-            } else if (authStore.isProfessional) {
-                next({ name: 'health-dashboard' });
-            } else {
-                next({ name: 'unauthorized' });
-            }
-            return;
-        }
-    }
-
     next();
 };
 
-// Guard global para inicializar autenticação (roda em TODAS as rotas)
+export const requireGuest = async (to, from, next) => {
+    const authStore = useAuthStore();
+    if (authStore.isAuthenticated) {
+        const isAuthenticated = await authStore.checkAuthStatus();
+        if (isAuthenticated) {
+            if (authStore.isAdmin) return next({ name: 'admin-dashboard' });
+            if (authStore.isManager) return next({ name: 'manager-dashboard' });
+            if (authStore.isProfessional) return next({ name: 'health-dashboard' });
+            return next({ name: 'unauthorized' });
+        }
+    }
+    next();
+};
+
 export const initializeAuth = async (to, from, next) => {
     const authStore = useAuthStore();
-
-    // Só inicializa uma vez por sessão da aplicação
     if (!authStore._initialized) {
         await authStore.initializeAuth();
         authStore._initialized = true;
     }
-
     next();
 };

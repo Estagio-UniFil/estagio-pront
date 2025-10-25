@@ -62,6 +62,11 @@
                             {{ getReportLabel(getValue(item, column.key)) }}
                         </span>
 
+                        <!-- Specialty Column -->
+                        <span v-else-if="column.type === 'specialty'" class="badge badge-primary">
+                            {{ getSpecialtyLabel(getValue(item, column.key)) }}
+                        </span>
+
                         <!-- Actions Column -->
                         <div v-else-if="column.type === 'actions'" class="flex items-center justify-center space-x-2">
                             <button v-for="action in column.actions" :key="action.key" @click.stop="$emit('action', { action: action.key, item, index })" :class="['p-1 rounded hover:bg-secondary transition-colors', `text-${action.color}-600 hover:text-${action.color}-800`]" :title="action.label">
@@ -164,10 +169,10 @@ const sortColumn = ref('');
 const sortDirection = ref('asc');
 const frontendCurrentPage = ref(1);
 
-// Computed - Determina se usa paginação frontend ou backend
+// Computed
 const isBackendPagination = computed(() => props.backendPagination !== null);
 
-// Computed - Dados após ordenação (apenas para paginação frontend)
+// Sort data for pagination
 const sortedData = computed(() => {
     if (isBackendPagination.value || !sortColumn.value) return props.data;
 
@@ -183,14 +188,11 @@ const sortedData = computed(() => {
     });
 });
 
-// Computed - Dados a serem exibidos
 const displayData = computed(() => {
     if (isBackendPagination.value) {
-        // Paginação backend: mostra os dados como recebidos
         return props.data;
     }
 
-    // Paginação frontend: aplica paginação local
     if (!props.showPagination) return sortedData.value;
 
     const start = (frontendCurrentPage.value - 1) * props.itemsPerPage;
@@ -198,14 +200,12 @@ const displayData = computed(() => {
     return sortedData.value.slice(start, end);
 });
 
-// Computed - Informações de paginação unificadas
 const paginationInfo = computed(() => {
     if (isBackendPagination.value) {
-        // Usa dados do backend
         return props.backendPagination;
     }
 
-    // Calcula paginação frontend
+    // Calculate frontend pagination
     const total = sortedData.value.length;
     const totalPages = Math.ceil(total / props.itemsPerPage);
     const from = total === 0 ? 0 : (frontendCurrentPage.value - 1) * props.itemsPerPage + 1;
@@ -220,7 +220,6 @@ const paginationInfo = computed(() => {
     };
 });
 
-// Computed - Deve mostrar paginação?
 const shouldShowPagination = computed(() => {
     if (isBackendPagination.value) {
         return paginationInfo.value.totalPages > 1;
@@ -228,17 +227,15 @@ const shouldShowPagination = computed(() => {
     return paginationInfo.value.total > props.itemsPerPage;
 });
 
-// Computed - Pode ir para página anterior?
 const canGoPrevious = computed(() => paginationInfo.value.currentPage > 1);
 
-// Computed - Pode ir para próxima página?
 const canGoNext = computed(() => paginationInfo.value.currentPage < paginationInfo.value.totalPages);
 
-// Computed - Números de páginas visíveis
+// Visible page number
 const visiblePageNumbers = computed(() => {
     const current = paginationInfo.value.currentPage;
     const total = paginationInfo.value.totalPages;
-    const delta = 2;
+    const delta = 1;
     const range = [];
 
     for (let i = Math.max(1, current - delta); i <= Math.min(total, current + delta); i++) {
@@ -333,6 +330,16 @@ const getReportLabel = (report_type) => {
     return map[report_type] || report_type;
 };
 
+const getSpecialtyLabel = (specialty) => {
+    const specialtyMap = {
+        psychologist: 'Psicologia',
+        physiotherapist: 'Fisioterapia',
+        social_worker: 'Assistencia Social',
+        speech_therapist: 'Fonoaudiologia',
+    };
+    return specialtyMap[specialty] || specialty;
+};
+
 const formatDate = (date) => {
     if (!date) return '-';
     return new Date(date).toLocaleDateString('pt-BR');
@@ -366,15 +373,13 @@ const handleSort = (column) => {
     emit('sort', { column, direction: sortDirection.value });
 };
 
-// Métodos de paginação
+// Pagination methods
 const goToSpecificPage = (page) => {
     if (page < 1 || page > paginationInfo.value.totalPages) return;
 
     if (isBackendPagination.value) {
-        // Emite evento para o componente pai gerenciar
         emit('page-change', page);
     } else {
-        // Gerencia paginação frontend localmente
         frontendCurrentPage.value = page;
     }
 };
@@ -397,7 +402,7 @@ const goToNextPage = () => {
 watch(
     () => props.data,
     () => {
-        // Reset frontend pagination quando dados mudam
+        // Reset frontend pagination when data change
         if (!isBackendPagination.value) {
             frontendCurrentPage.value = 1;
         }

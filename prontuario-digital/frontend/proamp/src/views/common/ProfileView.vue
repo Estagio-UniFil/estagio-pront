@@ -20,8 +20,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { storeToRefs } from 'pinia';
+import { computed, watch } from 'vue';
 import UserForm from '@/components/forms/user/UserForm.vue';
 import { useAuthStore } from '@/stores/authStore';
 import { useUserStore } from '@/stores/userStore';
@@ -31,7 +30,7 @@ const authStore = useAuthStore();
 const userStore = useUserStore();
 const alertStore = useAlertStore();
 
-const { user } = storeToRefs(authStore);
+const user = computed(() => authStore.user);
 
 // Avatar
 const userInitials = computed(() => {
@@ -50,29 +49,28 @@ const handleSave = async (userData) => {
             first_name: userData.first_name,
             last_name: userData.last_name,
         };
-        const updatedUser = await authStore.updateMe(payload);
-        console.log(updatedUser);
-        authStore.setUser(updatedUser);
+        await authStore.updateMe(payload);
         alertStore.triggerAlert({ message: 'Dados atualizados com sucesso.' });
     } catch (error) {
         const errorMessage = error.response?.data?.detail || 'Não foi possível alterar seus dados. Tente novamente.';
         alertStore.triggerAlert({ message: errorMessage, type: 'error' });
     }
 };
+
+watch(() => user);
 </script>
 
 <style scoped>
-/* --- Seção do Avatar --- */
 .avatar-placeholder {
     width: 120px;
     height: 120px;
     border-radius: 50%;
-    background-color: #3b82f6; /* Azul do botão Salvar */
+    background-color: #3b82f6;
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 3rem; /* 48px */
+    font-size: 3rem;
     font-weight: 700;
     font-family: 'Lato', sans-serif;
     border: 4px solid var(--bg-secondary);
@@ -80,45 +78,42 @@ const handleSave = async (userData) => {
 }
 
 .card :deep(.input-label) {
-    font-size: 0.75rem; /* 12px */
+    font-size: 0.75rem;
     text-transform: uppercase;
-    color: var(--text-secondary); /* tom de cinza */
+    color: var(--text-secondary);
     font-weight: 600;
     letter-spacing: 0.05em;
     margin-bottom: 0.25rem;
 }
 
 .card :deep(.input-field) {
-    border: none; /* Remove todas as bordas */
-    border-bottom: 2px solid var(--bg-tertiary); /* Adiciona uma borda inferior sutil */
-    background-color: transparent !important; /* Remove o fundo */
-    border-radius: 0; /* Remove o arredondamento */
+    border: none;
+    border-bottom: 2px solid var(--bg-tertiary);
+    background-color: transparent !important;
+    border-radius: 0;
     padding-left: 0;
     padding-right: 0;
-    padding-bottom: 0.5rem; /* Aumenta o espaçamento inferior */
-    font-size: 1rem; /* 16px */
-    color: var(--text-secondary); /* Cor de texto escuro */
+    padding-bottom: 0.5rem;
+    font-size: 1rem;
+    color: var(--text-secondary);
     font-weight: 500;
     transition: border-color 0.2s ease-in-out;
 }
 
-/* Efeito ao focar no campo */
 .card :deep(.input-field:focus) {
-    outline: none; /* Remove a borda de foco padrão */
-    box-shadow: none; /* Remove a sombra de foco padrão */
-    border-bottom-color: #3b82f6; /* Destaca a borda inferior com a cor primária */
+    outline: none;
+    box-shadow: none;
+    border-bottom-color: #3b82f6;
 }
 
-/* Estilo específico para o campo desabilitado (Tipo de Usuário) */
 .card :deep(.input-field:disabled) {
     color: var(--text-secondary);
     cursor: not-allowed;
     border-bottom-color: transparent;
 }
 
-/* Ajusta o espaçamento dos botões de ação */
 .card :deep(.flex.justify-end) {
-    margin-top: 1.5rem; /* Adiciona mais espaço acima dos botões */
+    margin-top: 1.5rem;
     padding-top: 1.5rem;
 }
 

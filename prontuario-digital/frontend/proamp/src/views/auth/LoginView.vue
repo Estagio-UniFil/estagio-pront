@@ -3,7 +3,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
         <div class="card max-w-md mx-auto">
-            <!-- Mensagem de erro -->
+            <!-- Error message -->
             <div v-if="authStore.error" class="alert alert-error mb-6">
                 {{ authStore.error }}
             </div>
@@ -16,7 +16,7 @@
                     <p v-if="errors.email" class="input-error">{{ errors.email }}</p>
                 </div>
 
-                <!-- Senha -->
+                <!-- Password -->
                 <div>
                     <label class="input-label">Senha</label>
                     <div class="relative">
@@ -29,7 +29,7 @@
                     <p v-if="errors.password" class="input-error">{{ errors.password }}</p>
                 </div>
 
-                <!-- Lembrar de mim -->
+                <!-- Remember me -->
                 <div class="flex items-center justify-between">
                     <div class="relative flex items-center">
                         <input v-model="form.rememberMe" type="checkbox" id="remember" class="mr-2" :disabled="authStore.isLoading" />
@@ -41,14 +41,14 @@
                     </div>
                 </div>
 
-                <!-- Botão de login -->
+                <!-- Login -->
                 <button type="submit" class="btn-primary w-full flex items-center justify-center" :disabled="authStore.isLoading || !isFormValid">
                     <div v-if="authStore.isLoading" class="loading-spinner w-4 h-4 mr-2"></div>
                     {{ authStore.isLoading ? 'Entrando...' : 'Entrar' }}
                 </button>
             </form>
 
-            <!-- Links adicionais -->
+            <!-- Links -->
             <div class="mt-6 text-center text-sm text-gray-600">
                 <p>Esqueceu sua senha? Entre em contato com o administrador.</p>
             </div>
@@ -66,14 +66,14 @@ import ThemeToggle from '@/components/common/ThemeToggle.vue';
 const router = useRouter();
 const authStore = useAuthStore();
 
-// Estado do formulário
+// Form state
 const form = ref({
     email: '',
     password: '',
     rememberMe: false,
 });
 
-// Estado da UI
+// UI state
 const showPassword = ref(false);
 const errors = ref({});
 
@@ -82,7 +82,7 @@ const isFormValid = computed(() => {
     return form.value.email && form.value.password && !authStore.isLoading;
 });
 
-// Métodos
+// Methods
 const togglePassword = () => {
     showPassword.value = !showPassword.value;
 };
@@ -114,10 +114,14 @@ const handleLogin = async () => {
     }
 
     try {
-        // Faz o login com remember me
+        // Login - remember me
         const userData = await authStore.login(form.value.email, form.value.password, form.value.rememberMe);
 
-        // Redireciona baseado na role do usuário
+        if (userData.must_change_password) {
+            router.push('/force-password-change');
+        }
+
+        // Redirect by role
         switch (userData.role) {
             case 'admin':
                 router.push('/admin/dashboard');
@@ -132,10 +136,8 @@ const handleLogin = async () => {
                 router.push('/');
         }
     } catch (error) {
-        // O erro já está sendo tratado no store e será exibido na tela
         console.error('Erro no login:', error);
 
-        // Se for erro de validação do servidor
         if (error.response?.data?.errors) {
             errors.value = error.response.data.errors;
         }

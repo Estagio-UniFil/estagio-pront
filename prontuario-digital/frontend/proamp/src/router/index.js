@@ -1,6 +1,6 @@
 // index.js
 import { createRouter, createWebHistory } from 'vue-router';
-import { requireGuest, requireAdmin, requireManager, requireHealthProfessional, initializeAuth } from './guards';
+import { requireGuest, requireAdmin, requireManager, requireHealthProfessional, initializeAuth, requirePasswordChange } from './guards';
 
 // Views
 import LoginView from '@/views/auth/LoginView.vue';
@@ -18,6 +18,12 @@ const router = createRouter({
             name: 'login',
             component: LoginView,
             beforeEnter: requireGuest,
+        },
+        {
+            path: '/force-password-change',
+            name: 'force-password-change',
+            component: () => import('@/views/auth/ForcePasswordChangeView.vue'),
+            beforeEnter: requirePasswordChange,
         },
 
         // Admin Routes - AdminLayout
@@ -139,6 +145,11 @@ const router = createRouter({
             path: '/modals',
             name: 'ModalShowcase',
             component: () => import('@/views/Tests/ModalShowcase.vue'),
+        },
+        {
+            path: '/alert-showcase',
+            name: 'alert-showcase',
+            component: () => import('@/views/Tests/AlertShowcase.vue'),
         },
         {
             path: '/:pathMatch(.*)*',

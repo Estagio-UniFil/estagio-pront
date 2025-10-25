@@ -112,7 +112,6 @@ const closeModal = () => {
 };
 
 const handleSuccess = () => {
-    // Recarregar lista de entradas após criar/deletar
     showModal.value = false;
     alertStore.triggerAlert({ message: 'Entrada de prontuário registrada.', type: 'success' });
     fetchEntries();

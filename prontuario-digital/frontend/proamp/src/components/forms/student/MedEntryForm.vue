@@ -1,6 +1,6 @@
 <template>
     <div class="form-container">
-        <!-- Dropdown de Seleção de Estudante (apenas no modo create) -->
+        <!-- Student Dropdown -->
         <div v-if="mode === 'create'" class="form-group">
             <label for="student-select" class="input-label">Selecionar Estudante*</label>
             <select id="student-select" v-model="selectedStudentId" class="input-field" @change="handleStudentChange" required>
@@ -9,7 +9,7 @@
             </select>
         </div>
 
-        <!-- Campos somente leitura (view mode) -->
+        <!-- View mode -->
         <div v-if="mode !== 'create'" class="form-group">
             <label for="student-name" class="input-label">Aluno</label>
             <input id="student-name" type="text" :value="studentName" class="input-field" disabled />
@@ -25,7 +25,7 @@
             <input id="entry-date" type="text" :value="formattedEntryDate" class="input-field" disabled />
         </div>
 
-        <!-- Campos editáveis -->
+        <!-- Edit fields -->
         <div class="form-group">
             <label for="description" class="input-label">Descrição{{ mode === 'create' ? '*' : '' }}</label>
             <textarea id="description" v-model="localDescription" class="input-field" :readonly="readonly" rows="4" placeholder="Descrição detalhada do atendimento..." :required="mode === 'create'"></textarea>
@@ -63,12 +63,12 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'student-selected']);
 
-// Usar refs locais para evitar loop infinito
+// Local refs
 const selectedStudentId = ref(props.modelValue.student?.id || '');
 const localDescription = ref(props.modelValue.description || '');
 const localNotes = ref(props.modelValue.notes || '');
 
-// Atualizar valores locais quando modelValue mudar (apenas do pai para o filho)
+// Update values
 watch(
     () => props.modelValue,
     (newValue) => {
@@ -79,7 +79,7 @@ watch(
     { deep: true },
 );
 
-// Emitir mudanças apenas quando os campos editáveis mudarem (filho para pai)
+// Emit changes
 watch([localDescription, localNotes], () => {
     emit('update:modelValue', {
         ...props.modelValue,

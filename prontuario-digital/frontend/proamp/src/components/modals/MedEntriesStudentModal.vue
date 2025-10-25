@@ -36,6 +36,8 @@
             </div>
         </div>
     </BaseModal>
+
+    <MedEntryModal :show="showModal" :mode="modalMode" :entry-data="selectedEntry" @close="closeModalDetails" @success="handleSuccess" />
 </template>
 
 <script setup>
@@ -44,8 +46,13 @@ import BaseModal from '@/components/modals/BaseModal.vue';
 import StudentForm from '@/components/forms/student/StudentForm.vue';
 import BaseTable from '@/components/tables/BaseTable.vue';
 import { useMedEntryStore } from '@/stores/medEntryStore';
+import MedEntryModal from '@/components/modals/MedEntryModal.vue';
 
 const medEntryStore = useMedEntryStore();
+
+const showModal = ref(false);
+const modalMode = ref('view');
+const selectedEntry = ref({});
 
 const props = defineProps({
     show: {
@@ -102,6 +109,14 @@ const handleClose = () => {
 
 const handleRowClick = (entry) => {
     console.log('Entrada clicada:', entry);
+    selectedEntry.value = entry;
+    modalMode.value = 'view';
+    showModal.value = true;
+};
+
+const closeModalDetails = () => {
+    showModal.value = false;
+    selectedEntry.value = {};
 };
 
 const handleTableAction = ({ action, item }) => {
@@ -139,12 +154,11 @@ watch(
     { immediate: true },
 );
 
-// Limpar dados quando o modal fechar
+// Clear data when modal is closed
 watch(
     () => props.show,
     (show) => {
         if (!show) {
-            // Opcionalmente limpar as entradas quando fechar o modal
             medEntryStore.entries = [];
         }
     },

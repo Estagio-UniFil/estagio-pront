@@ -20,13 +20,10 @@ def medical_entry_list(request):
     """
 
     if request.method == "GET":
-        # Buscar todas as entradas ou filtrar por estudante
         student_id = request.query_params.get("student_id")
 
-        # Base queryset - apenas entradas não deletadas
         queryset = MedicalEntry.objects.filter(deleted=False)
 
-        # Filtrar por estudante se fornecido
         if student_id:
             try:
                 student_obj = Student.objects.get(pk=student_id)
@@ -37,42 +34,33 @@ def medical_entry_list(request):
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
-        # Aplicar filtros baseados no papel do usuário
         if request.user.role == "health_prof":
-            # Profissional de saúde só vê entradas da sua especialidade
             if hasattr(request.user, "health_profile"):
                 user_specialty = request.user.health_profile.specialty
                 queryset = queryset.filter(
                     healthpro__health_profile__specialty=user_specialty
                 )
             else:
-                # Se não tem health_profile, não pode ver nenhuma entrada
                 queryset = queryset.none()
 
-        # Admin e gestor podem ver todas as entradas (sem filtro adicional)
-
-        # Ordenar por data de entrada
-        entries = queryset.order_by("-entry_date")  # Mais recentes primeiro
+        entries = queryset.order_by("-entry_date")
 
         serializer = MedicalEntrySerializer(entries, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == "POST":
-        # Apenas profissionais de saúde podem criar entradas
         if request.user.role != "health_prof":
             return Response(
                 {"detail": "Only health professionals can create entries"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        # Verificar se o profissional tem health_profile
         if not hasattr(request.user, "health_profile"):
             return Response(
                 {"detail": "Health profile not found"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # student_id é obrigatório para criar entrada
         student_id = request.data.get("student_id")
         if not student_id:
             return Response(
@@ -88,7 +76,6 @@ def medical_entry_list(request):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        # Criar a entrada
         serializer = MedicalEntrySerializer(
             data=request.data, context={"request": request}
         )
@@ -118,9 +105,7 @@ def medical_entry_detail(request, pk):
         )
 
     if request.method == "GET":
-        # Verificar permissões para visualizar detalhes
         if request.user.role == "health_prof":
-            # Profissional só pode ver detalhes se for da mesma especialidade
             if not hasattr(request.user, "health_profile"):
                 return Response(
                     {"detail": "Health profile not found"},
@@ -129,7 +114,6 @@ def medical_entry_detail(request, pk):
 
             user_specialty = request.user.health_profile.specialty
 
-            # Verificar se o profissional que criou a entrada tem health_profile
             if not hasattr(entry.healthpro, "health_profile"):
                 return Response(
                     {"detail": "Entry creator health profile not found"},
@@ -144,27 +128,22 @@ def medical_entry_detail(request, pk):
                     status=status.HTTP_403_FORBIDDEN,
                 )
 
-        # Admin pode ver qualquer entrada (sem verificação adicional)
-
         serializer = MedicalEntrySerializer(entry)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == "DELETE":
-        # Apenas profissionais de saúde podem deletar
         if request.user.role != "health_prof":
             return Response(
                 {"detail": "Only health professionals can delete entries"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        # Verificar se já foi deletada
         if entry.deleted:
             return Response(
                 {"detail": "Entry is already deleted"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Razão de exclusão é obrigatória
         delete_reason = request.data.get("delete_reason")
         if not delete_reason:
             return Response(
@@ -172,7 +151,6 @@ def medical_entry_detail(request, pk):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Realizar soft delete
         entry.soft_delete(user=request.user, reason=delete_reason)
         return Response(
             {"detail": "Entry deleted successfully"}, status=status.HTTP_200_OK
@@ -195,33 +173,24 @@ def medical_entry_by_student(request, student_id):
             status=status.HTTP_404_NOT_FOUND,
         )
 
-    # Base queryset - entradas do estudante não deletadas
     queryset = MedicalEntry.objects.filter(student=student_obj, deleted=False)
 
-    # Aplicar filtros baseados no papel do usuário
     if request.user.role == "health_prof":
-        # Profissional de saúde só vê entradas da sua especialidade
         if hasattr(request.user, "health_profile"):
             user_specialty = request.user.health_profile.specialty
             queryset = queryset.filter(
                 healthpro__health_profile__specialty=user_specialty
             )
         else:
-            # Se não tem health_profile, não pode ver nenhuma entrada
             queryset = queryset.none()
 
-    # Admin pode ver todas as entradas (sem filtro adicional)
-
-    # Ordenar por data de entrada
     entries = queryset.order_by("-entry_date")
 
     serializer = MedicalEntrySerializer(entries, many=True)
     return Response(
         {
             "student_id": student_id,
-            "student_name": getattr(
-                student_obj, "name", "N/A"
-            ),  # Assumindo que Student tem campo name
+            "student_name": getattr(student_obj, "name", "N/A"),
             "entries": serializer.data,
         },
         status=status.HTTP_200_OK,

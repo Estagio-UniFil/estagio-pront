@@ -16,9 +16,7 @@ from authentication.permissions import (
 
 
 class CustomAuthToken(ObtainAuthToken):
-    # View de Login: Recebe email e senha, retorna Token.
     def post(self, request, *args, **kwargs):
-        # Usa o serializer padrão do DRF
         serializer = self.serializer_class(
             data=request.data, context={"request": request}
         )
@@ -26,7 +24,6 @@ class CustomAuthToken(ObtainAuthToken):
         user = serializer.validated_data["user"]
         token, created = Token.objects.get_or_create(user=user)
 
-        # Retorna o token e a role para permissões
         return Response(
             {
                 "token": token.key,
@@ -41,7 +38,6 @@ class CustomAuthToken(ObtainAuthToken):
 
 @permission_classes([AdminWriteAllRead])
 class UserViewSet(viewsets.ModelViewSet):
-    # Endpoint para admins gerenciarem users
     queryset = User.objects.all().order_by("first_name")
     serializer_class = UserSerializer
     permission_classes = [IsAdminUser]

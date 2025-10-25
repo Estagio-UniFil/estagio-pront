@@ -153,7 +153,7 @@ def student_interval_report(request, pk):
         ]
         sheet.append(row_data)
 
-    # Salva o workbook em um buffer de memória
+    # Workbook is saved on a memory buffer
     buffer = io.BytesIO()
     workbook.save(buffer)
     buffer.seek(0)

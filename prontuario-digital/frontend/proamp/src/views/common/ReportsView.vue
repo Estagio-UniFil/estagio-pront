@@ -69,8 +69,7 @@ const tableColumns = ref([
     },
 ]);
 
-// Métodos
-
+// Methods
 const exportReport = () => {
     //debugger;
     console.log('exportação' + params);

@@ -31,12 +31,11 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 import ThemeToggle from './ThemeToggle.vue';
 
 const route = useRoute();
-const router = useRouter();
 const authStore = useAuthStore();
 const user = authStore.user;
 

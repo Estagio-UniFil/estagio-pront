@@ -4,7 +4,12 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                 <div>
                     <label for="name" class="input-label">Nome Completo{{ isEditing ? '*' : '' }}</label>
-                    <input type="text" class="input-field bg-tertiary" id="name" v-model="formData.name" :disabled="!isEditing" required />
+                    <input type="text" class="input-field bg-tertiary" id="name" v-model="formData.name" :disabled="!isEditing" @input="formData.name = formatAsTextOnly($event.target.value)" required />
+                    <div v-if="validationErrors.name" class="text-red-600 text-sm mt-1">
+                        <p v-for="(error, index) in validationErrors.name" :key="index">
+                            {{ error }}
+                        </p>
+                    </div>
                 </div>
                 <div>
                     <label for="cgm" class="input-label">CGM{{ isEditing ? '*' : '' }}</label>
@@ -15,7 +20,15 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                 <div>
                     <label for="dob" class="input-label">Data de Nascimento{{ isEditing ? '*' : '' }}</label>
-                    <input type="date" class="input-field bg-tertiary" id="dob" v-model="formData.dob" :disabled="!isEditing" required />
+                    <input type="date" class="input-field bg-tertiary" id="dob" v-model="formData.dob" :disabled="!isEditing" :max="maxDate" required />
+                    <div v-if="localFormErrors.dob" class="text-red-600 text-sm mt-1">
+                        {{ localFormErrors.dob }}
+                    </div>
+                    <div v-if="validationErrors.dob" class="text-red-600 text-sm mt-1">
+                        <p v-for="(error, index) in validationErrors.dob" :key="index">
+                            {{ error }}
+                        </p>
+                    </div>
                 </div>
                 <div>
                     <label for="gender" class="input-label">Gênero{{ isEditing ? '*' : '' }}</label>
@@ -30,11 +43,21 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                 <div>
                     <label for="guardian" class="input-label">Nome do Responsável{{ isEditing ? '*' : '' }}</label>
-                    <input type="text" class="input-field bg-tertiary" id="guardian" v-model="formData.guardian" :disabled="!isEditing" required />
+                    <input type="text" class="input-field bg-tertiary" id="guardian" v-model="formData.guardian" :disabled="!isEditing" @input="formData.guardian = formatAsTextOnly($event.target.value)" required />
+                    <div v-if="validationErrors.guardian" class="text-red-600 text-sm mt-1">
+                        <p v-for="(error, index) in validationErrors.guardian" :key="index">
+                            {{ error }}
+                        </p>
+                    </div>
                 </div>
                 <div>
                     <label for="guardian_cpf" class="input-label">CPF do Responsável{{ isEditing ? '*' : '' }}</label>
                     <input type="text" class="input-field bg-tertiary" id="guardian_cpf" v-model="formData.guardian_cpf" placeholder="000.000.000-00" maxlength="14" :disabled="!isEditing" required />
+                    <div v-if="validationErrors.guardian_cpf" class="text-red-600 text-sm mt-1">
+                        <p v-for="(error, index) in validationErrors.guardian_cpf" :key="index">
+                            {{ error }}
+                        </p>
+                    </div>
                 </div>
             </div>
 
@@ -72,7 +95,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 
 const props = defineProps({
     student: {
@@ -98,11 +121,22 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    validationErrors: {
+        type: Object,
+        default: () => ({}),
+    },
 });
 
 const emit = defineEmits(['submit', 'cancel']);
 
 const formData = ref({ ...props.student });
+const maxDate = computed(() => new Date().toISOString().split('T')[0]);
+const localFormErrors = ref({});
+
+const formatAsTextOnly = (value) => {
+    if (!value) return '';
+    return value.replace(/[\d]/g, '');
+};
 
 watch(
     () => props.student,

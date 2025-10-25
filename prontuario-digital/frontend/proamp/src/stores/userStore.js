@@ -87,7 +87,7 @@ export const useUserStore = defineStore('user', {
 
                 const response = await userService.getAllHealthPros(params);
 
-                // Resposta paginada do DRF
+                // DRF pagination
                 this.pros = response || [];
                 this.pagination = {
                     currentPage: page,
@@ -130,7 +130,6 @@ export const useUserStore = defineStore('user', {
 
             try {
                 const newUser = await userService.createUser(userData);
-                // Recarrega a página atual para manter consistência
                 await this.fetchUsers(this.pagination.currentPage);
                 return newUser;
             } catch (error) {
@@ -147,7 +146,6 @@ export const useUserStore = defineStore('user', {
 
             try {
                 const updatedUser = await userService.updateUser(id, userData);
-                // Atualiza o usuário na lista atual
                 const index = this.users.findIndex((user) => user.id === id);
                 if (index !== -1) {
                     this.users[index] = updatedUser;
@@ -167,10 +165,24 @@ export const useUserStore = defineStore('user', {
 
             try {
                 await userService.deleteUser(id);
-                // Recarrega a página atual
                 await this.fetchUsers(this.pagination.currentPage);
             } catch (error) {
                 this.error = error.response?.data?.message || 'Erro ao excluir usuário';
+                throw error;
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        async resetPasswordForUser(userId, passwordData) {
+            this.loading = true;
+            this.error = null;
+            try {
+                const response = await userService.resetPassword(userId, passwordData);
+                return response;
+            } catch (error) {
+                this.error = error.response?.data?.message || 'Erro ao redefinir a senha';
+                console.error('Erro no store ao redefinir senha:', error);
                 throw error;
             } finally {
                 this.loading = false;

@@ -34,7 +34,7 @@
                     </div>
                 </div>
             </router-link>
-            <button @click="handleLogout" class="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors font-lato-regular" :disabled="authStore.isLoading">
+            <button @click="handleLogout" class="btn-logout w-full text-left px-3 py-2 text-sm hover:bg-red-50 rounded-lg transition-colors font-lato-regular" :disabled="authStore.isLoading">
                 <i class="fas fa-sign-out-alt w-4 mr-2"></i>
                 {{ authStore.isLoading ? 'Saindo...' : 'Sair' }}
             </button>
@@ -51,7 +51,7 @@ import LogoProamp from '../logo/LogoProamp.vue';
 const router = useRouter();
 const authStore = useAuthStore();
 
-// Props (se necessário para controle do mobile)
+// Props
 const props = defineProps({
     sidebarOpen: {
         type: Boolean,
@@ -67,7 +67,7 @@ const props = defineProps({
     },
 });
 
-// Computeds
+// Computed
 const userName = computed(() => {
     const user = authStore.user;
     if (user?.first_name && user?.last_name) {
@@ -112,7 +112,7 @@ const handleLogout = async () => {
     }
 }
 
-/* Font Awesome fallback se não carregou */
+/* Font Awesome fallback */
 .fas::before {
     font-family: 'Font Awesome 6 Free';
     font-weight: 900;

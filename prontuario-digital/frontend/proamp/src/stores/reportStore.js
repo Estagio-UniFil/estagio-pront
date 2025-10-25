@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import reportService from '../services/api/reportService';
-import { useAlertStore } from './alertStore'; // Importe seu alertStore
+import { useAlertStore } from './alertStore';
 
 export const useReportStore = defineStore('report', {
     state: () => ({
@@ -11,7 +11,7 @@ export const useReportStore = defineStore('report', {
 
     actions: {
         /**
-         * Lógica de download de blob reutilizável.
+         * Blob logic for download.
          * @private
          */
         _handleBlobDownload(response) {
@@ -42,13 +42,12 @@ export const useReportStore = defineStore('report', {
         },
 
         /**
-         * Lógica de tratamento de erro reutilizável.
+         * Logic for error handle.
          * @private
          */
         async _handleApiError(err, alertStore) {
             if (err.response && err.response.data) {
                 try {
-                    // Tenta ler o erro do blob (que vem como JSON)
                     const errorText = await err.response.data.text();
                     const errorData = JSON.parse(errorText);
                     this.error = errorData.detail || 'Erro ao gerar o relatório';
@@ -63,8 +62,8 @@ export const useReportStore = defineStore('report', {
         },
 
         /**
-         * Exporta o relatório mensal geral.
-         * @returns {boolean} - true se sucesso, false se erro.
+         * Export monthly report.
+         * @returns {boolean}
          */
         async exportMonthlyReport(params) {
             this.isLoading = true;
@@ -72,7 +71,6 @@ export const useReportStore = defineStore('report', {
             const alertStore = useAlertStore();
 
             try {
-                // Remove chaves nulas/vazias para a API usar os defaults
                 const cleanParams = {
                     year: params.year || undefined,
                     month: params.month || undefined,
@@ -81,18 +79,18 @@ export const useReportStore = defineStore('report', {
                 const response = await reportService.getMonthlyReport(cleanParams);
                 this._handleBlobDownload(response);
                 alertStore.triggerAlert('Relatório gerado com sucesso!', 'success');
-                return true; // Sucesso
+                return true;
             } catch (err) {
                 await this._handleApiError(err, alertStore);
-                return false; // Erro
+                return false;
             } finally {
                 this.isLoading = false;
             }
         },
 
         /**
-         * Exporta o relatório de um estudante por período.
-         * @returns {boolean} - true se sucesso, false se erro.
+         * Export student interval report.
+         * @returns {boolean}
          */
         async exportStudentReport(data) {
             this.isLoading = true;
@@ -100,7 +98,6 @@ export const useReportStore = defineStore('report', {
             const alertStore = useAlertStore();
 
             try {
-                // Remove chaves nulas/vazias para a API usar os defaults
                 const cleanParams = {
                     start_date: data.startDate || undefined,
                     end_date: data.endDate || undefined,
@@ -109,17 +106,17 @@ export const useReportStore = defineStore('report', {
                 const response = await reportService.getStudentReport(data.id, cleanParams);
                 this._handleBlobDownload(response);
                 alertStore.triggerAlert('Relatório gerado com sucesso!', 'success');
-                return true; // Sucesso
+                return true;
             } catch (err) {
                 await this._handleApiError(err, alertStore);
-                return false; // Erro
+                return false;
             } finally {
                 this.isLoading = false;
             }
         },
 
         /**
-         * Busca o histórico (log) de relatórios gerados.
+         * Report Log.
          */
         async fetchAllLogEntries() {
             this.isLoading = true;

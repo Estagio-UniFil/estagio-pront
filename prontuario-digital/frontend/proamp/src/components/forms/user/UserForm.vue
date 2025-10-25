@@ -4,12 +4,12 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
                 <div>
                     <label for="first_name" class="input-label">Nome{{ isEditing ? '*' : '' }}</label>
-                    <input type="text" id="first_name" v-model="formData.first_name" class="input-field bg-tertiary" :class="{ error: errors.first_name }" :disabled="!isEditing" required />
+                    <input type="text" id="first_name" v-model="formData.first_name" class="input-field bg-tertiary" :class="{ error: errors.first_name }" :disabled="!isEditing" @input="formData.first_name = formatAsTextOnly($event.target.value)" required />
                     <p v-if="errors.first_name" class="input-error">{{ errors.first_name }}</p>
                 </div>
                 <div class="md:col-span-2">
                     <label for="last_name" class="input-label">Sobrenome{{ isEditing ? '*' : '' }}</label>
-                    <input type="text" id="last_name" v-model="formData.last_name" class="input-field bg-tertiary" :class="{ error: errors.last_name }" :disabled="!isEditing" required />
+                    <input type="text" id="last_name" v-model="formData.last_name" class="input-field bg-tertiary" :class="{ error: errors.last_name }" :disabled="!isEditing" @input="formData.last_name = formatAsTextOnly($event.target.value)" required />
                     <p v-if="errors.last_name" class="input-error">{{ errors.last_name }}</p>
                 </div>
                 <div class="md:col-span-3">
@@ -47,7 +47,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                     <div>
                         <label for="specialty" class="input-label">Especialidade{{ isEditing ? '*' : '' }}</label>
-                        <select id="specialty" v-model="formData.health_profile.specialty" class="input-field bg-tertiary" :class="{ error: errors.specialty, 'select-readonly': !isEditing }" :disabled="!isEditing" required>
+                        <select id="specialty" v-model="formData.health_profile.specialty" class="input-field bg-tertiary" :class="{ error: errors.specialty, 'select-readonly': !isEditing }" :disabled="!isEditing || disableRoleField" required>
                             <option value="" disabled>Selecione um tipo</option>
                             <option value="psychologist">Psicologia</option>
                             <option value="physiotherapist">Fisioterapia</option>
@@ -58,7 +58,7 @@
                     </div>
                     <div>
                         <label for="council_number" class="input-label">Número do Conselho{{ isEditing ? '*' : '' }}</label>
-                        <input type="text" id="council_number" v-model="formData.health_profile.council_number" class="input-field bg-tertiary" :class="{ error: errors.council_number }" :disabled="!isEditing" required />
+                        <input type="text" id="council_number" v-model="formData.health_profile.council_number" class="input-field bg-tertiary" :class="{ error: errors.council_number }" :disabled="!isEditing || disableRoleField" required />
                         <p v-if="errors.council_number" class="input-error">{{ errors.council_number }}</p>
                     </div>
                 </div>
@@ -120,43 +120,55 @@ const formData = ref({});
 const passwordConfirm = ref('');
 const errors = ref({});
 
-// Computed para validações
+// Computed for validations
 const isFormValid = computed(() => {
     return Object.keys(errors.value).length === 0 && formData.value.first_name && formData.value.last_name && formData.value.email && formData.value.role;
 });
 
-// Função de validação
+// Validations
+const formatAsTextOnly = (value) => {
+    if (!value) return '';
+    return value.replace(/[\d]/g, '');
+};
+
 const validateForm = () => {
     errors.value = {};
 
-    // Validar nome
+    // Regex to prevent numbers on a name
+    const nameRegex = /^[a-zA-Z\sçÇáéíóúÁÉÍÓÚâêîôûÂÊÎÔÛãõÃÕàèìòùÀÈÌÒÙäëïöüÄËÏÖÜ-]+$/;
+
+    // First name
     if (!formData.value.first_name?.trim()) {
         errors.value.first_name = 'Nome é obrigatório';
+    } else if (!nameRegex.test(formData.value.first_name)) {
+        errors.value.first_name = 'Nome deve conter apenas letras e espaços';
     }
 
-    // Validar sobrenome
+    // Last name
     if (!formData.value.last_name?.trim()) {
         errors.value.last_name = 'Sobrenome é obrigatório';
+    } else if (!nameRegex.test(formData.value.last_name)) {
+        errors.value.last_name = 'Sobrenome deve conter apenas letras e espaços';
     }
 
-    // Validar email
+    // Email
     if (!formData.value.email?.trim()) {
         errors.value.email = 'E-mail é obrigatório';
     } else if (!/\S+@\S+\.\S+/.test(formData.value.email)) {
         errors.value.email = 'E-mail inválido';
     }
 
-    // Validar role
+    // Role
     if (!formData.value.role) {
         errors.value.role = 'Tipo de usuário é obrigatório';
     }
 
-    // Validar senha (apenas para novos usuários)
+    // Password
     if (!props.user.id) {
         if (!formData.value.password) {
             errors.value.password = 'Senha é obrigatória';
-        } else if (formData.value.password.length < 6) {
-            errors.value.password = 'Senha deve ter pelo menos 6 caracteres';
+        } else if (formData.value.password.length < 8) {
+            errors.value.password = 'Senha deve ter pelo menos 8 caracteres';
         }
 
         if (!passwordConfirm.value) {
@@ -166,7 +178,7 @@ const validateForm = () => {
         }
     }
 
-    // Validar campos específicos do profissional de saúde
+    // Health pros
     if (formData.value.role === 'health_prof') {
         if (!formData.value.health_profile?.specialty) {
             errors.value.specialty = 'Especialidade é obrigatória';
@@ -179,7 +191,7 @@ const validateForm = () => {
     return Object.keys(errors.value).length === 0;
 };
 
-// Limpar erros quando o usuário começar a digitar
+// Clear errors when start typing
 watch(
     () => formData.value.first_name,
     () => {
@@ -245,7 +257,7 @@ watch(
             formData.value.health_profile = { specialty: '', council_number: '' };
         }
 
-        // Limpar erros quando os dados mudarem
+        // Clear erros on data change
         errors.value = {};
         passwordConfirm.value = '';
     },
@@ -264,7 +276,6 @@ watch(
 );
 
 const handleSubmit = () => {
-    // Validar formulário
     if (!validateForm()) {
         return;
     }

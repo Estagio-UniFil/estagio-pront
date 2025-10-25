@@ -9,7 +9,7 @@
 <script setup>
 import { useTheme } from '@/composables/useTheme';
 
-// Props opcionais para customização
+// Props
 defineProps({
     size: {
         type: String,
@@ -18,7 +18,7 @@ defineProps({
     },
 });
 
-// Usar o composable de tema
+// Theme composable
 const { isDark, toggleTheme } = useTheme();
 </script>
 
@@ -29,7 +29,6 @@ export default {
 </script>
 
 <style scoped>
-/* Estilos específicos do componente se necessário */
 .theme-toggle-small {
     width: 48px;
     height: 24px;
@@ -66,7 +65,7 @@ export default {
     transform: translateX(22px);
 }
 
-/* Estilo padrão para os ícones */
+/* Default Style */
 .theme-toggle-slider i {
     font-size: 12px;
     color: white;

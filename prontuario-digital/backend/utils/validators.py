@@ -66,19 +66,19 @@ if __name__ == "__main__":
     print(f"Testing valid CPF {valid_cpf}:")
     try:
         validate_cpf(valid_cpf)
-        print("✅ Valid!")
+        print("Valid!")
     except ValidationError as e:
-        print(f"❌ Error: {e.message}")
+        print(f"Error: {e.message}")
 
     print(f"\nTesting invalid CPF {invalid_cpf}:")
     try:
         validate_cpf(invalid_cpf)
-        print("✅ Valid!")
+        print("Valid!")
     except ValidationError as e:
-        print(f"❌ Error: {e.message}")
+        print(f"Error: {e.message}")
     print(f"\nTesting invalid CPF (all same digits) {invalid_cpf_equal_digits}:")
     try:
         validate_cpf(invalid_cpf_equal_digits)
-        print("✅ Valid!")
+        print("Valid!")
     except ValidationError as e:
-        print(f"❌ Error: {e.message}")
+        print(f"Error: {e.message}")

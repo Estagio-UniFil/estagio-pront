@@ -1,7 +1,7 @@
 import api from './baseService';
 
 export const medEntryService = {
-    // Buscar todas as entradas (com filtro opcional por estudante)
+    // All entries with optional filter by student on params
     async getAllEntries(params = {}) {
         try {
             console.log('Parâmetros enviados para a API:', params);
@@ -50,12 +50,10 @@ export const medEntryService = {
         }
     },
 
-    // Criar nova entrada
     async createEntry(entryData) {
         try {
             console.log('Criando entrada com dados:', entryData);
 
-            // Garantir que student_id está no payload
             if (!entryData.student_id) {
                 throw new Error('student_id é obrigatório para criar uma entrada');
             }
@@ -68,7 +66,7 @@ export const medEntryService = {
         }
     },
 
-    // Deletar entrada (soft delete) - apenas profissionais de saúde
+    // Soft delete
     async deleteEntry(entryId, deleteReason) {
         try {
             if (!deleteReason || deleteReason.trim() === '') {
@@ -85,17 +83,13 @@ export const medEntryService = {
         }
     },
 
-    // Buscar entradas com filtros avançados
     async getEntriesWithFilters(filters = {}) {
         try {
             const params = {};
 
-            // Filtro por estudante
             if (filters.studentId) {
                 params.student_id = filters.studentId;
             }
-
-            // Outros filtros podem ser adicionados aqui no futuro
 
             console.log('Buscando entradas com filtros:', params);
             const response = await api.get('api/medical-entry/', { params });

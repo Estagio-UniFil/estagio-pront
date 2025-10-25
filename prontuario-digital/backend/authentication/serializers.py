@@ -22,10 +22,12 @@ class UserSerializer(serializers.ModelSerializer):
             "role",
             "password",
             "health_profile",
+            "must_change_password",
         ]
         extra_kwargs = {
             "password": {"write_only": True, "style": {"input_type": "password"}},
             "username": {"required": False},
+            "must_change_password": {"read_only": True},
         }
 
     def create(self, validated_data):
@@ -56,15 +58,16 @@ class UserSerializer(serializers.ModelSerializer):
 
             validated_data["username"] = username
 
-        # Usa create_user para garantir que a senha seja hasheada
+        # Create_user method to hash the password
         user = User.objects.create_user(**validated_data)
 
-        # Se for profissional e houver dados, cria o perfil na tabela de health_profile
+        user.must_change_password = True
+        user.save(update_fields=["must_change_password"])
+
         if user.role == "health_prof" and profile_data:
             HealthProfile.objects.create(user=user, **profile_data)
-        # Se for profissional mas não houver dados, gera um erro
         elif user.role == "health_prof" and not profile_data:
-            user.delete()  # Remove o usuário criado incorretamente
+            user.delete()
             raise serializers.ValidationError(
                 "Dados do perfil profissional são obrigatórios."
             )
@@ -78,10 +81,10 @@ class UserSerializer(serializers.ModelSerializer):
         instance = super().update(instance, validated_data)
 
         if password:
-            instance.set_password(password)  # Hash da nova senha
+            instance.set_password(password)
+            instance.must_change_password = False
             instance.save()
 
-        # Atualiza ou cria o perfil profissional, se for o caso
         if instance.role == "health_prof":
             if profile_data:
                 profile, created = HealthProfile.objects.update_or_create(
@@ -106,6 +109,52 @@ class MeSerializer(serializers.ModelSerializer):
         if User.objects.exclude(pk=user.pk).filter(email=value).exists():
             raise serializers.ValidationError("Este e-mail já está em uso.")
         return value
+
+
+class PasswordChangeSerializer(serializers.Serializer):
+    """
+    Serializer para o endpoint de alteração de senha.
+    Valida a nova senha e a confirmação.
+    A senha atual é opcional para o caso do primeiro login.
+    """
+
+    current_password = serializers.CharField(
+        style={"input_type": "password"}, required=False, allow_blank=True
+    )
+    new_password = serializers.CharField(
+        style={"input_type": "password"}, required=True
+    )
+    confirm_password = serializers.CharField(
+        style={"input_type": "password"}, required=True
+    )
+
+    def validate(self, data):
+        if data["new_password"] != data["confirm_password"]:
+            raise serializers.ValidationError(
+                {"confirm_password": "As senhas não coincidem."}
+            )
+        return data
+
+
+class AdminPasswordResetSerializer(serializers.Serializer):
+    """
+    Serializer para o Admin redefinir a senha de um usuário.
+    Não pede a senha atual.
+    """
+
+    new_password = serializers.CharField(
+        style={"input_type": "password"}, required=True
+    )
+    confirm_password = serializers.CharField(
+        style={"input_type": "password"}, required=True
+    )
+
+    def validate(self, data):
+        if data["new_password"] != data["confirm_password"]:
+            raise serializers.ValidationError(
+                {"confirm_password": "As senhas não coincidem."}
+            )
+        return data
 
 
 class UserNestedSerializer(serializers.ModelSerializer):

@@ -73,12 +73,10 @@ const tableColumns = ref([
     },
 ]);
 
-// Métodos
+// Methods
 const openExportModal = () => {
     console.log('modal de exportação');
     isModalVisible.value = true;
-    //debugger;
-    //reportStore.exportMonthlyReport();
 };
 
 const fetchEntries = () => {

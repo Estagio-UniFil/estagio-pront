@@ -1,7 +1,7 @@
 <template>
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <!-- Total Funcionários -->
+        <!-- Total employees -->
         <div class="card">
             <div class="flex items-center">
                 <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
@@ -14,7 +14,7 @@
             </div>
         </div>
 
-        <!-- Total Alunos Ativos -->
+        <!-- Active students -->
         <div class="card">
             <div class="flex items-center">
                 <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
@@ -27,7 +27,7 @@
             </div>
         </div>
 
-        <!-- Atendimentos Hoje -->
+        <!-- Appointments today -->
         <div class="card">
             <div class="flex items-center">
                 <div class="p-3 rounded-full bg-purple-100 text-purple-600 mr-4">
@@ -40,7 +40,7 @@
             </div>
         </div>
 
-        <!-- Prontuários Atualizados -->
+        <!-- Records today -->
         <div class="card">
             <div class="flex items-center">
                 <div class="p-3 rounded-full bg-orange-100 text-orange-600 mr-4">
@@ -86,10 +86,10 @@
                     Novo Aluno
                 </router-link>
 
-                <router-link :to="{ name: 'admin-reports' }" class="btn-outline w-full">
-                    <i class="fas fa-file-download mr-2"></i>
-                    Gerar Relatório
-                </router-link>
+                <button class="btn-outline w-full" @click="exportReport">
+                    <i class="fas fa-chart-line mr-2"></i>
+                    Exportar Relatório Mensal
+                </button>
 
                 <router-link :to="{ name: 'admin-profile' }" class="btn-outline w-full">
                     <i class="fa-solid fa-user mr-2"></i>
@@ -108,17 +108,19 @@ import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement
 import { useUserStore } from '@/stores/userStore';
 import { useStudentStore } from '@/stores/studentStore';
 import { useMedEntryStore } from '@/stores/medEntryStore';
-import { endOfToday, endOfYesterday, startOfToday } from 'date-fns';
+import { useReportStore } from '@/stores/reportStore';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
 const userStore = useUserStore();
 const studentStore = useStudentStore();
 const medEntryStore = useMedEntryStore();
+const reportStore = useReportStore();
 
 const totalUsers = computed(() => userStore.users.length);
 const activeStudents = computed(() => studentStore.students.filter((student) => student.active).length);
-const totalEntries = computed(() => medEntryStore.entries.length);
+const totalMonthlyEntries = computed(() => filteredMonthlyData.value.length);
+const totalDailyEntries = computed(() => filteredDailyData.value.length);
 
 const loadData = async () => {
     try {
@@ -130,26 +132,80 @@ const loadData = async () => {
     }
 };
 
+const params = { reportType: 'general_monthly', year: null, month: null, studentId: null, startDate: '', endDate: '' };
+const exportReport = () => {
+    reportStore.exportMonthlyReport(params);
+};
+
+const filteredMonthlyData = computed(() => {
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+
+    return medEntryStore.entries.filter((entry) => {
+        const entryDate = new Date(entry.entry_date);
+
+        return entryDate.getMonth() === currentMonth && entryDate.getFullYear() === currentYear;
+    });
+});
+
+const filteredDailyData = computed(() => {
+    const currentDate = new Date();
+    const today = currentDate.getDate();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+
+    return medEntryStore.entries.filter((entry) => {
+        const entryDate = new Date(entry.entry_date);
+
+        return entryDate.getDate() === today && entryDate.getMonth() === currentMonth && entryDate.getFullYear() === currentYear;
+    });
+});
+
 const stats = computed(() => ({
     totalEmployees: totalUsers.value,
     activeStudents: activeStudents.value,
-    appointmentsThisMonth: totalEntries.value,
-    recordsToday: totalEntries.value,
+    appointmentsThisMonth: totalMonthlyEntries.value,
+    recordsToday: totalDailyEntries.value,
 }));
 
 // Chart
-const chartData = ref({
-    labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
-    datasets: [
-        {
-            label: 'Atendimentos',
-            data: [31, 40, 28, 51, 42, 109, 100],
-            backgroundColor: 'rgba(26, 86, 219, 0.2)',
-            borderColor: 'rgba(26, 86, 219, 1)',
-            tension: 0.3,
-            fill: true,
-        },
-    ],
+const chartData = computed(() => {
+    const labels = [];
+    const dataPoints = [];
+    const today = new Date();
+
+    for (let i = 6; i >= 0; i--) {
+        const targetDate = new Date();
+        targetDate.setDate(today.getDate() - i);
+
+        labels.push(targetDate.toLocaleDateString('pt-BR', { weekday: 'short' }));
+
+        const targetDay = targetDate.getDate();
+        const targetMonth = targetDate.getMonth();
+        const targetYear = targetDate.getFullYear();
+
+        const countForDay = medEntryStore.entries.filter((entry) => {
+            const entryDate = new Date(entry.entry_date);
+            return entryDate.getDate() === targetDay && entryDate.getMonth() === targetMonth && entryDate.getFullYear() === targetYear;
+        }).length;
+
+        dataPoints.push(countForDay);
+    }
+
+    return {
+        labels: labels,
+        datasets: [
+            {
+                label: 'Atendimentos',
+                data: dataPoints,
+                backgroundColor: 'rgba(26, 86, 219, 0.2)',
+                borderColor: 'rgba(26, 86, 219, 1)',
+                tension: 0.3,
+                fill: true,
+            },
+        ],
+    };
 });
 
 const chartOptions = ref({

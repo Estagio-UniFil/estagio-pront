@@ -157,6 +157,8 @@
 
     <!-- Delete modal -->
     <ConfirmModal v-if="itemToDelete" :show="showDeleteModal" :entryName="getUserName(itemToDelete)" @confirm="handleConfirmDelete" :action-type="'deletar'" @cancel="closeDeleteModal" />
+
+    <ResetPasswordModal :show="showResetPasswordModal" :user="userToReset" :is-submitting="userStore.loading" @close="closeResetPasswordModal" @submit="handleResetPassword" />
 </template>
 
 <script setup>
@@ -166,6 +168,7 @@ import { useUserStore } from '@/stores/userStore';
 import { useAlertStore } from '@/stores/alertStore';
 import UserModal from '@/components/modals/UserModal.vue';
 import ConfirmModal from '@/components/modals/ConfirmModal.vue';
+import ResetPasswordModal from '@/components/modals/ResetPasswordModal.vue';
 
 const userStore = useUserStore();
 const alertStore = useAlertStore();
@@ -181,6 +184,8 @@ const isEditingMode = ref(false);
 const isShowingActive = ref(true);
 const currentPage = ref(1);
 const itemsPerPage = ref(9);
+const showResetPasswordModal = ref(false);
+const userToReset = ref(null);
 
 const filters = ref({
     search: '',
@@ -219,6 +224,7 @@ const tableColumns = ref([
         actions: [
             { key: 'view', label: 'Visualizar', icon: 'fas fa-eye', color: 'blue' },
             { key: 'edit', label: 'Editar', icon: 'fas fa-edit', color: 'blue' },
+            { key: 'reset-password', label: 'Redefinir Senha', icon: 'fas fa-key', color: 'orange' },
             { key: 'delete', label: 'Excluir', icon: 'fas fa-trash', color: 'red' },
         ],
     },
@@ -317,6 +323,27 @@ const closeDeleteModal = () => {
     itemToDelete.value = null;
 };
 
+const openResetPasswordModal = (user) => {
+    userToReset.value = user;
+    showResetPasswordModal.value = true;
+};
+
+const closeResetPasswordModal = () => {
+    showResetPasswordModal.value = false;
+    userToReset.value = null;
+};
+
+const handleResetPassword = async ({ userId, passwordData }) => {
+    try {
+        await userStore.resetPasswordForUser(userId, passwordData);
+        alertStore.triggerAlert({ message: 'Senha redefinida com sucesso.' });
+        closeResetPasswordModal();
+    } catch (error) {
+        const errorMsg = error.response?.data?.confirm_password || error.response?.data?.detail || 'Não foi possível redefinir a senha.';
+        alertStore.triggerAlert({ message: errorMsg, type: 'error' });
+    }
+};
+
 const getUserName = (user) => {
     if (user.first_name && user.last_name) {
         return `${user.first_name} ${user.last_name}`;
@@ -402,6 +429,9 @@ const handleTableAction = ({ action, item }) => {
             break;
         case 'edit':
             handleEdit(item);
+            break;
+        case 'reset-password':
+            openResetPasswordModal(item);
             break;
         case 'delete':
             handleDelete(item);

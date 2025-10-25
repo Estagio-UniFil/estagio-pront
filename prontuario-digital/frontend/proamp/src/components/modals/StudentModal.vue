@@ -1,6 +1,6 @@
 <template>
     <BaseModal :show="show" :title="modalTitle" @close="handleClose">
-        <StudentForm :student="studentData" :is-editing="isEditing" :is-submitting="isSubmitting" @submit="handleSubmit" @cancel="handleClose" />
+        <StudentForm :student="studentData" :is-editing="isEditing" :is-submitting="isSubmitting" :validation-errors="props.validationErrors" @submit="handleSubmit" @cancel="handleClose" />
     </BaseModal>
 </template>
 
@@ -25,6 +25,10 @@ const props = defineProps({
     isSubmitting: {
         type: Boolean,
         default: false,
+    },
+    validationErrors: {
+        type: Object,
+        default: () => ({}),
     },
 });
 

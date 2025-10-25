@@ -24,5 +24,4 @@ class ReportLogAdmin(admin.ModelAdmin):
         "date",
         "report_type",
     )
-    # Define a ordem padrão de exibição
     ordering = ("-date",)

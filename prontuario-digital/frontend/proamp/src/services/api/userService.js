@@ -13,7 +13,7 @@ export const userService = {
     },
 
     async getAllHealthPros(params = {}) {
-        const response = await api.get('api/managerview/', { params });
+        const response = await api.get('api/auth/users/managerview/', { params });
         return response.data;
     },
 
@@ -35,6 +35,16 @@ export const userService = {
     async deleteUser(id) {
         const response = await api.delete(`api/auth/users/${id}/`);
         return response.data;
+    },
+
+    async resetPassword(id, passwordData) {
+        try {
+            const response = await api.post(`api/auth/users/${id}/reset-password/`, passwordData);
+            return response.data;
+        } catch (error) {
+            console.error('Erro ao redefinir senha:', error);
+            throw error;
+        }
     },
 };
 

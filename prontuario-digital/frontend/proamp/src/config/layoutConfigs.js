@@ -42,7 +42,7 @@ export const layoutConfigs = {
                 {
                     name: 'Alunos',
                     route: 'admin-students',
-                    icon: 'fas fa-users',
+                    icon: 'fas fa-user-graduate',
                 },
                 {
                     name: 'Relatórios',
@@ -128,7 +128,7 @@ export const layoutConfigs = {
                 {
                     name: 'Estudantes',
                     route: 'health-students',
-                    icon: 'fas fa-user-injured',
+                    icon: 'fas fa-user-graduate',
                 },
                 {
                     name: 'Prontuários',

@@ -118,9 +118,9 @@ const tableColumns = ref([
     },
     {
         key: 'health_profile.specialty',
-        label: 'Função',
+        label: 'Especialidade',
         sortable: true,
-        type: 'role',
+        type: 'specialty',
     },
     {
         key: 'actions',

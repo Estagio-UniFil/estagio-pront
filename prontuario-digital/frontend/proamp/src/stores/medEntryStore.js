@@ -45,26 +45,22 @@ export const useMedEntryStore = defineStore('medEntry', {
     },
 
     actions: {
-        // Limpar estado
         clearEntries() {
             this.entries = [];
             this.error = null;
         },
 
-        // Limpar dados do estudante específico
         clearStudentEntries() {
             this.studentEntries = null;
             this.lastFetchedStudentId = null;
             this.error = null;
         },
 
-        // Limpar entrada atual
         clearCurrentEntry() {
             this.currentEntry = null;
             this.error = null;
         },
 
-        // Buscar todas as entradas
         async fetchAllEntries() {
             this.isLoading = true;
             this.error = null;
@@ -82,7 +78,6 @@ export const useMedEntryStore = defineStore('medEntry', {
             }
         },
 
-        // Buscar entradas de um estudante específico (usando novo endpoint)
         async fetchStudentEntries(studentId) {
             if (!studentId) {
                 console.error('ID do estudante é obrigatório');
@@ -95,12 +90,10 @@ export const useMedEntryStore = defineStore('medEntry', {
 
             try {
                 console.log('Buscando entradas para o estudante ID:', studentId);
-                const data = await medEntryService.getStudentEntries(studentId); // ✅ CHAMA O ENDPOINT NOVO
+                const data = await medEntryService.getStudentEntries(studentId);
 
-                // O backend já retorna { student_id, student_name, entries }
                 this.studentEntries = data;
-                this.entries = data.entries || []; // 🔑 garante que a tabela no modal só tenha as entradas corretas
-
+                this.entries = data.entries || [];
                 console.log('Entradas do estudante carregadas:', this.entries.length);
             } catch (error) {
                 console.error('Erro ao buscar entradas do estudante:', error);
@@ -111,7 +104,6 @@ export const useMedEntryStore = defineStore('medEntry', {
             }
         },
 
-        // Buscar entradas com filtros (método alternativo)
         async fetchEntriesWithFilters(filters = {}) {
             this.isLoading = true;
             this.error = null;
@@ -130,7 +122,6 @@ export const useMedEntryStore = defineStore('medEntry', {
             }
         },
 
-        // Buscar entrada específica por ID
         async fetchEntryById(entryId) {
             if (!entryId) {
                 console.error('ID da entrada é obrigatório');
@@ -157,7 +148,6 @@ export const useMedEntryStore = defineStore('medEntry', {
             }
         },
 
-        // Criar nova entrada
         async createEntry(entryData) {
             if (!entryData.student_id) {
                 this.error = 'ID do estudante é obrigatório';
@@ -171,12 +161,10 @@ export const useMedEntryStore = defineStore('medEntry', {
                 console.log('Criando entrada:', entryData);
                 const data = await medEntryService.createEntry(entryData);
 
-                // Adicionar a nova entrada à lista local (se estiver carregada)
                 if (this.entries.length > 0) {
                     this.entries.unshift(data);
                 }
 
-                // Atualizar entradas do estudante se for o mesmo estudante
                 if (this.studentEntries && this.studentEntries.student_id == entryData.student_id) {
                     this.studentEntries.entries.unshift(data);
                 }
@@ -192,7 +180,6 @@ export const useMedEntryStore = defineStore('medEntry', {
             }
         },
 
-        // Deletar entrada
         async deleteEntry(entryId, deleteReason) {
             if (!entryId) {
                 this.error = 'ID da entrada é obrigatório';
@@ -211,15 +198,12 @@ export const useMedEntryStore = defineStore('medEntry', {
                 console.log('Deletando entrada ID:', entryId);
                 await medEntryService.deleteEntry(entryId, deleteReason);
 
-                // Remover da lista local
                 this.entries = this.entries.filter((entry) => entry.id !== entryId);
 
-                // Remover das entradas do estudante se existir
                 if (this.studentEntries && this.studentEntries.entries) {
                     this.studentEntries.entries = this.studentEntries.entries.filter((entry) => entry.id !== entryId);
                 }
 
-                // Limpar entrada atual se for a mesma
                 if (this.currentEntry && this.currentEntry.id === entryId) {
                     this.currentEntry = null;
                 }
@@ -235,14 +219,12 @@ export const useMedEntryStore = defineStore('medEntry', {
             }
         },
 
-        // Recarregar dados do estudante atual
         async refreshStudentEntries() {
             if (this.lastFetchedStudentId) {
                 await this.fetchStudentEntries(this.lastFetchedStudentId);
             }
         },
 
-        // Método auxiliar para extrair mensagem de erro
         _extractErrorMessage(error) {
             return error.response?.data?.detail || error.response?.data?.message || error.message || 'Ocorreu um erro inesperado. Tente novamente mais tarde.';
         },

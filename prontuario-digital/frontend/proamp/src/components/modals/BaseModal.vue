@@ -53,7 +53,7 @@ const close = () => {
     }
 };
 
-// Fechar com a tecla ESC
+// Close with ESC
 const handleKeydown = (e) => {
     if (props.show && props.closable && e.key === 'Escape') {
         close();
@@ -81,7 +81,6 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Transição simples para o modal */
 .modal-fade-enter-active,
 .modal-fade-leave-active {
     transition: opacity 0.3s ease;

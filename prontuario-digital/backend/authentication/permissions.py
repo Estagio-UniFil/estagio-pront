@@ -47,11 +47,9 @@ class AdminWriteHealthProfRead(permissions.BasePermission):
         if not (request.user and request.user.is_authenticated):
             return False
 
-        # Métodos de leitura: ambos podem acessar
-        if request.method in permissions.SAFE_METHODS:  # GET, HEAD, OPTIONS
+        if request.method in permissions.SAFE_METHODS:
             return request.user.role in ["admin", "health_prof"]
 
-        # Métodos de escrita: apenas admin
         return request.user.role == "admin"
 
 
@@ -65,11 +63,9 @@ class AdminWriteAllRead(permissions.BasePermission):
         if not (request.user and request.user.is_authenticated):
             return False
 
-        # Métodos de leitura: ambos podem acessar
-        if request.method in permissions.SAFE_METHODS:  # GET, HEAD, OPTIONS
+        if request.method in permissions.SAFE_METHODS:
             return request.user.role in ["admin", "manager", "health_prof"]
 
-        # Métodos de escrita: apenas admin
         return request.user.role == "admin"
 
 
@@ -83,8 +79,7 @@ class HealthProfWriteAdminRead(permissions.BasePermission):
         if not (request.user and request.user.is_authenticated):
             return False
 
-        # Métodos de leitura: ambos podem acessar
-        if request.method in permissions.SAFE_METHODS:  # GET, HEAD, OPTIONS
+        if request.method in permissions.SAFE_METHODS:
             return request.user.role in ["admin", "health_prof"]
 
         return request.user.role == "health_prof"
@@ -100,11 +95,9 @@ class HealthProfWriteAllRead(permissions.BasePermission):
         if not (request.user and request.user.is_authenticated):
             return False
 
-        # Métodos de leitura: ambos podem acessar
-        if request.method in permissions.SAFE_METHODS:  # GET, HEAD, OPTIONS
+        if request.method in permissions.SAFE_METHODS:
             return request.user.role in ["admin", "health_prof", "manager"]
 
-        # Métodos de escrita: apenas admin
         return request.user.role == "health_prof"
 
 
@@ -141,7 +134,6 @@ class AllRolesRead(permissions.BasePermission):
         if not (request.user and request.user.is_authenticated):
             return False
 
-        # Apenas métodos de leitura
         if request.method in permissions.SAFE_METHODS:
             return request.user.role in ["admin", "manager", "health_prof"]
 

@@ -2,8 +2,8 @@ import api from './baseService';
 
 export const reportService = {
     /**
-     * Busca o relatório mensal, opcionalmente com parâmetros de ano e mês.
-     * @param {object} params - Objeto contendo { year, month } (opcionais).
+     * Monthly report, optional month and year.
+     * @param {object} params - Object { year, month } (optional).
      */
     async getMonthlyReport(params) {
         const response = await api.get('api/reports/medical-entries/monthly/', {
@@ -19,9 +19,9 @@ export const reportService = {
     },
 
     /**
-     * Busca o relatório de um estudante por intervalo, opcionalmente com datas.
+     * Student report by interval, dates are optional.
      * @param {string} id - ID do estudante.
-     * @param {object} params - Objeto contendo { start_date, end_date } (opcionais).
+     * @param {object} params - Objeto { start_date, end_date } (optional).
      */
     async getStudentReport(id, params) {
         const response = await api.get(`api/reports/medical-entries/interval/${id}/`, {

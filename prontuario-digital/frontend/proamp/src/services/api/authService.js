@@ -1,7 +1,7 @@
 import api from './baseService.js';
 
 export const authService = {
-    // Obter CSRF token antes do login
+    // Get CSRF token before login
     async getCsrfToken() {
         try {
             const response = await api.get('csrf/');
@@ -12,20 +12,19 @@ export const authService = {
         }
     },
 
-    // Login com sessions
+    // Sessions login
     async login(email, password, rememberMe = false) {
         try {
-            // Garante o CSRF token
+            // Guarantee CSRF token
             await this.getCsrfToken();
 
-            // Faz o login
+            // Login
             const response = await api.post('login/', {
                 email: email,
                 password: password,
                 remember_me: rememberMe,
             });
 
-            // Retorna os dados do usuário
             return response;
         } catch (error) {
             console.error('Erro no login:', error);
@@ -57,7 +56,7 @@ export const authService = {
     async getUserLogged() {
         try {
             const response = await api.get('api/auth/users/me/');
-            return response;
+            return response.data;
         } catch (error) {
             console.error('Erro:', error);
             throw error;
@@ -67,14 +66,24 @@ export const authService = {
     async patchUserLogged(userData) {
         try {
             const response = await api.patch('api/auth/users/me/', userData);
-            return response;
+            return response.data;
         } catch (error) {
             console.error('Erro:', error);
             throw error;
         }
     },
 
-    // Pega dados do usuário atual do localStorage
+    async setPassword(passwordData) {
+        try {
+            const response = await api.post('api/auth/users/set-password/', passwordData);
+            return response.data;
+        } catch (error) {
+            console.error('Erro ao definir senha:', error);
+            throw error;
+        }
+    },
+
+    // User data from localStorage
     getCurrentUser() {
         const userData = localStorage.getItem('user');
         return userData ? JSON.parse(userData) : null;
