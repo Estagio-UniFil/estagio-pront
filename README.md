@@ -16,7 +16,7 @@ O ProAMP é um sistema web que digitaliza o processo de registro de atendimentos
 
 **Backend:** Python 3.12.4 + Django 5.2 + Django REST Framework 3.16.0  
 **Banco de Dados:** PostgreSQL 17  
-**Frontend:** JavaScript Puro (migração para React/Vue em análise)
+**Frontend:** Vue.js 3.5.18 + Tailwind CSS 4.1
 
 ## 📁 Estrutura do Repositório
 
@@ -31,51 +31,9 @@ estagio-pront/
 │   └── diagramas/             # Diagramas técnicos  
 │       └── svg/               # Diagramas em formato SVG  
 └── prontuario-digital/  
-    └── backend/               # Código do backend Django  
+    └── backend/               # Código do backend Django
+    └── frontend/              # Código do frontend com Vue   
 ```
-
-## 📚 Documentação
-
-### Artefatos de Engenharia
-
-- **[Plano de Estágio](docs/arquivos/v2proamp-plano-de-estagio.pdf)** - Documento completo do projeto
-- **[Glossário do Projeto](docs/artefatos/0-art-glossario-projeto.pdf)** - Termos técnicos e definições
-- **[Pedido do Investidor](docs/artefatos/1-art-pedido-investidor.pdf)** - Solicitação inicial
-- **[Especificação Suplementar](docs/artefatos/2-art-espec-suplementar.pdf)** - Requisitos não funcionais
-- **[Documento de Visão](docs/artefatos/3-art-visao.pdf)** - Visão geral e objetivos
-
-### Casos de Uso
-
-- **[Gerenciamento de Alunos](docs/casos_de_uso/gerenciamento-de-alunos/)** - Especificação detalhada
-
-### Diagramas
-
-Todos os diagramas estão disponíveis em **[docs/diagramas/](docs/diagramas/0-diagramas-merged.pdf)**:
-
-- **Diagrama de Classes** - Estrutura orientada a objetos
-- **Diagrama ER** - Modelo conceitual do banco
-- **Diagrama Lógico** - Implementação física do banco
-- **Diagrama de Sequência** - Fluxos de interação
-- **Diagrama de Estados** - Ciclo de vida dos registros
-- **Diagrama de Implantação** - Arquitetura de distribuição
-
-## 👥 Funcionalidades por Perfil
-
-### Administrador
-
-- Gerenciamento de alunos e funcionários
-- Acesso completo ao sistema
-
-### Setor Clínico
-
-- Registro de atendimentos
-- Consulta de histórico de pacientes
-- Geração de relatórios mensais
-
-### Gestores
-
-- Visualização de histórico de atendimentos
-- Acesso a relatórios
 
 ## 🔗 Links Úteis
 
